@@ -36,7 +36,7 @@ const ProjectCard = ({ project, onClick }) => {
           src={currentVideoSrc}
           poster={project.image}
           autoPlay
-          loop={!project.videos}
+          loop={!project.videos || project.videos.length === 1}
           muted
           playsInline
           onEnded={handleVideoEnded}
@@ -159,8 +159,8 @@ export default function AcelbytePage({ onNavigate }) {
       title: "Personal VFXs",
       category: "VFX",
       description: "A collection of high-octane 3D motion design pieces exploring concepts of digital rebirth and futuristic aesthetics. Utilizing advanced particle simulations and volumetric lighting.",
-      image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
-      videos: ["/personal-vfx-scenes.mp4"],
+      image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=2669&auto=format&fit=crop",
+      videos: ["personal-vfx-scenes.mp4"],
       color: "#FDD935",
       stack: ["Houdini", "Redshift", "After Effects"]
     },
@@ -497,7 +497,7 @@ export default function AcelbytePage({ onNavigate }) {
                       src={selectedProject.videos ? selectedProject.videos[modalVideoIndex] : selectedProject.video}
                       poster={selectedProject.image}
                       autoPlay
-                      loop={!selectedProject.videos}
+                      loop={!selectedProject.videos || selectedProject.videos.length === 1}
                       muted
                       playsInline
                       onEnded={() => {
