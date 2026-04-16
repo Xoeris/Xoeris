@@ -1,0 +1,194 @@
+import React, { useState, useEffect } from 'react';
+import AcelbytePage from './AcelbytePage';
+import DigitalArtifactsPage from './DigitalArtifactsPage';
+import LoomaPage from './LoomaPage';
+import XoerisPage from './XoerisPage';
+import TartarugaPage from './TartarugaPage';
+
+// Exact colors extracted from the provided image
+const colors = {
+  bg: '#000000',
+  yellow: '#FDD935',
+  coral: '#F0805E',
+  violet: '#5A4DB2',
+  text: '#ffffff',
+  textMuted: '#a1a1aa'
+};
+
+export default function App() {
+  // Initialize state based on current URL path
+  const [currentPage, setCurrentPage] = useState(() => {
+    const hostname = window.location.hostname;
+    const path = window.location.pathname;
+
+    if (hostname.includes('loomastudio.acelbyte.com') || path === '/loomastudio') return 'looma';
+    if (hostname.includes('xoeris.acelbyte.com') || path === '/xoeris') return 'xoeris';
+    if (hostname.includes('tartaruga.acelbyte.com') || path === '/tartaruga') return 'tartaruga';
+    if (path === '/digital-artifacts') return 'digital-artifacts';
+    return 'acelbyte';
+  });
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const hostname = window.location.hostname;
+      const path = window.location.pathname;
+      if (hostname.includes('loomastudio.acelbyte.com') || path === '/loomastudio') setCurrentPage('looma');
+      else if (hostname.includes('xoeris.acelbyte.com') || path === '/xoeris') setCurrentPage('xoeris');
+      else if (hostname.includes('tartaruga.acelbyte.com') || path === '/tartaruga') setCurrentPage('tartaruga');
+      else if (path === '/digital-artifacts') setCurrentPage('digital-artifacts');
+      else setCurrentPage('acelbyte');
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Custom navigation function to update URL or redirect to subdomains
+  const handleNavigate = (page) => {
+    const hostname = window.location.hostname;
+    const isDevelopment = hostname === 'localhost' || hostname.includes('127.0.0.1');
+    
+    // Domain mapping
+    const domains = {
+      acelbyte: 'https://acelbyte.com',
+      looma: 'https://loomastudio.acelbyte.com',
+      xoeris: 'https://xoeris.acelbyte.com',
+      tartaruga: 'https://tartaruga.acelbyte.com'
+    };
+
+    // If we're already on the correct subdomain (or in dev), handle internally
+    if (isDevelopment) {
+      let path = '/';
+      if (page === 'looma') path = '/loomastudio';
+      else if (page === 'xoeris') path = '/xoeris';
+      else if (page === 'tartaruga') path = '/tartaruga';
+      else if (page === 'digital-artifacts') path = '/digital-artifacts';
+      
+      window.history.pushState({}, '', path);
+      setCurrentPage(page);
+      window.scrollTo(0, 0);
+      return;
+    }
+
+    // Production: Check if we need to redirect to another subdomain
+    const currentDomainKey = hostname.includes('loomastudio.acelbyte.com') ? 'looma' : 
+                             hostname.includes('xoeris.acelbyte.com') ? 'xoeris' : 
+                             hostname.includes('tartaruga.acelbyte.com') ? 'tartaruga' : 'acelbyte';
+
+    if (page !== currentDomainKey && domains[page]) {
+      window.location.href = domains[page];
+      return;
+    }
+
+    // Internal navigation for same domain (like digital-artifacts on acelbyte.com)
+    let path = '/';
+    if (page === 'digital-artifacts') path = '/digital-artifacts';
+    else if (page === 'tartaruga') path = '/tartaruga';
+    
+    window.history.pushState({}, '', path);
+    setCurrentPage(page);
+    window.scrollTo(0, 0);
+  };
+
+  const getPageTransitionClass = () => {
+    return 'animate-page-slide-in';
+  };
+
+  return (
+    <div className="min-h-screen font-sans selection:bg-[#F0805E] selection:text-white relative z-0 overflow-x-hidden" style={{ backgroundColor: colors.bg, color: colors.text }}>
+      
+      {/* Shared Animated Background Blobs - Only for Looma and Xoeris */}
+      {currentPage !== 'acelbyte' && currentPage !== 'digital-artifacts' && (
+        <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden">
+          <div className="blob blob-1" style={{ backgroundColor: colors.yellow }}></div>
+          <div className="blob blob-2" style={{ backgroundColor: colors.coral }}></div>
+          <div className="blob blob-3" style={{ backgroundColor: colors.violet }}></div>
+          {/* Glass overlay to smooth out the blur even more */}
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-[80px]"></div>
+        </div>
+      )}
+
+      {/* Page Routing with Transitions */}
+      <div key={currentPage} className={getPageTransitionClass()}>
+        {currentPage === 'acelbyte' && <AcelbytePage onNavigate={handleNavigate} />}
+        {currentPage === 'looma' && <LoomaPage onNavigate={handleNavigate} />}
+        {currentPage === 'xoeris' && <XoerisPage onNavigate={handleNavigate} />}
+        {currentPage === 'tartaruga' && <TartarugaPage onNavigate={handleNavigate} />}
+        {currentPage === 'digital-artifacts' && <DigitalArtifactsPage onNavigate={handleNavigate} />}
+      </div>
+
+      {/* Global Styles */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes pageSlideIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-page-slide-in {
+          animation: pageSlideIn 0.5s ease-out forwards;
+        }
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 20s linear infinite;
+        }
+        .perspective-1000 {
+          perspective: 1000px;
+        }
+        @keyframes blob1 {
+          0% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(30vw, 10vh) scale(1.1); }
+          66% { transform: translate(-10vw, 20vh) scale(0.9); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
+        @keyframes blob2 {
+          0% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(-20vw, -20vh) scale(1.2); }
+          66% { transform: translate(20vw, -10vh) scale(0.8); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
+        @keyframes blob3 {
+          0% { transform: translate(0, 0) scale(1); }
+          33% { transform: translate(15vw, -30vh) scale(1.1); }
+          66% { transform: translate(-15vw, -20vh) scale(1.3); }
+          100% { transform: translate(0, 0) scale(1); }
+        }
+        .blob {
+          position: absolute;
+          filter: blur(100px);
+          opacity: 0.6;
+          border-radius: 50%;
+          animation-iteration-count: infinite;
+          animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+          animation-direction: alternate;
+          mix-blend-mode: screen;
+        }
+        .blob-1 {
+          width: 50vw;
+          height: 50vw;
+          top: -10%;
+          left: -10%;
+          animation-name: blob1;
+          animation-duration: 20s;
+        }
+        .blob-2 {
+          width: 45vw;
+          height: 45vw;
+          top: 40%;
+          right: -10%;
+          animation-name: blob2;
+          animation-duration: 25s;
+        }
+        .blob-3 {
+          width: 60vw;
+          height: 60vw;
+          bottom: -20%;
+          left: 10%;
+          animation-name: blob3;
+          animation-duration: 22s;
+        }
+      `}} />
+    </div>
+  );
+}

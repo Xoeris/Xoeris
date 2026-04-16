@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "sarah/sarah-ai.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(webhook|set_webhook|cron|keep_alive|bot_status)",
+      "destination": "sarah/sarah-ai.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/cron",
+      "schedule": "0 8 * * *"
+    }
+  ]
+}
