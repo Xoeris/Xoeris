@@ -28,7 +28,7 @@ const ProjectCard = ({ project, onClick }) => {
   return (
     <div
       onClick={() => onClick(project)}
-      className="group relative aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 bg-white/5 cursor-pointer hover:border-[#FDD935]/50 hover:shadow-[0_0_30px_rgba(253,217,53,0.15)] transition-all duration-[400ms] ease-hyper hover:scale-[1.02] active:scale-[0.98]"
+      className="group relative aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 bg-black cursor-pointer hover:border-[#FDD935]/50 hover:shadow-[0_0_30px_rgba(253,217,53,0.15)] transition-all duration-[400ms] ease-hyper hover:scale-[1.02] active:scale-[0.98]"
     >
       <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 z-10"></div>
       {currentVideoSrc ? (
@@ -42,11 +42,13 @@ const ProjectCard = ({ project, onClick }) => {
           onEnded={handleVideoEnded}
           className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
         />
-      ) : (
+      ) : project.image ? (
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
           style={{ backgroundImage: `url('${project.image}')` }}
         ></div>
+      ) : (
+        <div className="absolute inset-0 bg-black"></div>
       )}
       <div
         className="absolute top-6 right-6 z-20 bg-black/50 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
@@ -159,7 +161,6 @@ export default function AcelbytePage({ onNavigate }) {
       title: "Personal VFXs",
       category: "VFX",
       description: "A collection of high-octane 3D motion design pieces exploring concepts of digital rebirth and futuristic aesthetics. Utilizing advanced particle simulations and volumetric lighting.",
-      image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?q=80&w=2669&auto=format&fit=crop",
       videos: ["personal-vfx-scenes.mp4"],
       color: "#FDD935",
       stack: ["Houdini", "Redshift", "After Effects"]
@@ -491,7 +492,7 @@ export default function AcelbytePage({ onNavigate }) {
               </button>
 
               <div className="grid grid-cols-1 md:grid-cols-2">
-                <div className="relative h-64 md:h-auto min-h-[400px]">
+                <div className="relative h-64 md:h-auto min-h-[400px] bg-black">
                   {(selectedProject.videos || selectedProject.video) ? (
                     <video
                       src={selectedProject.videos ? selectedProject.videos[modalVideoIndex] : selectedProject.video}
@@ -507,8 +508,10 @@ export default function AcelbytePage({ onNavigate }) {
                       }}
                       className="absolute inset-0 w-full h-full object-cover object-center"
                     />
-                  ) : (
+                  ) : selectedProject.image ? (
                     <img src={selectedProject.image} alt={selectedProject.title} className="absolute inset-0 w-full h-full object-cover" />
+                  ) : (
+                    <div className="absolute inset-0 bg-black"></div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-transparent to-transparent md:bg-gradient-to-r"></div>
                 </div>
