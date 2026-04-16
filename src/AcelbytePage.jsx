@@ -160,7 +160,7 @@ export default function AcelbytePage({ onNavigate }) {
       category: "VFX",
       description: "A collection of high-octane 3D motion design pieces exploring concepts of digital rebirth and futuristic aesthetics. Utilizing advanced particle simulations and volumetric lighting.",
       image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop",
-      video: "/personal-vfx-scenes.mp4",
+      videos: ["/personal-vfx-scenes.mp4"],
       color: "#FDD935",
       stack: ["Houdini", "Redshift", "After Effects"]
     },
