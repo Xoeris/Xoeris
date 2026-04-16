@@ -7,10 +7,18 @@ export default function XoerisPage({ onNavigate }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrolled = window.scrollY > 50;
+          setIsScrolled((prev) => (prev !== scrolled ? scrolled : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -18,7 +26,7 @@ export default function XoerisPage({ onNavigate }) {
 
     <div className="animate-fade-in relative z-10">
       {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'py-4 shadow-lg backdrop-blur-xl bg-black/40 border-b border-white/10' : 'py-6 bg-transparent'}`}>
+      <nav className={`fixed w-full z-50 transition-all duration-300 gpu-accel ${isScrolled ? 'py-4 shadow-lg backdrop-blur-xl bg-black/40 border-b border-white/10' : 'py-6 bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
           <a href="/xoeris" onClick={(e) => { e.preventDefault(); onNavigate('xoeris'); }} className="flex items-center group">
             <div className="w-14 h-14 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
@@ -95,15 +103,15 @@ export default function XoerisPage({ onNavigate }) {
           </div>
 
           {/* Hero Visual - Data/AI Motif */}
-          <div className="relative flex justify-center lg:justify-end items-center h-80 lg:h-full z-0 perspective-1000">
-            <div className="relative w-full max-w-md transform rotate-[5deg] hover:rotate-0 transition-transform duration-700 ease-out group flex justify-center">
+          <div className="relative flex justify-center lg:justify-end items-center h-80 lg:h-full z-0 perspective-1000 gpu-accel">
+            <div className="relative w-full max-w-md transform rotate-[5deg] hover:rotate-0 transition-transform duration-700 ease-out group flex justify-center will-change-transform">
               <div className="relative w-64 h-80 flex items-center justify-center">
                 {/* Abstract Data Hexagons */}
-                <div className="absolute w-40 h-40 border-2 border-[#5A4DB2] rounded-3xl transform rotate-45 transition-all duration-500 group-hover:scale-110 bg-[#5A4DB2]/10 backdrop-blur-md flex items-center justify-center z-20 shadow-[0_0_50px_rgba(90,77,178,0.4)]">
+                <div className="absolute w-40 h-40 border-2 border-[#5A4DB2] rounded-3xl transform rotate-45 transition-all duration-500 group-hover:scale-110 bg-[#5A4DB2]/10 backdrop-blur-md flex items-center justify-center z-20 shadow-[0_0_50px_rgba(90,77,178,0.4)] will-change-transform">
                    <Database size={48} className="text-[#FDD935] -rotate-45" />
                 </div>
-                <div className="absolute w-40 h-40 border-2 border-[#F0805E] rounded-3xl transform rotate-45 translate-x-12 translate-y-12 transition-all duration-700 group-hover:translate-x-16 group-hover:translate-y-16 bg-[#F0805E]/10 backdrop-blur-sm z-10"></div>
-                <div className="absolute w-40 h-40 border-2 border-[#FDD935] rounded-3xl transform rotate-45 -translate-x-12 -translate-y-12 transition-all duration-700 group-hover:-translate-x-16 group-hover:-translate-y-16 bg-[#FDD935]/10 backdrop-blur-sm z-10"></div>
+                <div className="absolute w-40 h-40 border-2 border-[#F0805E] rounded-3xl transform rotate-45 translate-x-12 translate-y-12 transition-all duration-700 group-hover:translate-x-16 group-hover:translate-y-16 bg-[#F0805E]/10 backdrop-blur-sm z-10 will-change-transform"></div>
+                <div className="absolute w-40 h-40 border-2 border-[#FDD935] rounded-3xl transform rotate-45 -translate-x-12 -translate-y-12 transition-all duration-700 group-hover:-translate-x-16 group-hover:-translate-y-16 bg-[#FDD935]/10 backdrop-blur-sm z-10 will-change-transform"></div>
               </div>
 
               {/* Decorative floating elements */}

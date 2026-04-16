@@ -8,10 +8,18 @@ export default function LoomaPage({ onNavigate }) {
   const [selectedMember, setSelectedMember] = useState(null);
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrolled = window.scrollY > 50;
+          setIsScrolled((prev) => (prev !== scrolled ? scrolled : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -26,7 +34,7 @@ export default function LoomaPage({ onNavigate }) {
   return (
     <div className="animate-fade-in relative z-10 text-white">
       {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'py-4 shadow-lg backdrop-blur-xl bg-black/40 border-b border-white/10' : 'py-6 bg-transparent'}`}>
+      <nav className={`fixed w-full z-50 transition-all duration-300 gpu-accel ${isScrolled ? 'py-4 shadow-lg backdrop-blur-xl bg-black/40 border-b border-white/10' : 'py-6 bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
           <a href="/loomastudio" onClick={(e) => { e.preventDefault(); onNavigate('looma'); }} className="flex items-center group">
             <div className="relative w-14 h-14 transition-transform group-hover:scale-110">
@@ -79,9 +87,9 @@ export default function LoomaPage({ onNavigate }) {
 
       {/* 1. Cover Section */}
       <section className="relative w-full min-h-screen flex flex-col items-center justify-center text-center px-6 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-           <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-[#5A4DB2] opacity-20 blur-[120px] rounded-full" />
-           <div className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] bg-[#F0805E] opacity-20 blur-[120px] rounded-full" />
+        <div className="absolute inset-0 pointer-events-none gpu-accel">
+           <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-[#5A4DB2] opacity-15 blur-[80px] rounded-full will-change-filter" />
+           <div className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] bg-[#F0805E] opacity-15 blur-[80px] rounded-full will-change-filter" />
         </div>
 
         <FadeIn className="relative z-10 flex flex-col items-center space-y-8">
@@ -129,7 +137,7 @@ export default function LoomaPage({ onNavigate }) {
       </section>
 
       {/* 3. Vision & Mission */}
-      <section id="vision" className="relative w-full min-h-screen py-24 px-6 md:px-16 flex flex-col justify-center bg-white/5 backdrop-blur-sm">
+      <section id="vision" className="relative w-full min-h-screen py-24 px-6 md:px-16 flex flex-col justify-center bg-white/5 backdrop-blur-sm gpu-accel">
         <div className="max-w-7xl mx-auto w-full grid md:grid-cols-2 gap-16 md:gap-24 items-start">
           {/* Visi */}
           <FadeIn className="space-y-6 sticky top-32">
@@ -208,8 +216,8 @@ export default function LoomaPage({ onNavigate }) {
           
           {/* Detailed Portfolio Section - Appears when a member is selected */}
           {selectedMember && (
-            <div className="mb-20 animate-page-slide-in relative z-20">
-              <div className="bg-white/5 backdrop-blur-3xl rounded-[40px] border border-white/10 p-8 md:p-12 shadow-2xl relative overflow-hidden">
+            <div className="mb-20 animate-page-slide-in relative z-20 gpu-accel">
+              <div className="bg-white/5 backdrop-blur-2xl rounded-[40px] border border-white/10 p-8 md:p-12 shadow-2xl relative overflow-hidden">
                 {/* Close Button */}
                 <button 
                   onClick={() => setSelectedMember(null)}

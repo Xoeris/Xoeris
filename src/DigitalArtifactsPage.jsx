@@ -59,11 +59,11 @@ export default function DigitalArtifactsPage({ onNavigate }) {
   return (
     <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-[#FDD935] selection:text-black overflow-hidden relative">
       {/* Background Elements */}
-      <div className="fixed inset-0 z-0 bg-[linear-gradient(rgba(253,217,53,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-30"></div>
+      <div className="fixed inset-0 z-0 bg-[linear-gradient(rgba(253,217,53,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-30 gpu-accel"></div>
       
-      <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden mix-blend-screen">
-        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-[#FDD935] blur-[100px] opacity-[0.15] rounded-full animate-pulse"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-[#F59E0B] blur-[120px] opacity-[0.1] rounded-full animate-pulse delay-1000"></div>
+      <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden mix-blend-screen gpu-accel">
+        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-[#FDD935] blur-[60px] opacity-[0.12] rounded-full animate-pulse will-change-filter"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-[#F59E0B] blur-[80px] opacity-[0.08] rounded-full animate-pulse delay-1000 will-change-filter"></div>
       </div>
 
       <FadeIn className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-24">
@@ -104,7 +104,7 @@ export default function DigitalArtifactsPage({ onNavigate }) {
           {artifacts.map((artifact) => (
             <div 
               key={artifact.id}
-              className="group relative bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 hover:border-[#FDD935]/50 transition-all duration-300 cursor-pointer overflow-hidden"
+              className="group relative bg-white/5 border border-white/10 rounded-2xl p-8 hover:bg-white/10 hover:border-[#FDD935]/50 transition-all duration-300 cursor-pointer overflow-hidden gpu-accel"
               onMouseEnter={() => setHoveredId(artifact.id)}
               onMouseLeave={() => setHoveredId(null)}
             >

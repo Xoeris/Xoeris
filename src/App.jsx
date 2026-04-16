@@ -99,12 +99,12 @@ export default function App() {
       
       {/* Shared Animated Background Blobs - Only for Looma and Xoeris */}
       {currentPage !== 'acelbyte' && currentPage !== 'digital-artifacts' && (
-        <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden">
-          <div className="blob blob-1" style={{ backgroundColor: colors.yellow }}></div>
-          <div className="blob blob-2" style={{ backgroundColor: colors.coral }}></div>
-          <div className="blob blob-3" style={{ backgroundColor: colors.violet }}></div>
+        <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden gpu-accel">
+          <div className="blob blob-1 will-change-transform" style={{ backgroundColor: colors.yellow }}></div>
+          <div className="blob blob-2 will-change-transform" style={{ backgroundColor: colors.coral }}></div>
+          <div className="blob blob-3 will-change-transform" style={{ backgroundColor: colors.violet }}></div>
           {/* Glass overlay to smooth out the blur even more */}
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-[80px]"></div>
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-[60px]"></div>
         </div>
       )}
 
@@ -137,32 +137,33 @@ export default function App() {
           perspective: 1000px;
         }
         @keyframes blob1 {
-          0% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30vw, 10vh) scale(1.1); }
-          66% { transform: translate(-10vw, 20vh) scale(0.9); }
-          100% { transform: translate(0, 0) scale(1); }
+          0% { transform: translate3d(0, 0, 0) scale(1); }
+          33% { transform: translate3d(30vw, 10vh, 0) scale(1.1); }
+          66% { transform: translate3d(-10vw, 20vh, 0) scale(0.9); }
+          100% { transform: translate3d(0, 0, 0) scale(1); }
         }
         @keyframes blob2 {
-          0% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(-20vw, -20vh) scale(1.2); }
-          66% { transform: translate(20vw, -10vh) scale(0.8); }
-          100% { transform: translate(0, 0) scale(1); }
+          0% { transform: translate3d(0, 0, 0) scale(1); }
+          33% { transform: translate3d(-20vw, -20vh, 0) scale(1.2); }
+          66% { transform: translate3d(20vw, -10vh, 0) scale(0.8); }
+          100% { transform: translate3d(0, 0, 0) scale(1); }
         }
         @keyframes blob3 {
-          0% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(15vw, -30vh) scale(1.1); }
-          66% { transform: translate(-15vw, -20vh) scale(1.3); }
-          100% { transform: translate(0, 0) scale(1); }
+          0% { transform: translate3d(0, 0, 0) scale(1); }
+          33% { transform: translate3d(15vw, -30vh, 0) scale(1.1); }
+          66% { transform: translate3d(-15vw, -20vh, 0) scale(1.3); }
+          100% { transform: translate3d(0, 0, 0) scale(1); }
         }
         .blob {
           position: absolute;
-          filter: blur(100px);
-          opacity: 0.6;
+          filter: blur(60px);
+          opacity: 0.5;
           border-radius: 50%;
           animation-iteration-count: infinite;
           animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
           animation-direction: alternate;
           mix-blend-mode: screen;
+          will-change: transform;
         }
         .blob-1 {
           width: 50vw;
@@ -170,7 +171,7 @@ export default function App() {
           top: -10%;
           left: -10%;
           animation-name: blob1;
-          animation-duration: 20s;
+          animation-duration: 30s;
         }
         .blob-2 {
           width: 45vw;
@@ -178,7 +179,7 @@ export default function App() {
           top: 40%;
           right: -10%;
           animation-name: blob2;
-          animation-duration: 25s;
+          animation-duration: 35s;
         }
         .blob-3 {
           width: 60vw;
@@ -186,7 +187,7 @@ export default function App() {
           bottom: -20%;
           left: 10%;
           animation-name: blob3;
-          animation-duration: 22s;
+          animation-duration: 32s;
         }
       `}} />
     </div>

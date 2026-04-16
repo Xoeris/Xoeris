@@ -31,8 +31,18 @@ export default function TartarugaPage({ onNavigate }) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrolled = window.scrollY > 50;
+          setIsScrolled((prev) => (prev !== scrolled ? scrolled : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -40,16 +50,16 @@ export default function TartarugaPage({ onNavigate }) {
     <div className="min-h-screen bg-[#0a0502] text-white font-sans selection:bg-[#FDD935] selection:text-black">
       
       {/* Dynamic Background Blobs based on the new palette */}
-      <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-[#FDD935] blur-[150px] opacity-[0.15] rounded-full animate-pulse"></div>
-        <div className="absolute bottom-[-10%] right-[-20%] w-[50vw] h-[50vw] bg-[#F0805E] blur-[150px] opacity-[0.1] rounded-full animate-pulse delay-1000"></div>
-        <div className="absolute top-[30%] right-[10%] w-[40vw] h-[40vw] bg-[#1D1B4B] blur-[120px] opacity-[0.2] rounded-full animate-float"></div>
+      <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden gpu-accel">
+        <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-[#FDD935] blur-[100px] opacity-[0.12] rounded-full animate-pulse will-change-filter"></div>
+        <div className="absolute bottom-[-10%] right-[-20%] w-[50vw] h-[50vw] bg-[#F0805E] blur-[100px] opacity-[0.08] rounded-full animate-pulse delay-1000 will-change-filter"></div>
+        <div className="absolute top-[30%] right-[10%] w-[40vw] h-[40vw] bg-[#1D1B4B] blur-[80px] opacity-[0.15] rounded-full animate-float will-change-transform"></div>
         {/* Subtle grid for tech aesthetic */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(253,217,53,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.02)_1px,transparent_1px)] bg-[size:40px_40px] opacity-30"></div>
       </div>
 
       {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'py-4 backdrop-blur-xl bg-black/40 border-b border-[#FDD935]/20 shadow-2xl' : 'py-8 bg-transparent'}`}>
+      <nav className={`fixed w-full z-50 transition-all duration-300 gpu-accel ${isScrolled ? 'py-4 backdrop-blur-xl bg-black/40 border-b border-[#FDD935]/20 shadow-2xl' : 'py-8 bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center gap-8">
             <img src="/tartaruga-logo.png" alt="Tartaruga Logo" className="w-14 h-14 object-contain" />
@@ -204,11 +214,12 @@ export default function TartarugaPage({ onNavigate }) {
           animation: gradientShift 4s ease infinite;
         }
         @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-20px); }
+          0%, 100% { transform: translate3d(0, 0, 0); }
+          50% { transform: translate3d(0, -20px, 0); }
         }
         .animate-float {
           animation: float 6s ease-in-out infinite;
+          will-change: transform;
         }
       `}} />
     </div>

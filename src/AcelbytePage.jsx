@@ -14,8 +14,21 @@ const colors = {
   glassBorder: 'rgba(253, 217, 53, 0.2)'
 };
 
-const ProjectCard = ({ project, onClick }) => {
+const ProjectCard = React.memo(({ project, onClick }) => {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const videoRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsIntersecting(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+    if (videoRef.current) observer.observe(videoRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   const handleVideoEnded = () => {
     if (project.videos && project.videos.length > 0) {
@@ -28,12 +41,13 @@ const ProjectCard = ({ project, onClick }) => {
   return (
     <div
       onClick={() => onClick(project)}
-      className="group relative aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 bg-black cursor-pointer hover:border-[#FDD935]/50 hover:shadow-[0_0_30px_rgba(253,217,53,0.15)] transition-all duration-[400ms] ease-hyper hover:scale-[1.02] active:scale-[0.98]"
+      className="group relative aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 bg-black cursor-pointer hover:border-[#FDD935]/50 hover:shadow-[0_0_30px_rgba(253,217,53,0.15)] transition-all duration-[400ms] ease-hyper hover:scale-[1.02] active:scale-[0.98] gpu-accel"
     >
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 z-10"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-60 z-10 transition-opacity group-hover:opacity-80"></div>
       {currentVideoSrc ? (
         <video
-          src={currentVideoSrc}
+          ref={videoRef}
+          src={isIntersecting ? currentVideoSrc : ""}
           poster={project.image}
           autoPlay
           loop={!project.videos || project.videos.length === 1}
@@ -51,12 +65,12 @@ const ProjectCard = ({ project, onClick }) => {
         <div className="absolute inset-0 bg-black"></div>
       )}
       <div
-        className="absolute top-6 right-6 z-20 bg-black/50 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider"
+        className="absolute top-6 right-6 z-20 bg-black/50 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider translate-z-0"
         style={{ color: project.color }}
       >
         {project.category}
       </div>
-      <div className="absolute bottom-0 left-0 w-full p-8 z-20 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+      <div className="absolute bottom-0 left-0 w-full p-8 z-20 translate-y-4 group-hover:translate-y-0 transition-transform duration-500 will-change-transform">
         <h4 className="text-2xl font-black mb-2 text-white">{project.title}</h4>
         <p className="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100 line-clamp-2">
           {project.description}
@@ -64,7 +78,7 @@ const ProjectCard = ({ project, onClick }) => {
       </div>
     </div>
   );
-};
+});
 
 export default function AcelbytePage({ onNavigate }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -214,10 +228,18 @@ export default function AcelbytePage({ onNavigate }) {
   ];
 
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrolled = window.scrollY > 50;
+          setIsScrolled((prev) => (prev !== scrolled ? scrolled : prev));
+          ticking = false;
+        });
+        ticking = true;
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -228,17 +250,17 @@ export default function AcelbytePage({ onNavigate }) {
       <div className="fixed inset-0 z-[-2] bg-[linear-gradient(rgba(253,217,53,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-50 mask-image-radial-gradient"></div>
 
       {/* Shared Animated Background Blobs (Yellow Tech Theme) */}
-      <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden mix-blend-screen">
-        <div className="blob blob-1" style={{ backgroundColor: colors.primary }}></div>
-        <div className="blob blob-2" style={{ backgroundColor: colors.secondary }}></div>
-        <div className="blob blob-3" style={{ backgroundColor: colors.accent }}></div>
+      <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden mix-blend-screen gpu-accel">
+        <div className="blob blob-1 will-change-transform" style={{ backgroundColor: colors.primary }}></div>
+        <div className="blob blob-2 will-change-transform" style={{ backgroundColor: colors.secondary }}></div>
+        <div className="blob blob-3 will-change-transform" style={{ backgroundColor: colors.accent }}></div>
         {/* Heavy Glass overlay for CyberGlassMorphism */}
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[100px]"></div>
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[60px]"></div>
       </div>
 
       <div className="animate-fade-in relative z-10">
         {/* Navigation */}
-        <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'py-4 shadow-[0_10px_30px_rgba(253,217,53,0.05)] backdrop-blur-2xl bg-black/50 border-b border-[#FDD935]/20' : 'py-6 bg-transparent'}`}>
+        <nav className={`fixed w-full z-50 transition-all duration-300 gpu-accel ${isScrolled ? 'py-4 shadow-lg backdrop-blur-xl bg-black/50 border-b border-[#FDD935]/20' : 'py-6 bg-transparent'}`}>
           <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
             <a href="#" className="flex items-center group">
               <div className="w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 overflow-hidden">
