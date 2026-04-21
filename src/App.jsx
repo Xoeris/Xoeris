@@ -43,6 +43,32 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  // Update document title and favicon according to the current page
+  useEffect(() => {
+    const titles = {
+      acelbyte: 'Acelbyte',
+      looma: 'Looma Studio',
+      xoeris: 'Xoeris',
+      tartaruga: 'Tartaruga',
+      'digital-artifacts': 'Digital Artifacts | Acelbyte'
+    };
+
+    const icons = {
+      acelbyte: '/acelbyte-logo.png',
+      looma: '/looma-studio-logo.png',
+      xoeris: '/xoeris-logo.png',
+      tartaruga: '/tartaruga-logo.png',
+      'digital-artifacts': '/acelbyte-logo.png'
+    };
+
+    document.title = titles[currentPage] || 'Acelbyte';
+    
+    const link = document.querySelector("link[rel~='icon']");
+    if (link) {
+      link.href = icons[currentPage] || '/acelbyte-logo.png';
+    }
+  }, [currentPage]);
+
   // Custom navigation function to update URL or redirect to subdomains
   const handleNavigate = (page) => {
     const hostname = window.location.hostname;
