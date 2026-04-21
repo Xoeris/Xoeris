@@ -8,9 +8,9 @@ import TartarugaPage from './TartarugaPage';
 // Exact colors extracted from the provided image
 const colors = {
   bg: '#000000',
-  yellow: '#FDD935',
-  coral: '#F0805E',
-  violet: '#5A4DB2',
+  yellow: '#F9CB43',
+  coral: '#E88C6D',
+  violet: '#705EBC',
   text: '#ffffff',
   textMuted: '#a1a1aa'
 };
@@ -95,7 +95,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen font-sans selection:bg-[#F0805E] selection:text-white relative z-0 overflow-x-hidden" style={{ backgroundColor: colors.bg, color: colors.text }}>
+    <div className="min-h-screen font-sans selection:bg-[#F9CB43] selection:text-black relative z-0 overflow-x-hidden" style={{ backgroundColor: colors.bg, color: colors.text }}>
       
       {/* Shared Animated Background Blobs - Only for Looma and Xoeris */}
       {currentPage !== 'acelbyte' && currentPage !== 'digital-artifacts' && (
