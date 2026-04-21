@@ -277,14 +277,8 @@ export default function AcelbytePage({ onNavigate }) {
               <div className="w-px h-6 bg-[#FDD935]/20"></div>
 
               <div className="flex items-center gap-5">
-                <a href="https://loomastudio.acelbyte.com" onClick={(e) => { e.preventDefault(); onNavigate('looma'); }} className="flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-white transition-colors duration-300 ease-hyper">
-                  <img src="/looma-studio-logo.png" alt="Looma" className="w-3.5 h-3.5 object-contain" /> LOOMA
-                </a>
                 <a href="https://xoeris.acelbyte.com" onClick={(e) => { e.preventDefault(); onNavigate('xoeris'); }} className="flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-white transition-colors duration-300 ease-hyper">
                   <img src="/xoeris-logo.png" alt="Xoeris" className="w-3.5 h-3.5 object-contain" /> XOERIS
-                </a>
-                <a href="https://tartaruga.acelbyte.com" onClick={(e) => { e.preventDefault(); onNavigate('tartaruga'); }} className="flex items-center gap-1.5 text-xs font-bold text-gray-400 hover:text-white transition-colors duration-300 ease-hyper">
-                  <img src="/tartaruga-logo.png" alt="Tartaruga" className="w-3.5 h-3.5 object-contain" /> TARTARUGA
                 </a>
               </div>
               <a href="#works" className="px-6 py-2.5 text-sm font-black uppercase tracking-wider rounded-lg transition-all duration-500 ease-hyper hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(253,217,53,0.4)] hover:shadow-[0_0_30px_rgba(253,217,53,0.7)]" style={{ backgroundColor: colors.primary, color: '#000' }}>
@@ -305,14 +299,8 @@ export default function AcelbytePage({ onNavigate }) {
               <a href="#works" className="text-lg font-bold text-gray-300 hover:text-[#FDD935] uppercase tracking-widest" onClick={() => setMobileMenuOpen(false)}>Works</a>
               <a href="#contact" className="text-lg font-bold text-gray-300 hover:text-[#FDD935] uppercase tracking-widest" onClick={() => setMobileMenuOpen(false)}>Contact</a>
               <div className="w-1/2 h-px bg-[#FDD935]/20 my-2"></div>
-              <a href="#looma" onClick={(e) => { e.preventDefault(); onNavigate('looma'); setMobileMenuOpen(false); }} className="text-sm font-bold text-gray-400 hover:text-white py-2 flex items-center gap-2">
-                <img src="/looma-studio-logo.png" alt="Looma" className="w-4 h-4 object-contain" /> LOOMA
-              </a>
               <a href="https://xoeris.acelbyte.com" onClick={(e) => { e.preventDefault(); onNavigate('xoeris'); setMobileMenuOpen(false); }} className="text-sm font-bold text-gray-400 hover:text-white py-2 flex items-center gap-2">
                 <img src="/xoeris-logo.png" alt="Xoeris" className="w-4 h-4 object-contain" /> XOERIS
-              </a>
-              <a href="https://tartaruga.acelbyte.com" onClick={(e) => { e.preventDefault(); onNavigate('tartaruga'); setMobileMenuOpen(false); }} className="text-sm font-bold text-gray-400 hover:text-white py-2 flex items-center gap-2">
-                <img src="/tartaruga-logo.png" alt="Tartaruga" className="w-4 h-4 object-contain" /> TARTARUGA
               </a>
             </div>
           )}
