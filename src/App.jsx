@@ -4,6 +4,7 @@ import DigitalArtifactsPage from './DigitalArtifactsPage';
 import LoomaPage from './LoomaPage';
 import XoerisPage from './XoerisPage';
 import TartarugaPage from './TartarugaPage';
+import SubscriptionsPage from './SubscriptionsPage';
 
 // Exact colors extracted from the provided image
 const colors = {
@@ -24,6 +25,7 @@ export default function App() {
     if (hostname.includes('loomastudio.acelbyte.com') || path === '/loomastudio') return 'looma';
     if (hostname.includes('xoeris.acelbyte.com') || path === '/xoeris') return 'xoeris';
     if (hostname.includes('tartaruga.acelbyte.com') || path === '/tartaruga') return 'tartaruga';
+    if (path === '/subscriptions' || path === '/payment') return 'subscriptions';
     if (path === '/digital-artifacts') return 'digital-artifacts';
     return 'acelbyte';
   });
@@ -36,6 +38,7 @@ export default function App() {
       if (hostname.includes('loomastudio.acelbyte.com') || path === '/loomastudio') setCurrentPage('looma');
       else if (hostname.includes('xoeris.acelbyte.com') || path === '/xoeris') setCurrentPage('xoeris');
       else if (hostname.includes('tartaruga.acelbyte.com') || path === '/tartaruga') setCurrentPage('tartaruga');
+      else if (path === '/subscriptions' || path === '/payment') setCurrentPage('subscriptions');
       else if (path === '/digital-artifacts') setCurrentPage('digital-artifacts');
       else setCurrentPage('acelbyte');
     };
@@ -50,6 +53,7 @@ export default function App() {
       looma: 'Looma Studio',
       xoeris: 'Xoeris',
       tartaruga: 'Tartaruga',
+      subscriptions: 'Subscriptions | Acelbyte',
       'digital-artifacts': 'Digital Artifacts | Acelbyte'
     };
 
@@ -58,6 +62,7 @@ export default function App() {
       looma: '/looma-studio-logo.png',
       xoeris: '/xoeris-logo.png',
       tartaruga: '/tartaruga-logo.png',
+      subscriptions: '/acelbyte-logo.png',
       'digital-artifacts': '/acelbyte-logo.png'
     };
 
@@ -88,6 +93,8 @@ export default function App() {
       if (page === 'looma') path = '/loomastudio';
       else if (page === 'xoeris') path = '/xoeris';
       else if (page === 'tartaruga') path = '/tartaruga';
+      else if (page === 'subscriptions') path = '/subscriptions';
+      else if (page === 'payment') path = '/payment';
       else if (page === 'digital-artifacts') path = '/digital-artifacts';
       
       window.history.pushState({}, '', path);
@@ -109,6 +116,8 @@ export default function App() {
     // Internal navigation for same domain (like digital-artifacts on acelbyte.com)
     let path = '/';
     if (page === 'digital-artifacts') path = '/digital-artifacts';
+    else if (page === 'subscriptions') path = '/subscriptions';
+    else if (page === 'payment') path = '/payment';
     else if (page === 'tartaruga') path = '/tartaruga';
     
     window.history.pushState({}, '', path);
@@ -140,6 +149,7 @@ export default function App() {
         {currentPage === 'looma' && <LoomaPage onNavigate={handleNavigate} />}
         {currentPage === 'xoeris' && <XoerisPage onNavigate={handleNavigate} />}
         {currentPage === 'tartaruga' && <TartarugaPage onNavigate={handleNavigate} />}
+        {currentPage === 'subscriptions' && <SubscriptionsPage onNavigate={handleNavigate} />}
         {currentPage === 'digital-artifacts' && <DigitalArtifactsPage onNavigate={handleNavigate} />}
       </div>
 
