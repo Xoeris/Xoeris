@@ -116,7 +116,6 @@ export default function SubscriptionsPage({ onNavigate }) {
             "Public dashboard hosting"
           ]}
         />
-        <div className="relative">
           <PricingCard 
             title="Pro"
             description="Deep analysis and collaboration"
@@ -132,11 +131,6 @@ export default function SubscriptionsPage({ onNavigate }) {
               "Private encrypted storage"
             ]}
           />
-          {billingCycle === 'yearly' && (
-            <div className="absolute top-[calc(100%+1rem)] left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-bold text-gray-500 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/10">
-              $35 rate locked for first 2 years
-            </div>
-          )}
         </div>
         <PricingCard 
           title="Max"
@@ -229,7 +223,7 @@ export default function SubscriptionsPage({ onNavigate }) {
       <div className="flex gap-4 p-6 bg-[#141414] border border-white/10 rounded-2xl mb-12">
         <Info size={20} className="text-gray-500 shrink-0" />
         <p className="text-sm text-gray-400 leading-relaxed">
-          Your subscription will auto renew on {new Date(new Date().setFullYear(new Date().getFullYear() + (billingCycle === 'yearly' ? 1 : 0), new Date().getMonth() + (billingCycle === 'monthly' ? 1 : 0))).toLocaleDateString()}. {billingCycle === 'yearly' ? 'The promotional rate of $420.00/year is locked for 2 years.' : `You will be charged $50.00/month + tax.`}
+          Your subscription will auto renew on {new Date(new Date().setFullYear(new Date().getFullYear() + (billingCycle === 'yearly' ? 1 : 0), new Date().getMonth() + (billingCycle === 'monthly' ? 1 : 0))).toLocaleDateString()}. You will be charged ${billingCycle === 'yearly' ? '420.00/year' : '50.00/month'} + tax.
         </p>
       </div>
 
