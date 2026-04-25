@@ -104,9 +104,9 @@ export default function SubscriptionsPage({ onNavigate }) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <PricingCard 
           title="Free"
-          description="Meet Claude"
+          description="Meet Acelbyte"
           price="0"
-          buttonText="Use Claude for free"
+          buttonText="Use Acelbyte for free"
           icon={Zap}
           features={[
             "Chat on web, iOS, Android, and desktop",
@@ -125,7 +125,7 @@ export default function SubscriptionsPage({ onNavigate }) {
             buttonText="Get Pro plan"
             icon={ShieldCheck}
             features={[
-              "Claude Code directly in your codebase",
+              "Acelbyte Code directly in your codebase",
               "Power through tasks with Cowork",
               "Higher usage limits",
               "Deep research and analysis",
@@ -146,7 +146,7 @@ export default function SubscriptionsPage({ onNavigate }) {
           icon={Info}
           features={[
             "Up to 20x more usage than Pro*",
-            "Recommended for Claude Code & Cowork",
+            "Recommended for Acelbyte Code & Cowork",
             "Early access to advanced features",
             "Higher output limits for all tasks",
             "Priority access at high traffic times"
@@ -155,7 +155,7 @@ export default function SubscriptionsPage({ onNavigate }) {
       </div>
 
       <p className="mt-12 text-center text-gray-600 text-xs max-w-2xl mx-auto">
-        *Usage limits apply. Prices shown don't include applicable tax. Prices and plans are subject to change at Claude's discretion.
+        *Usage limits apply. Prices shown don't include applicable tax. Prices and plans are subject to change at Acelbyte's discretion.
       </p>
     </div>
   );
@@ -261,7 +261,7 @@ export default function SubscriptionsPage({ onNavigate }) {
             </div>
           </div>
           <p className="text-xs text-gray-500 leading-relaxed">
-            You agree that Claude will charge your card in the amount above now and on a recurring annual basis until you cancel in accordance with our <a href="#" className="text-gray-400 hover:text-white underline">terms</a>. You can cancel at any time in your account settings.
+            You agree that Acelbyte will charge your card in the amount above now and on a recurring annual basis until you cancel in accordance with our <a href="#" className="text-gray-400 hover:text-white underline">terms</a>. You can cancel at any time in your account settings.
           </p>
         </div>
         <button className="w-full py-4 rounded-2xl bg-[#222] hover:bg-[#2a2a2a] text-gray-300 hover:text-white font-black uppercase tracking-[0.2em] transition-all border border-white/5 active:scale-[0.98]">

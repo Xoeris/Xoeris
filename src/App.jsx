@@ -25,7 +25,7 @@ export default function App() {
     if (hostname.includes('loomastudio.acelbyte.com') || path === '/loomastudio') return 'looma';
     if (hostname.includes('xoeris.acelbyte.com') || path === '/xoeris') return 'xoeris';
     if (hostname.includes('tartaruga.acelbyte.com') || path === '/tartaruga') return 'tartaruga';
-    if (path === '/subscriptions' || path === '/payment') return 'subscriptions';
+    if (hostname.includes('xoeris.acelbyte.com') && (path === '/subscriptions' || path === '/payment')) return 'subscriptions';
     if (path === '/digital-artifacts') return 'digital-artifacts';
     return 'acelbyte';
   });
@@ -38,7 +38,7 @@ export default function App() {
       if (hostname.includes('loomastudio.acelbyte.com') || path === '/loomastudio') setCurrentPage('looma');
       else if (hostname.includes('xoeris.acelbyte.com') || path === '/xoeris') setCurrentPage('xoeris');
       else if (hostname.includes('tartaruga.acelbyte.com') || path === '/tartaruga') setCurrentPage('tartaruga');
-      else if (path === '/subscriptions' || path === '/payment') setCurrentPage('subscriptions');
+      else if (hostname.includes('xoeris.acelbyte.com') && (path === '/subscriptions' || path === '/payment')) setCurrentPage('subscriptions');
       else if (path === '/digital-artifacts') setCurrentPage('digital-artifacts');
       else setCurrentPage('acelbyte');
     };
@@ -116,8 +116,22 @@ export default function App() {
     // Internal navigation for same domain (like digital-artifacts on acelbyte.com)
     let path = '/';
     if (page === 'digital-artifacts') path = '/digital-artifacts';
-    else if (page === 'subscriptions') path = '/subscriptions';
-    else if (page === 'payment') path = '/payment';
+    else if (page === 'subscriptions') {
+      if (hostname.includes('xoeris.acelbyte.com')) {
+        path = '/subscriptions';
+      } else {
+        window.location.href = 'https://xoeris.acelbyte.com/subscriptions';
+        return;
+      }
+    }
+    else if (page === 'payment') {
+      if (hostname.includes('xoeris.acelbyte.com')) {
+        path = '/payment';
+      } else {
+        window.location.href = 'https://xoeris.acelbyte.com/payment';
+        return;
+      }
+    }
     else if (page === 'tartaruga') path = '/tartaruga';
     
     window.history.pushState({}, '', path);
