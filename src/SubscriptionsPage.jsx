@@ -18,7 +18,7 @@ export default function SubscriptionsPage({ onNavigate }) {
   }, []);
 
   const handleSwitchView = (newView) => {
-    const path = newView === 'payment' ? '/payment' : '/subscriptions';
+    const path = newView === 'payment' ? '/payment' : '/subscription';
     window.history.pushState({}, '', path);
     setView(newView);
     window.scrollTo(0, 0);
@@ -95,7 +95,7 @@ export default function SubscriptionsPage({ onNavigate }) {
             </button>
             <div className="flex items-center gap-2">
               <span className={`text-sm font-bold transition-colors ${billingCycle === 'yearly' ? 'text-white' : 'text-gray-500'}`}>Yearly</span>
-              <span className="px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-wider">Save 17%</span>
+              <span className="px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-wider">Save 30%</span>
             </div>
           </div>
         )}
@@ -104,32 +104,32 @@ export default function SubscriptionsPage({ onNavigate }) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <PricingCard 
           title="Free"
-          description="Meet Acelbyte"
+          description="Meet Xoeris"
           price="0"
-          buttonText="Use Acelbyte for free"
+          buttonText="Use Xoeris for free"
           icon={Zap}
           features={[
-            "Chat on web, iOS, Android, and desktop",
-            "Generate code and visualize data",
-            "Connect Slack and Google Workspace",
-            "Extended thinking for complex work",
-            "Built-in web search"
+            "Real-time data visualization",
+            "Basic dataset exploration",
+            "Community API access",
+            "Standard export formats",
+            "Public dashboard hosting"
           ]}
         />
         <div className="relative">
           <PricingCard 
             title="Pro"
-            description="Research, code, and organize"
+            description="Deep analysis and collaboration"
             highlighted={true}
             price={billingCycle === 'yearly' ? '35' : '50'}
             buttonText="Get Pro plan"
             icon={ShieldCheck}
             features={[
-              "Acelbyte Code directly in your codebase",
-              "Power through tasks with Cowork",
-              "Higher usage limits",
-              "Deep research and analysis",
-              "Memory that carries across conversations"
+              "Xoeris Engine directly in your workflow",
+              "Advanced predictive modeling",
+              "Priority API throughput",
+              "Custom data connectors",
+              "Private encrypted storage"
             ]}
           />
           {billingCycle === 'yearly' && (
@@ -140,22 +140,22 @@ export default function SubscriptionsPage({ onNavigate }) {
         </div>
         <PricingCard 
           title="Max"
-          description="Higher limits, priority access"
+          description="Enterprise-grade performance"
           price="100"
           buttonText="Get Max plan"
           icon={Info}
           features={[
-            "Up to 20x more usage than Pro*",
-            "Recommended for Acelbyte Code & Cowork",
-            "Early access to advanced features",
-            "Higher output limits for all tasks",
-            "Priority access at high traffic times"
+            "Unlimited data processing",
+            "Dedicated node clusters",
+            "Early access to ML models",
+            "SLA-backed uptime",
+            "24/7 dedicated support"
           ]}
         />
       </div>
 
       <p className="mt-12 text-center text-gray-600 text-xs max-w-2xl mx-auto">
-        *Usage limits apply. Prices shown don't include applicable tax. Prices and plans are subject to change at Acelbyte's discretion.
+        *Usage limits apply. Prices shown don't include applicable tax. Prices and plans are subject to change at Xoeris's discretion.
       </p>
     </div>
   );
@@ -261,7 +261,7 @@ export default function SubscriptionsPage({ onNavigate }) {
             </div>
           </div>
           <p className="text-xs text-gray-500 leading-relaxed">
-            You agree that Acelbyte will charge your card in the amount above now and on a recurring annual basis until you cancel in accordance with our <a href="#" className="text-gray-400 hover:text-white underline">terms</a>. You can cancel at any time in your account settings.
+            You agree that Xoeris will charge your card in the amount above now and on a recurring annual basis until you cancel in accordance with our <a href="#" className="text-gray-400 hover:text-white underline">terms</a>. You can cancel at any time in your account settings.
           </p>
         </div>
         <button className="w-full py-4 rounded-2xl bg-[#222] hover:bg-[#2a2a2a] text-gray-300 hover:text-white font-black uppercase tracking-[0.2em] transition-all border border-white/5 active:scale-[0.98]">
