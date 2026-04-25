@@ -131,7 +131,6 @@ export default function SubscriptionsPage({ onNavigate }) {
               "Private encrypted storage"
             ]}
           />
-        </div>
         <PricingCard 
           title="Max"
           description="Enterprise-grade performance"
