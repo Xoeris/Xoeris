@@ -38,7 +38,7 @@ export default function SubscriptionsPage({ onNavigate }) {
           <span className="text-4xl font-black text-white">{price === '0' ? '$0' : `$${price}`}</span>
           {price !== '0' && <span className="text-gray-500 text-sm font-medium">USD / month</span>}
         </div>
-        {price !== '0' && billingCycle === 'yearly' && (
+        {price !== '0' && (billingCycle === 'yearly' || title === 'Max') && (
           <div className="text-gray-500 text-xs mt-1">billed annually</div>
         )}
       </div>
@@ -104,9 +104,9 @@ export default function SubscriptionsPage({ onNavigate }) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <PricingCard 
           title="Free"
-          description="Meet Acelbyte"
+          description="Meet Claude"
           price="0"
-          buttonText="Use Acelbyte for free"
+          buttonText="Use Claude for free"
           icon={Zap}
           features={[
             "Chat on web, iOS, Android, and desktop",
@@ -116,30 +116,37 @@ export default function SubscriptionsPage({ onNavigate }) {
             "Built-in web search"
           ]}
         />
-        <PricingCard 
-          title="Pro"
-          description="Research, code, and organize"
-          highlighted={true}
-          price={billingCycle === 'yearly' ? '17' : '20'}
-          buttonText="Get Pro plan"
-          icon={ShieldCheck}
-          features={[
-            "Acelbyte Code directly in your codebase",
-            "Power through tasks with Cowork",
-            "Higher usage limits",
-            "Deep research and analysis",
-            "Memory that carries across conversations"
-          ]}
-        />
+        <div className="relative">
+          <PricingCard 
+            title="Pro"
+            description="Research, code, and organize"
+            highlighted={true}
+            price={billingCycle === 'yearly' ? '35' : '50'}
+            buttonText="Get Pro plan"
+            icon={ShieldCheck}
+            features={[
+              "Claude Code directly in your codebase",
+              "Power through tasks with Cowork",
+              "Higher usage limits",
+              "Deep research and analysis",
+              "Memory that carries across conversations"
+            ]}
+          />
+          {billingCycle === 'yearly' && (
+            <div className="absolute top-[calc(100%+1rem)] left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-bold text-gray-500 uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/10">
+              $35 rate locked for first 2 years
+            </div>
+          )}
+        </div>
         <PricingCard 
           title="Max"
           description="Higher limits, priority access"
-          price={billingCycle === 'yearly' ? '100' : '120'}
+          price="100"
           buttonText="Get Max plan"
           icon={Info}
           features={[
             "Up to 20x more usage than Pro*",
-            "Recommended for Acelbyte Code & Cowork",
+            "Recommended for Claude Code & Cowork",
             "Early access to advanced features",
             "Higher output limits for all tasks",
             "Priority access at high traffic times"
@@ -148,7 +155,7 @@ export default function SubscriptionsPage({ onNavigate }) {
       </div>
 
       <p className="mt-12 text-center text-gray-600 text-xs max-w-2xl mx-auto">
-        *Usage limits apply. Prices shown don't include applicable tax. Prices and plans are subject to change at Acelbyte's discretion.
+        *Usage limits apply. Prices shown don't include applicable tax. Prices and plans are subject to change at Claude's discretion.
       </p>
     </div>
   );
@@ -177,20 +184,20 @@ export default function SubscriptionsPage({ onNavigate }) {
               </div>
             </div>
             <div className="text-white font-bold mb-1">Monthly</div>
-            <div className="text-gray-500 text-sm">$20.00/month + tax</div>
+            <div className="text-gray-500 text-sm">$50.00/month + tax</div>
           </button>
           <button 
             onClick={() => setBillingCycle('yearly')}
             className={`p-6 rounded-2xl border text-left transition-all relative ${billingCycle === 'yearly' ? 'bg-[#1a1a1a] border-white/30 ring-1 ring-white/10' : 'bg-[#141414] border-white/10 hover:border-white/20'}`}
           >
-            <div className="absolute top-4 right-4 px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-wider">Save 17%</div>
+            <div className="absolute top-4 right-4 px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-wider">Save 30%</div>
             <div className="flex justify-between items-start mb-4">
               <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${billingCycle === 'yearly' ? 'border-white' : 'border-gray-700'}`}>
                 {billingCycle === 'yearly' && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
               </div>
             </div>
             <div className="text-white font-bold mb-1">Yearly</div>
-            <div className="text-gray-500 text-sm">$200.00/year + tax</div>
+            <div className="text-gray-500 text-sm">$35.00/month + tax</div>
           </button>
         </div>
       </header>
@@ -204,16 +211,16 @@ export default function SubscriptionsPage({ onNavigate }) {
               <div className="text-white font-bold">Pro plan</div>
               <div className="text-gray-500 text-xs mt-1">{billingCycle === 'yearly' ? 'Annually' : 'Monthly'}</div>
             </div>
-            <div className="text-white font-bold">${billingCycle === 'yearly' ? '200' : '20'}</div>
+            <div className="text-white font-bold">${billingCycle === 'yearly' ? '420' : '50'}</div>
           </div>
           <div className="h-px bg-white/5" />
           <div className="flex justify-between items-center">
             <div className="text-gray-400 font-medium">Subtotal</div>
-            <div className="text-white font-bold">${billingCycle === 'yearly' ? '200' : '20'}</div>
+            <div className="text-white font-bold">${billingCycle === 'yearly' ? '420' : '50'}</div>
           </div>
           <div className="flex justify-between items-center pt-2">
             <div className="text-white font-bold">Total due today</div>
-            <div className="text-white font-bold">${billingCycle === 'yearly' ? '200' : '20'}</div>
+            <div className="text-white font-bold">${billingCycle === 'yearly' ? '420' : '50'}</div>
           </div>
         </div>
       </div>
@@ -222,7 +229,7 @@ export default function SubscriptionsPage({ onNavigate }) {
       <div className="flex gap-4 p-6 bg-[#141414] border border-white/10 rounded-2xl mb-12">
         <Info size={20} className="text-gray-500 shrink-0" />
         <p className="text-sm text-gray-400 leading-relaxed">
-          Your subscription will auto renew on {new Date(new Date().setFullYear(new Date().getFullYear() + (billingCycle === 'yearly' ? 1 : 0), new Date().getMonth() + (billingCycle === 'monthly' ? 1 : 0))).toLocaleDateString()}. You will be charged ${billingCycle === 'yearly' ? '200.00/year' : '20.00/month'} + tax.
+          Your subscription will auto renew on {new Date(new Date().setFullYear(new Date().getFullYear() + (billingCycle === 'yearly' ? 1 : 0), new Date().getMonth() + (billingCycle === 'monthly' ? 1 : 0))).toLocaleDateString()}. {billingCycle === 'yearly' ? 'The promotional rate of $420.00/year is locked for 2 years.' : `You will be charged $50.00/month + tax.`}
         </p>
       </div>
 
@@ -254,7 +261,7 @@ export default function SubscriptionsPage({ onNavigate }) {
             </div>
           </div>
           <p className="text-xs text-gray-500 leading-relaxed">
-            You agree that Acelbyte will charge your card in the amount above now and on a recurring annual basis until you cancel in accordance with our <a href="#" className="text-gray-400 hover:text-white underline">terms</a>. You can cancel at any time in your account settings.
+            You agree that Claude will charge your card in the amount above now and on a recurring annual basis until you cancel in accordance with our <a href="#" className="text-gray-400 hover:text-white underline">terms</a>. You can cancel at any time in your account settings.
           </p>
         </div>
         <button className="w-full py-4 rounded-2xl bg-[#222] hover:bg-[#2a2a2a] text-gray-300 hover:text-white font-black uppercase tracking-[0.2em] transition-all border border-white/5 active:scale-[0.98]">

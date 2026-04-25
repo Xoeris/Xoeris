@@ -133,7 +133,7 @@ export default function App() {
     <div className="min-h-screen font-sans selection:bg-[#F9CB43] selection:text-black relative z-0 overflow-x-hidden" style={{ backgroundColor: colors.bg, color: colors.text }}>
       
       {/* Shared Animated Background Blobs - Only for Looma and Xoeris */}
-      {currentPage !== 'acelbyte' && currentPage !== 'digital-artifacts' && (
+      {currentPage !== 'acelbyte' && currentPage !== 'digital-artifacts' && currentPage !== 'subscriptions' && (
         <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden gpu-accel">
           <div className="blob blob-1 will-change-transform" style={{ backgroundColor: colors.yellow }}></div>
           <div className="blob blob-2 will-change-transform" style={{ backgroundColor: colors.coral }}></div>
