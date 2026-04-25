@@ -63,7 +63,7 @@ export default function SubscriptionsPage({ onNavigate }) {
   );
 
   const PricingView = () => (
-    <div className="max-w-7xl mx-auto px-6 py-20">
+    <div className="max-w-7xl mx-auto px-6 py-12 md:py-20">
       <header className="text-center mb-16">
         <h1 className="text-5xl md:text-6xl font-black text-white mb-10 tracking-tight">Plans that grow with you</h1>
         
@@ -161,7 +161,7 @@ export default function SubscriptionsPage({ onNavigate }) {
   );
 
   const PaymentView = () => (
-    <div className="max-w-2xl mx-auto px-6 py-20">
+    <div className="max-w-2xl mx-auto px-6 py-12 md:py-20">
       <header className="mb-12">
         <button 
           onClick={() => handleSwitchView('pricing')}
@@ -272,14 +272,14 @@ export default function SubscriptionsPage({ onNavigate }) {
   );
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] relative overflow-hidden">
+    <div className="bg-[#0a0a0a] min-h-screen relative overflow-hidden flex flex-col items-center">
       {/* Background blobs for depth */}
       <div className="fixed inset-0 pointer-events-none opacity-20">
         <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-[#F9CB43] blur-[150px] rounded-full translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-[#705EBC] blur-[120px] rounded-full -translate-x-1/2 translate-y-1/2" />
+        <div className="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-[#705EBC] blur-[120px] rounded-full -translate-x-1/2 translate-y-1/2 opacity-30" />
       </div>
 
-      <FadeIn className="relative z-10">
+      <FadeIn className="relative z-10 w-full">
         {view === 'pricing' ? <PricingView /> : <PaymentView />}
       </FadeIn>
 

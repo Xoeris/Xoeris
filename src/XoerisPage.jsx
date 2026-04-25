@@ -39,6 +39,7 @@ export default function XoerisPage({ onNavigate }) {
             <a href="#products" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Products</a>
             <a href="#solutions" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Solutions</a>
             <a href="#resources" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Resources</a>
+            <a href="/subscription" onClick={(e) => { e.preventDefault(); onNavigate('subscriptions'); }} className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Pricing</a>
             
             <div className="w-px h-6 bg-white/20"></div>
 
@@ -67,6 +68,7 @@ export default function XoerisPage({ onNavigate }) {
             <a href="#products" className="text-lg font-medium text-gray-300 hover:text-white" onClick={() => setMobileMenuOpen(false)}>Products</a>
             <a href="#solutions" className="text-lg font-medium text-gray-300 hover:text-white" onClick={() => setMobileMenuOpen(false)}>Solutions</a>
             <a href="#resources" className="text-lg font-medium text-gray-300 hover:text-white" onClick={() => setMobileMenuOpen(false)}>Resources</a>
+            <a href="/subscription" className="text-lg font-medium text-gray-300 hover:text-white" onClick={(e) => { e.preventDefault(); onNavigate('subscriptions'); setMobileMenuOpen(false); }}>Pricing</a>
             <div className="w-1/2 h-px bg-white/10 my-2"></div>
             <a href="https://acelbyte.com" onClick={(e) => { e.preventDefault(); onNavigate('acelbyte'); setMobileMenuOpen(false); }} className="text-lg font-bold text-[#FDD935] py-2 flex items-center gap-2">
               <img src="/acelbyte-logo.png" alt="Acelbyte" className="w-5 h-5 object-contain" /> Switch to Acelbyte

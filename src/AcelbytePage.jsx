@@ -274,7 +274,6 @@ export default function AcelbytePage({ onNavigate }) {
               <a href="#about" className="text-sm font-bold text-gray-300 hover:text-[#FDD935] hover:drop-shadow-[0_0_8px_rgba(253,217,53,0.8)] transition-all duration-300 ease-hyper-bounce uppercase tracking-wider active:scale-95">About</a>
               <a href="#works" className="text-sm font-bold text-gray-300 hover:text-[#FDD935] hover:drop-shadow-[0_0_8px_rgba(253,217,53,0.8)] transition-all duration-300 ease-hyper-bounce uppercase tracking-wider active:scale-95">Works</a>
               <a href="#contact" className="text-sm font-bold text-gray-300 hover:text-[#FDD935] hover:drop-shadow-[0_0_8px_rgba(253,217,53,0.8)] transition-all duration-300 ease-hyper-bounce uppercase tracking-wider active:scale-95">Contact</a>
-              <a href="/subscriptions" onClick={(e) => { e.preventDefault(); onNavigate('subscriptions'); }} className="text-sm font-bold text-gray-300 hover:text-[#FDD935] hover:drop-shadow-[0_0_8px_rgba(253,217,53,0.8)] transition-all duration-300 ease-hyper-bounce uppercase tracking-wider active:scale-95">Pricing</a>
 
               <div className="w-px h-6 bg-[#FDD935]/20"></div>
 
@@ -300,7 +299,6 @@ export default function AcelbytePage({ onNavigate }) {
               <a href="#about" className="text-lg font-bold text-gray-300 hover:text-[#FDD935] uppercase tracking-widest" onClick={() => setMobileMenuOpen(false)}>About</a>
               <a href="#works" className="text-lg font-bold text-gray-300 hover:text-[#FDD935] uppercase tracking-widest" onClick={() => setMobileMenuOpen(false)}>Works</a>
               <a href="#contact" className="text-lg font-bold text-gray-300 hover:text-[#FDD935] uppercase tracking-widest" onClick={() => setMobileMenuOpen(false)}>Contact</a>
-              <a href="/subscriptions" className="text-lg font-bold text-gray-300 hover:text-[#FDD935] uppercase tracking-widest" onClick={(e) => { e.preventDefault(); onNavigate('subscriptions'); setMobileMenuOpen(false); }}>Pricing</a>
               <div className="w-1/2 h-px bg-[#FDD935]/20 my-2"></div>
               <a href="https://xoeris.acelbyte.com" onClick={(e) => { e.preventDefault(); onNavigate('xoeris'); setMobileMenuOpen(false); }} className="text-sm font-bold text-gray-400 hover:text-white py-2 flex items-center gap-2">
                 <img src="/xoeris-logo.png" alt="Xoeris" className="w-4 h-4 object-contain" /> XOERIS
