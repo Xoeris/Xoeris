@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Check, ArrowLeft, CreditCard, ShieldCheck, Zap, Info, ArrowRight } from 'lucide-react';
+import { Menu, X, Check, Zap, ShieldCheck, Info, ArrowLeft, ArrowRight, CreditCard, Store, Building2 } from 'lucide-react';
 import FadeIn from './components/FadeIn';
 
 export default function SubscriptionsPage({ onNavigate }) {
@@ -64,95 +64,252 @@ export default function SubscriptionsPage({ onNavigate }) {
     </div>
   );
 
-  const PricingView = () => (
-    <div className="max-w-7xl mx-auto px-6 py-12 md:py-20">
-      <header className="text-center mb-16">
-        <h1 className="text-5xl md:text-6xl font-black text-white mb-10 tracking-tight">Plans that grow with you</h1>
-        
-        {/* Tab Switcher */}
-        <div className="inline-flex p-1.5 bg-[#141414] rounded-2xl border border-white/5 mb-10">
-          <button 
-            onClick={() => setActiveTab('individual')}
-            className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${activeTab === 'individual' ? 'bg-[#222] text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
-          >
-            Individual
-          </button>
-          <button 
-            onClick={() => setActiveTab('team')}
-            className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${activeTab === 'team' ? 'bg-[#222] text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
-          >
-            Team and Enterprise
-          </button>
-        </div>
+  const PricingView = () => {
+    if (activeTab === 'individual') {
+      return (
+        <div className="max-w-7xl mx-auto px-6 py-12 md:py-20">
+          <header className="text-center mb-16">
+            <h1 className="text-5xl md:text-6xl font-black text-white mb-10 tracking-tight">Plans that grow with you</h1>
+            
+            {/* Tab Switcher */}
+            <div className="inline-flex p-1.5 bg-[#141414] rounded-2xl border border-white/5 mb-10">
+              <button 
+                onClick={() => setActiveTab('individual')}
+                className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${activeTab === 'individual' ? 'bg-[#222] text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
+              >
+                Individual
+              </button>
+              <button 
+                onClick={() => setActiveTab('team')}
+                className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${activeTab === 'team' ? 'bg-[#222] text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
+              >
+                Team and Enterprise
+              </button>
+            </div>
 
-        {/* Billing Toggle */}
-        {activeTab === 'individual' && (
-          <div className="flex items-center justify-center gap-4">
-            <span className={`text-sm font-bold transition-colors ${billingCycle === 'monthly' ? 'text-white' : 'text-gray-500'}`}>Monthly</span>
+            {/* Billing Toggle */}
+            <div className="flex items-center justify-center gap-4">
+              <span className={`text-sm font-bold transition-colors ${billingCycle === 'monthly' ? 'text-white' : 'text-gray-500'}`}>Monthly</span>
+              <button 
+                onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
+                className="relative w-12 h-6 bg-[#222] rounded-full p-1 transition-colors hover:bg-[#333]"
+              >
+                <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-300 ${billingCycle === 'yearly' ? 'translate-x-6' : 'translate-x-0'}`} />
+              </button>
+              <div className="flex items-center gap-2">
+                <span className={`text-sm font-bold transition-colors ${billingCycle === 'yearly' ? 'text-white' : 'text-gray-500'}`}>Yearly</span>
+              </div>
+            </div>
+          </header>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <PricingCard 
+              title="Free"
+              description="Meet Xoeris"
+              price="0"
+              buttonText="Use Xoeris for free"
+              icon={Zap}
+              features={[
+                "Real-time data visualization",
+                "Basic dataset exploration",
+                "Community API access",
+                "Standard export formats",
+                "Public dashboard hosting"
+              ]}
+            />
+            <PricingCard 
+              title="Pro"
+              description="Deep analysis and collaboration"
+              highlighted={true}
+              price={billingCycle === 'yearly' ? '35' : '50'}
+              buttonText="Get Pro plan"
+              icon={ShieldCheck}
+              features={[
+                "Xoeris Engine directly in your workflow",
+                "Advanced predictive modeling",
+                "Priority API throughput",
+                "Custom data connectors",
+                "Private encrypted storage"
+              ]}
+            />
+            <PricingCard 
+              title="Max"
+              description="Enterprise-grade performance"
+              price="100"
+              buttonText="Get Max plan"
+              icon={Info}
+              features={[
+                "Unlimited data processing",
+                "Dedicated node clusters",
+                "Early access to ML models",
+                "SLA-backed uptime",
+                "24/7 dedicated support"
+              ]}
+            />
+          </div>
+
+          <p className="mt-12 text-center text-gray-600 text-xs max-w-2xl mx-auto">
+            *Usage limits apply. Prices shown don't include applicable tax. Prices and plans are subject to change at Xoeris's discretion.
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="max-w-5xl mx-auto px-6 py-12 md:py-20">
+        <header className="text-center mb-16">
+          <h1 className="text-5xl md:text-6xl font-black text-white mb-10 tracking-tight">Enterprise-grade security</h1>
+          
+          <div className="inline-flex p-1.5 bg-[#141414] rounded-2xl border border-white/5 mb-10">
             <button 
-              onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
-              className="relative w-12 h-6 bg-[#222] rounded-full p-1 transition-colors hover:bg-[#333]"
+              onClick={() => setActiveTab('individual')}
+              className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${activeTab === 'individual' ? 'bg-[#222] text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
             >
-              <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-300 ${billingCycle === 'yearly' ? 'translate-x-6' : 'translate-x-0'}`} />
+              Individual
             </button>
-            <div className="flex items-center gap-2">
-              <span className={`text-sm font-bold transition-colors ${billingCycle === 'yearly' ? 'text-white' : 'text-gray-500'}`}>Yearly</span>
+            <button 
+              onClick={() => setActiveTab('team')}
+              className={`px-8 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${activeTab === 'team' ? 'bg-[#222] text-white shadow-lg' : 'text-gray-500 hover:text-white'}`}
+            >
+              Team and Enterprise
+            </button>
+          </div>
+        </header>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Team Card */}
+          <div className="bg-[#141414] border border-white/10 rounded-3xl p-8 flex flex-col relative overflow-hidden">
+            <div className="flex justify-between items-start mb-6">
+              <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
+                <Store className="text-gray-400" size={32} />
+              </div>
+              <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] text-gray-400 font-bold">5-150 users</span>
+            </div>
+            
+            <h3 className="text-3xl font-bold text-white mb-2">Team</h3>
+            <p className="text-gray-400 text-sm mb-10">Predictable usage per seat</p>
+
+            <div className="bg-[#1a1a1a] rounded-2xl p-6 border border-white/5 mb-10 space-y-8">
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="text-white font-bold mb-1">Standard seat</div>
+                  <div className="text-gray-500 text-[10px] leading-relaxed">
+                    All Xoeris features, plus more usage than Pro*<br/>
+                    $25 /mo when billed monthly
+                  </div>
+                </div>
+                <div className="text-white font-bold text-lg flex items-baseline gap-1">
+                  $20<span className="text-gray-500 text-xs">/mo</span>
+                </div>
+              </div>
+              <div className="h-px bg-white/5" />
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="text-white font-bold mb-1">Premium seat</div>
+                  <div className="text-gray-500 text-[10px] leading-relaxed">
+                    5x more usage than standard seats*<br/>
+                    $125 /mo when billed monthly
+                  </div>
+                </div>
+                <div className="text-white font-bold text-lg flex items-baseline gap-1">
+                  $100<span className="text-gray-500 text-xs">/mo</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4 mb-10">
+              {[
+                "200K context window",
+                "Extra usage available at API rates",
+                "Xoeris Code",
+                "Cowork",
+                "Central billing and administration",
+                "Single sign-on (SSO) and domain capture",
+                "Admin controls for remote and local connectors",
+                "Enterprise deployment for the Xoeris desktop app",
+                "Enterprise search across your organization",
+                "Connect Microsoft 365, Slack, and more",
+                "No model training on your content by default"
+              ].map((f, i) => (
+                <div key={i} className="flex gap-3 text-sm text-gray-300">
+                  <Check size={18} className="text-gray-500 shrink-0" />
+                  <span>{f}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-auto space-y-4">
+              <button className="w-full py-4 rounded-xl bg-[#444] text-gray-300 font-bold text-sm cursor-not-allowed">
+                Get Team plan
+              </button>
+              <div className="flex items-center justify-center gap-2 text-[10px] text-gray-500 font-bold uppercase tracking-widest bg-white/5 py-3 rounded-xl border border-white/5">
+                <Info size={14} /> Work email address required
+              </div>
             </div>
           </div>
-        )}
-      </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <PricingCard 
-          title="Free"
-          description="Meet Xoeris"
-          price="0"
-          buttonText="Use Xoeris for free"
-          icon={Zap}
-          features={[
-            "Real-time data visualization",
-            "Basic dataset exploration",
-            "Community API access",
-            "Standard export formats",
-            "Public dashboard hosting"
-          ]}
-        />
-          <PricingCard 
-            title="Pro"
-            description="Deep analysis and collaboration"
-            highlighted={true}
-            price={billingCycle === 'yearly' ? '35' : '50'}
-            buttonText="Get Pro plan"
-            icon={ShieldCheck}
-            features={[
-              "Xoeris Engine directly in your workflow",
-              "Advanced predictive modeling",
-              "Priority API throughput",
-              "Custom data connectors",
-              "Private encrypted storage"
-            ]}
-          />
-        <PricingCard 
-          title="Max"
-          description="Enterprise-grade performance"
-          price="100"
-          buttonText="Get Max plan"
-          icon={Info}
-          features={[
-            "Unlimited data processing",
-            "Dedicated node clusters",
-            "Early access to ML models",
-            "SLA-backed uptime",
-            "24/7 dedicated support"
-          ]}
-        />
+          {/* Enterprise Card */}
+          <div className="bg-[#141414] border border-white/10 rounded-3xl p-8 flex flex-col relative overflow-hidden">
+            <div className="flex justify-between items-start mb-6">
+              <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center border border-white/10">
+                <Building2 className="text-gray-400" size={32} />
+              </div>
+              <span className="px-2 py-0.5 rounded bg-white/5 border border-white/10 text-[10px] text-gray-400 font-bold">20+ users</span>
+            </div>
+            
+            <h3 className="text-3xl font-bold text-white mb-2">Enterprise</h3>
+            <p className="text-gray-400 text-sm mb-10">Flexible pooled usage</p>
+
+            <div className="bg-[#1a1a1a] rounded-2xl p-6 border border-white/5 mb-10">
+              <div className="text-white font-bold mb-2">Seat price + usage at API rates</div>
+              <div className="text-gray-500 text-[10px]">
+                $20/seat. Usage cost scales with model and task.
+              </div>
+            </div>
+
+            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-6">All Team features, plus:</div>
+            
+            <div className="space-y-4 mb-10">
+              {[
+                "Pay-as-you-go pricing with pooled usage across your org",
+                "Set user and org spend limits",
+                "500K context window",
+                "Role-based access with fine grained permissioning",
+                "System for Cross-domain Identity Management (SCIM)",
+                "Audit logs",
+                "Compliance API for observability and monitoring",
+                "Network-level access control",
+                "Custom data retention controls",
+                "IP allowlisting",
+                "Google Docs cataloging"
+              ].map((f, i) => (
+                <div key={i} className="flex gap-3 text-sm text-gray-300">
+                  <Check size={18} className="text-gray-500 shrink-0" />
+                  <span>{f}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-auto space-y-4">
+              <button className="w-full py-4 rounded-xl bg-[#444] text-gray-300 font-bold text-sm cursor-not-allowed">
+                Get Enterprise plan
+              </button>
+              <div className="p-4 bg-white/5 rounded-xl border border-white/5">
+                <div className="flex gap-2 text-[10px] text-gray-500 font-bold leading-relaxed uppercase tracking-widest">
+                  <Info size={14} className="shrink-0" />
+                  <span>A work email address is required to create an Enterprise account. <a href="#" className="text-gray-400 underline">Contact sales</a> for more information.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="mt-12 text-center text-gray-600 text-[10px] max-w-2xl mx-auto">
+          *Usage limits apply. Prices shown don't include applicable tax. Prices and plans are subject to change at Xoeris's discretion.
+        </p>
       </div>
-
-      <p className="mt-12 text-center text-gray-600 text-xs max-w-2xl mx-auto">
-        *Usage limits apply. Prices shown don't include applicable tax. Prices and plans are subject to change at Xoeris's discretion.
-      </p>
-    </div>
-  );
+    );
+  };
 
   const PaymentView = () => (
     <div className="max-w-2xl mx-auto px-6 py-12 md:py-20">
