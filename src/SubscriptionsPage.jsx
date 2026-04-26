@@ -38,9 +38,11 @@ export default function SubscriptionsPage({ onNavigate }) {
           <span className="text-4xl font-black text-white">{price === '0' ? '$0' : `$${price}`}</span>
           {price !== '0' && <span className="text-gray-500 text-sm font-medium">USD / month</span>}
         </div>
-        {price !== '0' && (billingCycle === 'yearly' || title === 'Max') && (
-          <div className="text-gray-500 text-xs mt-1">billed annually</div>
-        )}
+        <div className="h-5">
+          {price !== '0' && (billingCycle === 'yearly' || title === 'Max') && (
+            <div className="text-gray-500 text-xs mt-1">billed annually</div>
+          )}
+        </div>
       </div>
       <button 
         onClick={() => title === 'Pro' ? handleSwitchView('payment') : null}
@@ -95,7 +97,6 @@ export default function SubscriptionsPage({ onNavigate }) {
             </button>
             <div className="flex items-center gap-2">
               <span className={`text-sm font-bold transition-colors ${billingCycle === 'yearly' ? 'text-white' : 'text-gray-500'}`}>Yearly</span>
-              <span className="px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-wider">Save 30%</span>
             </div>
           </div>
         )}
@@ -183,7 +184,6 @@ export default function SubscriptionsPage({ onNavigate }) {
             onClick={() => setBillingCycle('yearly')}
             className={`p-6 rounded-2xl border text-left transition-all relative ${billingCycle === 'yearly' ? 'bg-[#1a1a1a] border-white/30 ring-1 ring-white/10' : 'bg-[#141414] border-white/10 hover:border-white/20'}`}
           >
-            <div className="absolute top-4 right-4 px-2 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-wider">Save 30%</div>
             <div className="flex justify-between items-start mb-4">
               <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${billingCycle === 'yearly' ? 'border-white' : 'border-gray-700'}`}>
                 {billingCycle === 'yearly' && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
