@@ -8,7 +8,7 @@ const products = [
     title: "Tartaruga Mini Sheet Crispy Seaweed Barbeque",
     specs: "3.2 g x 12 pcs",
     description: "Experience the smoky, savory delight of our signature barbeque crispy seaweed. Perfectly roasted for that crunch you crave.",
-    image: "/food1.jpeg",
+    image: "/minisheet1.png",
     price: "Rp 35.000",
     link: "https://www.tokopedia.com/tartarugacrispyseaweed/tartaruga-mini-sheet-crispy-seaweed-barbeque-3-2-g-x-12-pcs?extParam=src%3Dshop%26whid%3D12517962&aff_unique_id=&channel=others&chain_key=",
     color: "#F59E0B",
@@ -19,11 +19,33 @@ const products = [
     title: "Tartaruga Mini Sheet Crispy Seaweed Hot and Spicy",
     specs: "3.2 g x 12 pcs",
     description: "Ignite your taste buds with our Hot and Spicy variety. A balanced heat that keeps you coming back for more crunch.",
-    image: "/food2.jpeg",
+    image: "/minisheet2.png",
     price: "Rp 35.000",
     link: "https://www.tokopedia.com/tartarugacrispyseaweed/tartaruga-mini-sheet-crispy-seaweed-hot-spicy-3-2-g-x-12-pcs?extParam=src%3Dshop%26whid%3D12517962&aff_unique_id=&channel=others&chain_key=",
     color: "#EF4444",
     tag: "Trending"
+  },
+  {
+    id: 3,
+    title: "Tartaruga Max Sheet Crispy Seaweed Barbeque",
+    specs: "4.5 g x 12 pcs",
+    description: "Maximum crunch, maximum satisfaction. Our Max Sheet Barbeque offers larger, heartier seaweed sheets with the same intense smoky flavor you love.",
+    image: "/maxsheet1.png",
+    price: "Rp 45.000",
+    link: "https://www.tokopedia.com/tartarugacrispyseaweed",
+    color: "#F59E0B",
+    tag: "New Arrival"
+  },
+  {
+    id: 4,
+    title: "Tartaruga Max Sheet Crispy Seaweed Hot and Spicy",
+    specs: "4.5 g x 12 pcs",
+    description: "The ultimate spicy challenge. Our Max Sheet Hot and Spicy delivers a bold, fiery kick in a larger format for the truly adventurous snacker.",
+    image: "/maxsheet2.png",
+    price: "Rp 45.000",
+    link: "https://www.tokopedia.com/tartarugacrispyseaweed",
+    color: "#EF4444",
+    tag: "Hot & Spicy"
   }
 ];
 

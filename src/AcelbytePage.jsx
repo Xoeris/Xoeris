@@ -176,7 +176,7 @@ export default function AcelbytePage({ onNavigate }) {
       category: "VFX",
       description: "A collection of high-octane 3D motion design pieces exploring concepts of digital rebirth and futuristic aesthetics. Utilizing advanced particle simulations and volumetric lighting.",
       videos: ["personal-vfx-scenes.mp4"],
-      image: "/personal-vfx-scenes-thumbnail.jpg",
+      image: "/personal-vfx-scenes-thumbnail.png",
       color: "#FDD935",
       stack: ["Houdini", "Redshift", "After Effects"]
     },
@@ -212,7 +212,7 @@ export default function AcelbytePage({ onNavigate }) {
       title: "UMN's Maxima 2024 VFXs",
       category: "VFX",
       description: "Official VFX and motion design work for UMN Maxima 2024. Featuring stylized color grading and experimental editing techniques to convey a powerful event narrative.",
-      image: "/maxima-2024-after-movie-vfx-scenes-thumbnail.jpg",
+      image: "/maxima-2024-after-movie-vfx-scenes-thumbnail.png",
       video: "/maxima-2024-after-movie-vfx-scenes.mp4",
       color: "#F59E0B",
       stack: ["DaVinci Resolve", "Premiere Pro", "Arri Alexa"]
