@@ -7,11 +7,20 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ChatPermis
 
 # Load the Telegram Token from Vercel Environment Variables
 TOKEN = os.environ.get('TELEGRAM_TOKEN')
-OWNER_ID = os.environ.get('7823382572')
+OWNER_ID = '7823382572'
 
 STATUS_FILE = "/tmp/owner_status.txt"
 
 def get_owner_status():
+    # Try reading from Telegram pinned message (persistent across Vercel cold starts)
+    try:
+        chat = bot.get_chat(OWNER_ID)
+        if chat.pinned_message and chat.pinned_message.text:
+            return "status: off" in chat.pinned_message.text
+    except Exception as e:
+        print(f"Failed to get status from Telegram: {e}")
+    
+    # Fallback to local /tmp file
     if os.path.exists(STATUS_FILE):
         try:
             with open(STATUS_FILE, "r") as f:
@@ -21,11 +30,21 @@ def get_owner_status():
     return False
 
 def set_owner_status(is_off):
+    # Store in Telegram pinned message
+    try:
+        status_text = "status: off" if is_off else "status: on"
+        msg = bot.send_message(OWNER_ID, f"🔧 System State: {status_text}")
+        bot.pin_chat_message(OWNER_ID, msg.message_id, disable_notification=True)
+    except Exception as e:
+        print(f"Failed to pin status in Telegram: {e}")
+
+    # Fallback/cache in local /tmp file
     try:
         with open(STATUS_FILE, "w") as f:
             f.write("off" if is_off else "on")
     except Exception as e:
         print(f"Failed to write status file: {e}")
+
 
 def is_owner(user_id):
     if not OWNER_ID:
