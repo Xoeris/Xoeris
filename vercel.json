@@ -3,7 +3,10 @@
   "builds": [
     {
       "src": "sarah/sarah-ai.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "maxDuration": 30
+      }
     },
     {
       "src": "package.json",
