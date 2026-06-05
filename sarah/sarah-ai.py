@@ -23,6 +23,49 @@ app = Flask(__name__)
 def send_welcome(message):
     bot.reply_to(message, "Hello! 🚀 I am an always-active bot hosted on Vercel.")
 
+# Handler for XoerisHijack simulation command
+@bot.message_handler(func=lambda message: message.text and (
+    message.text.strip() == './telegram sudo ./python XoerisHijack.py' or
+    message.text.strip() == './telegram sudo \\./python XoerisHijack.py'
+))
+@bot.channel_post_handler(func=lambda message: message.text and (
+    message.text.strip() == './telegram sudo ./python XoerisHijack.py' or
+    message.text.strip() == './telegram sudo \\./python XoerisHijack.py'
+))
+def handle_xoeris_hijack(message):
+    lines = [
+        "$ ./telegram sudo ./python XoerisHijack.py",
+        "[Xoeris Framework v9.6.1]",
+        "Initializing Remote Session...",
+        "Bypassing Security Layer........ OK",
+        "Injecting Payload............... OK",
+        "Scanning Target Device.......... OK",
+        "Target Found:",
+        "Name      : [REDACTED]",
+        "Status    : Online",
+        "Location  : Tracked",
+        "Photos    : Synced",
+        "Contacts  : Exported",
+        "WiFi Keys : Retrieved",
+        "WARNING:",
+        "Target has opened this message.",
+        "Beginning automatic data extraction...",
+        "Progress:",
+        "[████████████████████] 100%",
+        "Operation Complete.",
+        "Result:",
+        "Congratulations.",
+        "You have successfully been identified as the most kepo person in this chat.",
+        "No data was stolen.",
+        "But your curiosity level has been permanently logged."
+    ]
+    for line in lines:
+        try:
+            bot.send_message(message.chat.id, line)
+        except Exception as e:
+            print(f"Failed to send line: {e}")
+
+
 # Fix: Using custom lambda function to ignore @botusername in group chats
 @bot.message_handler(func=lambda message: message.text and message.text.split()[0].split('@')[0] == '/notes')
 def send_notes(message):
