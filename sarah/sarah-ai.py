@@ -81,6 +81,20 @@ def toggle_status(message):
         set_owner_status(False)
         bot.reply_to(message, "🔛 Status updated: You are now ONLINE. Auto-reply is disabled.")
 
+# Handler to receive Telegram verification code for the Userbot
+@bot.message_handler(func=lambda message: message.text and message.text.lower().startswith('code:') and is_owner(message.from_user.id))
+def handle_code_input(message):
+    code = message.text.split(':')[1].strip()
+    if code.isdigit() and len(code) == 5:
+        try:
+            requests.post("https://kvdb.io/MKr1Xpux1H8zR3Wf1c9v/code", data=code)
+            bot.reply_to(message, f"✅ Code {code} received and stored!")
+        except Exception as e:
+            bot.reply_to(message, f"❌ Failed to store code: {e}")
+    else:
+        bot.reply_to(message, "⚠️ Invalid format. Please send in format: `code: 12345` (exactly 5 digits).")
+
+
 # Auto-reply to private messages when owner is offline
 @bot.message_handler(
     content_types=['text', 'photo', 'video', 'document', 'audio', 'voice', 'sticker'],
