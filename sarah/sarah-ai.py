@@ -7,12 +7,37 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ChatPermis
 
 # Load the Telegram Token from Vercel Environment Variables
 TOKEN = os.environ.get('TELEGRAM_TOKEN')
+OWNER_ID = os.environ.get('7823382572')
+
+STATUS_FILE = "/tmp/owner_status.txt"
+
+def get_owner_status():
+    if os.path.exists(STATUS_FILE):
+        try:
+            with open(STATUS_FILE, "r") as f:
+                return f.read().strip() == "off"
+        except Exception:
+            pass
+    return False
+
+def set_owner_status(is_off):
+    try:
+        with open(STATUS_FILE, "w") as f:
+            f.write("off" if is_off else "on")
+    except Exception as e:
+        print(f"Failed to write status file: {e}")
+
+def is_owner(user_id):
+    if not OWNER_ID:
+        return False
+    return str(user_id) == str(OWNER_ID)
 
 # Initialize Bot and Flask App
 # IMPORTANT: threaded=False is REQUIRED for Vercel! 
 # Otherwise, Vercel kills the process before the bot can reply.
 bot = telebot.TeleBot(TOKEN, threaded=False)
 app = Flask(__name__)
+
 
 # -------------------------------------------------------------------
 # 1. AUTO-REPLY MESSAGES (Triggers instantly when someone messages)
@@ -22,6 +47,40 @@ app = Flask(__name__)
 @bot.message_handler(func=lambda message: message.text and message.text.split()[0].split('@')[0] in ['/start', '/help'])
 def send_welcome(message):
     bot.reply_to(message, "Hello! 🚀 I am an always-active bot hosted on Vercel.")
+
+# Handler to toggle owner status (Only owner can use this)
+@bot.message_handler(func=lambda message: message.text and message.text.split()[0].split('@')[0] in ['/off', '/on'])
+def toggle_status(message):
+    if not is_owner(message.from_user.id):
+        return
+    
+    command = message.text.split()[0].split('@')[0]
+    if command == '/off':
+        set_owner_status(True)
+        bot.reply_to(message, "📴 Status updated: You are now OFFLINE. Auto-reply is enabled.")
+    else:
+        set_owner_status(False)
+        bot.reply_to(message, "🔛 Status updated: You are now ONLINE. Auto-reply is disabled.")
+
+# Auto-reply to private messages when owner is offline
+@bot.message_handler(
+    content_types=['text', 'photo', 'video', 'document', 'audio', 'voice', 'sticker'],
+    func=lambda message: message.chat.type == 'private' and get_owner_status()
+)
+def auto_reply_offline(message):
+    if is_owner(message.from_user.id):
+        return
+    # Avoid responding to slash commands
+    if message.text and message.text.startswith('/'):
+        return
+    
+    bot.reply_to(
+        message,
+        "🤖 *SARAH Auto-Reply:*\n\n"
+        "I am currently offline or away. I'll get back to you as soon as I'm back!",
+        parse_mode="Markdown"
+    )
+
 
 # Handler for XoerisHijack simulation command
 @bot.message_handler(func=lambda message: message.text and (
