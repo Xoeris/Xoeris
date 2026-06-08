@@ -157,7 +157,7 @@ export default function App() {
       )}
 
       {/* Page Routing with Transitions */}
-      <div key={currentPage} className={getPageTransitionClass()}>
+      <div key={currentPage}>
         {currentPage === 'acelbyte' && <AcelbytePage onNavigate={handleNavigate} />}
         {currentPage === 'looma' && <LoomaPage onNavigate={handleNavigate} />}
         {currentPage === 'xoeris' && <XoerisPage onNavigate={handleNavigate} />}

@@ -5,6 +5,11 @@ const FadeIn = ({ children, delay = 0, className = "", onClick = null }) => {
   const ref = useRef(null);
 
   useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') {
+      setIsVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
