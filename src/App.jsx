@@ -16,6 +16,14 @@ import AetherisPage from './AetherisPage';
 import VoltrixPage from './VoltrixPage';
 import ZenithPage from './ZenithPage';
 
+// Product Deep-Dive Pages
+import HorizoneProductPage from './HorizoneProductPage';
+import XESCProductPage from './XESCProductPage';
+import DrivonProductPage from './DrivonProductPage';
+
+// Support Hubs
+import DeveloperPortal from './DeveloperPortal';
+
 const PlaceholderProduct = ({ title, onNavigate }) => (
   <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-10 text-center">
     <div className="w-20 h-20 bg-white/5 rounded-3xl mb-10 flex items-center justify-center">
@@ -47,6 +55,7 @@ export default function App() {
 
     if (hostname.includes('xoeris') || path.startsWith('/xoeris') || path !== '/') {
       if (path === '/subscription' || path === '/payment') return 'subscriptions';
+      if (path === '/developers') return 'developers';
 
       if (path.startsWith('/netwave')) return 'netwave';
       if (path.startsWith('/ariasphere')) return 'ariasphere';
@@ -77,7 +86,8 @@ export default function App() {
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname.toLowerCase();
-      if (path.startsWith('/netwave')) setCurrentPage('netwave');
+      if (path === '/developers') setCurrentPage('developers');
+      else if (path.startsWith('/netwave')) setCurrentPage('netwave');
       else if (path.startsWith('/ariasphere')) setCurrentPage('ariasphere');
       else if (path.startsWith('/illucine')) setCurrentPage('illucine');
       else if (path.startsWith('/elarion')) {
@@ -112,6 +122,7 @@ export default function App() {
       acelbyte: 'Acelbyte',
       looma: 'Looma Studio',
       xoeris: 'Xoeris Ecosystem',
+      developers: 'Developer Portal | Xoeris',
       netwave: 'Xoeris Netwave',
       ariasphere: 'Xoeris Ariasphere',
       illucine: 'Xoeris Illucine',
@@ -136,6 +147,7 @@ export default function App() {
       acelbyte: '/',
       looma: '/loomastudio',
       xoeris: '/xoeris',
+      developers: '/developers',
       netwave: '/netwave',
       ariasphere: '/ariasphere',
       illucine: '/illucine',
@@ -188,12 +200,15 @@ export default function App() {
         {currentPage === 'voltrix' && <VoltrixPage onNavigate={handleNavigate} />}
         {currentPage === 'zenith' && <ZenithPage onNavigate={handleNavigate} />}
 
-        {/* Product Details (Placeholders) */}
-        {currentPage === 'elarion-horizone' && <PlaceholderProduct title="HORIZONE" onNavigate={handleNavigate} />}
+        {/* Product Details */}
+        {currentPage === 'elarion-horizone' && <HorizoneProductPage onNavigate={handleNavigate} />}
         {currentPage === 'elarion-acton' && <PlaceholderProduct title="ACTON" onNavigate={handleNavigate} />}
         {currentPage === 'elarion-amberlord' && <PlaceholderProduct title="AMBERLORD" onNavigate={handleNavigate} />}
-        {currentPage === 'aetheris-xesc' && <PlaceholderProduct title="XESC" onNavigate={handleNavigate} />}
-        {currentPage === 'aetheris-drivon' && <PlaceholderProduct title="DRIVON" onNavigate={handleNavigate} />}
+        {currentPage === 'aetheris-xesc' && <XESCProductPage onNavigate={handleNavigate} />}
+        {currentPage === 'aetheris-drivon' && <DrivonProductPage onNavigate={handleNavigate} />}
+
+        {/* Support Hubs */}
+        {currentPage === 'developers' && <DeveloperPortal onNavigate={handleNavigate} />}
       </div>
 
       <style dangerouslySetInnerHTML={{__html: `
