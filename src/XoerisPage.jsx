@@ -1,6 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Database, Activity, TrendingUp, ChevronRight, ArrowRight, Smartphone } from 'lucide-react';
+import {
+  Menu, X, Database, Activity, TrendingUp,
+  ChevronRight, ArrowRight, Smartphone,
+  Globe, Zap, Cpu, Hexagon, Shield, Layers,
+  Command, Code2, Cloud, Music, Film, Joystick
+} from 'lucide-react';
 import FadeIn from './components/FadeIn';
+
+const FamilyCard = ({ title, desc, icon: Icon, family, onNavigate, color }) => (
+  <FadeIn>
+    <div
+      onClick={() => onNavigate(family)}
+      className="group relative bg-white/[0.03] backdrop-blur-xl border border-white/10 p-8 rounded-[2.5rem] cursor-pointer hover:bg-white/[0.08] hover:border-white/20 transition-all duration-500 overflow-hidden h-full flex flex-col justify-between"
+    >
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-transparent to-transparent group-hover:via-current transition-all duration-1000" style={{ color: color }}></div>
+      <div>
+        <div className="w-16 h-16 rounded-2xl bg-white/[0.05] flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500">
+          <Icon size={32} style={{ color: color }} />
+        </div>
+        <h3 className="text-2xl font-black mb-4 tracking-tight uppercase">{title}</h3>
+        <p className="text-gray-400 leading-relaxed font-medium mb-8 group-hover:text-gray-300 transition-colors">{desc}</p>
+      </div>
+      <div className="flex items-center gap-2 text-sm font-black uppercase tracking-widest" style={{ color: color }}>
+        Explore Family <ChevronRight size={16} />
+      </div>
+    </div>
+  </FadeIn>
+);
 
 export default function XoerisPage({ onNavigate }) {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -11,220 +37,224 @@ export default function XoerisPage({ onNavigate }) {
       const scrolled = window.scrollY > 50;
       if (scrolled !== isScrolled) setIsScrolled(scrolled);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [isScrolled]);
 
+  const families = [
+    { title: "Netwave", family: "netwave", icon: Globe, color: "#3B82F6", desc: "Global networking, high-speed connectivity, and satellite integration nodes." },
+    { title: "Ariasphere", family: "ariasphere", icon: Music, color: "#EC4899", desc: "Spatial audio systems, music production suites, and acoustic engineering." },
+    { title: "Illucine", family: "illucine", icon: Film, color: "#F59E0B", desc: "Advanced animation pipelines and real-time film creation frameworks." },
+    { title: "Elarion", family: "elarion", icon: Joystick, color: "#705EBC", desc: "Interconnected apps, 3D engines (Horizone), and optical Neurolens (ACTON)." },
+    { title: "Aetheris", family: "aetheris", icon: Cloud, color: "#10B981", desc: "AI systems (XESC), Cloud infrastructure (Drivon), and operating systems." },
+    { title: "Voltrix", family: "voltrix", icon: Zap, color: "#FDD935", desc: "Core innovation, R&D systems, and integrated hardware (SAMUDRA)." },
+    { title: "Zenith", family: "zenith", icon: Cpu, color: "#EF4444", desc: "Physics mechanics, CPU/GPU architecture, and core computational engines." }
+  ];
+
   return (
-    <div className="relative z-10 w-full min-h-screen">
-      {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'py-4 shadow-lg backdrop-blur-xl bg-black/40 border-b border-white/10' : 'py-6 bg-transparent'}`}>
-        <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
-          <button onClick={() => onNavigate('xoeris')} className="flex items-center group bg-transparent border-none p-0 outline-none">
-            <div className="w-14 h-14 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-              <img src="/xoeris-logo.png" alt="Xoeris Logo" className="w-full h-full object-contain" />
+    <div className="relative z-10 w-full">
+      {/* Global Navigation */}
+      <nav className={`fixed w-full z-[200] transition-all duration-500 ${isScrolled ? 'py-4 shadow-2xl backdrop-blur-2xl bg-black/60 border-b border-white/5' : 'py-8 bg-transparent'}`}>
+        <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex justify-between items-center">
+          <button onClick={() => onNavigate('xoeris')} className="flex items-center gap-3 group bg-transparent border-none">
+            <div className="w-12 h-12 transition-transform duration-500 group-hover:scale-110">
+               <img src="/xoeris-logo.png" alt="Xoeris" className="w-full h-full object-contain" />
             </div>
+            <span className="text-xl font-black tracking-[0.2em] text-white">XOERIS</span>
           </button>
 
-          {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#products" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Products</a>
-            <a href="#solutions" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Solutions</a>
-            <a href="#resources" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">Resources</a>
-            <button onClick={() => onNavigate('subscriptions')} className="text-sm font-medium text-gray-300 hover:text-white transition-colors bg-transparent border-none outline-none">Pricing</button>
-            
-            <div className="w-px h-6 bg-white/20"></div>
-
-            <div className="flex items-center gap-4">
-              <button onClick={() => onNavigate('acelbyte')} className="flex items-center gap-1.5 text-sm font-bold text-[#FDD935] hover:text-white transition-colors bg-transparent border-none outline-none">
-                <img src="/acelbyte-logo.png" alt="Acelbyte" className="w-4 h-4 object-contain" /> Acelbyte
+          {/* Families Mega Menu Link (Desktop) */}
+          <div className="hidden lg:flex items-center gap-10">
+            {families.map((f) => (
+              <button
+                key={f.title}
+                onClick={() => onNavigate(f.family)}
+                className="text-[11px] font-black uppercase tracking-[0.15em] text-gray-400 hover:text-white transition-all hover:translate-y-[-2px]"
+              >
+                {f.title}
               </button>
-              <button onClick={() => onNavigate('looma')} className="flex items-center gap-1.5 text-sm font-bold text-[#F0805E] hover:text-white transition-colors bg-transparent border-none outline-none">
-                <img src="/looma-studio-logo.png" alt="Looma" className="w-4 h-4 object-contain" /> Looma Studio
-              </button>
-            </div>
-            <a href="#contact" className="px-5 py-2.5 text-sm font-bold rounded-full transition-transform hover:scale-105" style={{ backgroundColor: '#5A4DB2', color: '#fff' }}>
-              Request Demo
-            </a>
+            ))}
           </div>
 
-          {/* Mobile Menu Toggle */}
-          <button className="md:hidden text-white p-2" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          <div className="hidden lg:flex items-center gap-6">
+            <button onClick={() => onNavigate('subscriptions')} className="text-xs font-black uppercase tracking-widest text-white/60 hover:text-white transition-colors">Pricing</button>
+            <button
+              onClick={() => onNavigate('acelbyte')}
+              className="px-6 py-3 bg-white text-black text-[11px] font-black uppercase tracking-widest rounded-full hover:scale-105 transition-transform"
+            >
+              Enterprise
+            </button>
+          </div>
+
+          <button className="lg:hidden text-white" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+            {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
 
-        {/* Mobile Nav Dropdown */}
+        {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden absolute top-full left-0 w-full bg-black/90 backdrop-blur-xl border-t border-white/10 shadow-xl py-4 flex flex-col items-center gap-4 text-white">
-            <a href="#products" className="text-lg font-medium text-gray-300 hover:text-white" onClick={() => setMobileMenuOpen(false)}>Products</a>
-            <a href="#solutions" className="text-lg font-medium text-gray-300 hover:text-white" onClick={() => setMobileMenuOpen(false)}>Solutions</a>
-            <a href="#resources" className="text-lg font-medium text-gray-300 hover:text-white" onClick={() => setMobileMenuOpen(false)}>Resources</a>
-            <button onClick={() => { onNavigate('subscriptions'); setMobileMenuOpen(false); }} className="text-lg font-medium text-gray-300 hover:text-white bg-transparent border-none outline-none">Pricing</button>
-            <div className="w-1/2 h-px bg-white/10 my-2"></div>
-            <button onClick={() => { onNavigate('acelbyte'); setMobileMenuOpen(false); }} className="text-lg font-bold text-[#FDD935] py-2 flex items-center gap-2 bg-transparent border-none outline-none">
-              <img src="/acelbyte-logo.png" alt="Acelbyte" className="w-5 h-5 object-contain" /> Switch to Acelbyte
-            </button>
-            <button onClick={() => { onNavigate('looma'); setMobileMenuOpen(false); }} className="text-lg font-bold text-[#F0805E] py-2 flex items-center gap-2 bg-transparent border-none outline-none">
-              <img src="/looma-studio-logo.png" alt="Looma" className="w-5 h-5 object-contain" /> Switch to Looma
-            </button>
+          <div className="lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-3xl border-t border-white/5 py-10 px-6 flex flex-col gap-8 animate-in fade-in slide-in-from-top-4 duration-500">
+            {families.map(f => (
+              <button key={f.title} onClick={() => { onNavigate(f.family); setMobileMenuOpen(false); }} className="text-2xl font-black uppercase tracking-widest text-left" style={{ color: f.color }}>{f.title}</button>
+            ))}
+            <div className="h-px w-full bg-white/10"></div>
+            <button onClick={() => onNavigate('acelbyte')} className="text-lg font-bold text-gray-400">Back to Acelbyte</button>
           </div>
         )}
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 md:px-12 max-w-7xl mx-auto overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-          <div className="z-10 relative">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#5A4DB2]/20 border border-[#5A4DB2]/50 text-sm font-medium mb-6 text-indigo-200 backdrop-blur-sm">
-              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#5A4DB2' }}></span>
-              Introducing Xoeris Intelligence Hub
-            </div>
-            <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.1] mb-6 tracking-tight text-white">
-              Data, <br/> Decoded.
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-300 mb-10 max-w-lg leading-relaxed">
-              Transform raw data into strategic foresight. Xoeris provides advanced analytics and machine learning pipelines for modern enterprises.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a href="#products" className="flex items-center justify-center gap-2 px-8 py-4 text-lg font-bold transition-all hover:-translate-y-1 rounded-full text-white" style={{ backgroundColor: '#5A4DB2' }}>
-                View Solutions <ArrowRight size={20} />
-              </a>
-              <button onClick={() => onNavigate('looma')} className="flex items-center justify-center gap-2 px-8 py-4 text-lg font-bold border border-white/20 transition-all hover:bg-white/10 rounded-full bg-white/5 backdrop-blur-sm text-white">
-                <img src="/looma-studio-logo.png" alt="Looma" className="w-5 h-5 object-contain" /> Design Partner
-              </button>
-            </div>
+      {/* Hero: The Intelligence Core */}
+      <section className="relative pt-60 pb-32 px-6 md:px-12 flex flex-col items-center text-center overflow-hidden min-h-screen">
+        <FadeIn className="relative z-10 max-w-5xl">
+          <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/[0.03] border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] mb-10 text-white shadow-2xl backdrop-blur-md">
+            <span className="w-2 h-2 rounded-full bg-[#705EBC] animate-pulse"></span>
+            Ecosystem v2.0 Sync Active
           </div>
-
-          {/* Hero Visual - Data/AI Motif */}
-          <div className="relative flex justify-center lg:justify-end items-center h-80 lg:h-full z-0 perspective-1000">
-            <div className="relative w-full max-w-md transform rotate-[5deg] hover:rotate-0 transition-transform duration-700 ease-out group flex justify-center">
-              <div className="relative w-64 h-80 flex items-center justify-center">
-                {/* Abstract Data Hexagons */}
-                <div className="absolute w-40 h-40 border-2 border-[#5A4DB2] rounded-3xl transform rotate-45 transition-all duration-500 group-hover:scale-110 bg-[#5A4DB2]/10 backdrop-blur-md flex items-center justify-center z-20 shadow-[0_0_50px_rgba(90,77,178,0.4)]">
-                   <Database size={48} className="text-[#FDD935] -rotate-45" />
-                </div>
-                <div className="absolute w-40 h-40 border-2 border-[#F0805E] rounded-3xl transform rotate-45 translate-x-12 translate-y-12 transition-all duration-700 group-hover:translate-x-16 group-hover:translate-y-16 bg-[#F0805E]/10 backdrop-blur-sm z-10"></div>
-                <div className="absolute w-40 h-40 border-2 border-[#FDD935] rounded-3xl transform rotate-45 -translate-x-12 -translate-y-12 transition-all duration-700 group-hover:-translate-x-16 group-hover:-translate-y-16 bg-[#FDD935]/10 backdrop-blur-sm z-10"></div>
-              </div>
-
-              {/* Decorative floating elements */}
-              <div className="absolute -top-8 -right-8 w-24 h-24 border-2 border-dashed rounded-full animate-spin-slow opacity-40" style={{ borderColor: '#FDD935', animationDuration: '15s' }}></div>
-              <div className="absolute bottom-0 -left-10 w-32 h-32 border border-white/20 backdrop-blur-sm rounded-full animate-pulse opacity-30 transform scale-y-50"></div>
-            </div>
+          <h1 className="text-7xl md:text-9xl font-black leading-[0.95] mb-10 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-gray-600">
+            INTEGRATED <br/> INTELLIGENCE.
+          </h1>
+          <p className="text-xl md:text-2xl text-gray-400 mb-16 max-w-3xl mx-auto leading-relaxed font-medium">
+            Xoeris is a multi-layered technology ecosystem converging advanced computing, AI frameworks, and professional creative tools into a single interconnected universe.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <button onClick={() => onNavigate('elarion-horizone')} className="group flex items-center gap-3 px-10 py-5 bg-[#705EBC] text-white text-sm font-black uppercase tracking-widest rounded-2xl hover:scale-105 transition-all shadow-[0_20px_50px_rgba(112,94,188,0.3)]">
+              Explore Horizone <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
+            </button>
+            <button onClick={() => onNavigate('acelbyte')} className="flex items-center gap-3 px-10 py-5 bg-white/5 border border-white/10 text-white text-sm font-black uppercase tracking-widest rounded-2xl hover:bg-white/10 transition-all backdrop-blur-md">
+              View Whitepapers
+            </button>
           </div>
-        </div>
+        </FadeIn>
+
+        {/* Abstract Background Element (The Core) */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#705EBC] rounded-full blur-[200px] opacity-10 pointer-events-none animate-pulse"></div>
       </section>
 
-      {/* Features Section */}
-      <section id="products" className="py-24 px-6 md:px-12 relative text-white">
-        <div className="max-w-7xl mx-auto">
-          <FadeIn>
-            <div className="mb-16 md:w-2/3">
-              <h2 className="text-4xl md:text-5xl font-bold mb-6">Enterprise Intelligence</h2>
-              <p className="text-xl text-gray-300">Unify your data sources and deploy predictive models with zero friction.</p>
+      {/* The Family Universe Grid */}
+      <section className="py-32 px-6 md:px-12 max-w-[1400px] mx-auto relative">
+        <FadeIn>
+          <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
+            <div className="max-w-2xl">
+              <h2 className="text-sm font-black text-[#705EBC] uppercase tracking-[0.4em] mb-6">The Universe</h2>
+              <h3 className="text-5xl md:text-7xl font-black tracking-tighter leading-tight">EXPLORE THE <br/> 7 FAMILIES.</h3>
+            </div>
+            <p className="text-gray-500 font-bold uppercase tracking-widest text-xs border-l-2 border-[#705EBC] pl-6 py-2">
+              Cross-Platform <br/> Synchronization
+            </p>
+          </div>
+        </FadeIn>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {families.map((f, i) => (
+            <FamilyCard key={f.title} {...f} onNavigate={onNavigate} />
+          ))}
+
+          {/* Spotlight: SAMUDRA (Integrated R&D) */}
+          <FadeIn className="lg:col-span-2">
+            <div
+              onClick={() => onNavigate('samudra')}
+              className="group relative h-full bg-gradient-to-br from-[#151518] to-black border border-white/10 p-10 rounded-[2.5rem] cursor-pointer hover:border-[#FDD935]/30 transition-all duration-500 overflow-hidden"
+            >
+              <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
+                <div className="max-w-lg">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FDD935]/10 border border-[#FDD935]/20 text-[9px] font-black uppercase tracking-[0.2em] mb-8 text-[#FDD935]">
+                    Featured R&D System
+                  </div>
+                  <h3 className="text-4xl font-black mb-6 tracking-tighter uppercase">SAMUDRA Maritime</h3>
+                  <p className="text-gray-400 text-lg leading-relaxed mb-8">Integrated maritime intelligence system. Fish tracking, solar power management, and real-time boat telemetry for the modern fleet.</p>
+                  <div className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-[#FDD935]">
+                    Launch System Terminal <ChevronRight size={16} />
+                  </div>
+                </div>
+                <div className="w-64 h-64 relative bg-[#FDD935]/5 rounded-full flex items-center justify-center border border-[#FDD935]/10 group-hover:scale-110 transition-transform duration-700">
+                   <Smartphone size={80} className="text-[#FDD935] drop-shadow-[0_0_20px_rgba(253,217,53,0.5)]" />
+                </div>
+              </div>
+              <div className="absolute top-0 right-0 w-96 h-96 bg-[#FDD935] opacity-[0.03] blur-[100px] pointer-events-none"></div>
             </div>
           </FadeIn>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <FadeIn delay={100}>
-              <div className="group bg-white/5 backdrop-blur-md p-8 border border-white/10 hover:bg-white/10 hover:border-[#5A4DB2] transition-all duration-300 relative overflow-hidden rounded-2xl">
-                <div className="absolute top-0 left-0 w-full h-1 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500" style={{ backgroundColor: '#5A4DB2' }}></div>
-                <Database size={40} style={{ color: '#5A4DB2' }} className="mb-6" />
-                <h3 className="text-2xl font-bold mb-4">Data Pipelines</h3>
-                <p className="text-gray-300 mb-6 leading-relaxed">
-                  Automated ETL workflows that clean, structure, and securely store your data across multi-cloud environments.
-                </p>
-                <a href="#" className="inline-flex items-center gap-2 font-semibold hover:gap-3 transition-all" style={{ color: '#5A4DB2' }}>
-                  View Pipelines <ChevronRight size={16} />
-                </a>
+      {/* Global Scale Section */}
+      <section className="py-32 bg-white/[0.02] border-y border-white/5 relative overflow-hidden">
+        <div className="max-w-[1400px] mx-auto px-6 md:px-12 grid lg:grid-cols-2 gap-20 items-center">
+          <FadeIn>
+            <h2 className="text-sm font-black text-gray-500 uppercase tracking-[0.4em] mb-8">Zenith Engine</h2>
+            <h3 className="text-5xl md:text-7xl font-black tracking-tighter mb-10 leading-tight">BUILT FOR THE <br/> NEXT EPOCH.</h3>
+            <p className="text-xl text-gray-400 leading-relaxed mb-12 font-medium">
+              Every Xoeris product is powered by the Zenith Engine. From the physics in Amberlord to the data processing in XESC, Zenith provides the raw computational force required for real-time synchronization.
+            </p>
+            <div className="grid grid-cols-2 gap-8">
+              <div>
+                <div className="text-3xl font-black text-white mb-2">99.9%</div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-gray-500">Uptime Reliability</div>
               </div>
-            </FadeIn>
-
-            <FadeIn delay={200}>
-              <div className="group bg-white/5 backdrop-blur-md p-8 border border-white/10 hover:bg-white/10 hover:border-[#FDD935] transition-all duration-300 relative overflow-hidden rounded-2xl">
-                <div className="absolute top-0 left-0 w-full h-1 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500" style={{ backgroundColor: '#FDD935' }}></div>
-                <Activity size={40} style={{ color: '#FDD935' }} className="mb-6" />
-                <h3 className="text-2xl font-bold mb-4">Predictive AI</h3>
-                <p className="text-gray-300 mb-6 leading-relaxed">
-                  Deploy state-of-the-art machine learning models directly into your applications to forecast trends and user behaviors.
-                </p>
-                <a href="#" className="inline-flex items-center gap-2 font-semibold hover:gap-3 transition-all" style={{ color: '#FDD935' }}>
-                  View AI Models <ChevronRight size={16} />
-                </a>
+              <div>
+                <div className="text-3xl font-black text-white mb-2">&lt; 1ms</div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-gray-500">Node Latency</div>
               </div>
-            </FadeIn>
-
-            <FadeIn delay={300}>
-              <div className="group bg-white/5 backdrop-blur-md p-8 border border-white/10 hover:bg-white/10 hover:border-[#F0805E] transition-all duration-300 relative overflow-hidden rounded-2xl">
-                <div className="absolute top-0 left-0 w-full h-1 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500" style={{ backgroundColor: '#F0805E' }}></div>
-                <TrendingUp size={40} style={{ color: '#F0805E' }} className="mb-6" />
-                <h3 className="text-2xl font-bold mb-4">Visual Dashboards</h3>
-                <p className="text-gray-300 mb-6 leading-relaxed">
-                  Real-time, customizable business intelligence dashboards that turn complex datasets into clear, actionable insights.
-                </p>
-                <a href="#" className="inline-flex items-center gap-2 font-semibold hover:gap-3 transition-all" style={{ color: '#F0805E' }}>
-                  View Dashboards <ChevronRight size={16} />
-                </a>
-              </div>
-            </FadeIn>
-
-            <FadeIn delay={400}>
-              <div className="group bg-white/5 backdrop-blur-md p-8 border border-white/10 hover:bg-white/10 hover:border-[#705EBC] transition-all duration-300 relative overflow-hidden rounded-2xl">
-                <div className="absolute top-0 left-0 w-full h-1 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500" style={{ backgroundColor: '#705EBC' }}></div>
-                <Smartphone size={40} style={{ color: '#705EBC' }} className="mb-6" />
-                <h3 className="text-2xl font-bold mb-4">SAMUDRA</h3>
-                <p className="text-gray-300 mb-6 leading-relaxed">
-                  Integrated maritime information system for fishermen, featuring fish tracking, weather, and solar-powered connectivity.
-                </p>
-                <button
-                  onClick={() => onNavigate('samudra')}
-                  className="inline-flex items-center gap-2 font-semibold hover:gap-3 transition-all bg-transparent border-none outline-none"
-                  style={{ color: '#705EBC' }}
-                >
-                  Launch App <ChevronRight size={16} />
-                </button>
-              </div>
-            </FadeIn>
+            </div>
+          </FadeIn>
+          <div className="relative">
+             <div className="aspect-square bg-white/[0.03] rounded-3xl border border-white/10 flex items-center justify-center overflow-hidden">
+                <Cpu size={200} className="text-white/10 animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+             </div>
+             <div className="absolute -bottom-10 -left-10 p-8 bg-black border border-white/10 rounded-2xl shadow-2xl backdrop-blur-3xl">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-[#705EBC] flex items-center justify-center"><Layers size={20}/></div>
+                  <div className="font-black text-sm uppercase tracking-tighter">Unified OS Architecture</div>
+                </div>
+                <p className="text-[11px] text-gray-500 leading-tight">Synchronizing 12M+ devices across Netwave nodes.</p>
+             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-black/40 backdrop-blur-xl pt-16 pb-8 border-t border-white/10 mt-20 text-white">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-          <div className="md:col-span-2">
-            <button onClick={() => onNavigate('xoeris')} className="flex items-center gap-3 mb-6 group bg-transparent border-none p-0 outline-none text-white">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                <img src="/xoeris-logo.png" alt="Xoeris Logo" className="w-full h-full object-contain" />
+      {/* Unified Footer */}
+      <footer className="pt-32 pb-16 px-6 md:px-12 bg-black">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-16 mb-32">
+            <div className="col-span-2">
+              <button onClick={() => onNavigate('xoeris')} className="flex items-center gap-3 mb-10 group bg-transparent border-none">
+                <img src="/xoeris-logo.png" alt="Xoeris" className="w-10 h-10 object-contain" />
+                <span className="text-2xl font-black tracking-widest text-white">XOERIS</span>
+              </button>
+              <p className="text-gray-500 font-medium max-w-xs leading-relaxed mb-10">
+                Pioneering the intersection of intelligence and artistic expression through a unified technology stack.
+              </p>
+              <div className="flex gap-4">
+                 <div className="w-10 h-10 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-colors cursor-pointer"><Globe size={18}/></div>
+                 <div className="w-10 h-10 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-colors cursor-pointer"><Shield size={18}/></div>
               </div>
-              <span className="text-2xl font-custom font-bold">Xoeris</span>
-            </button>
-            <p className="text-gray-400 max-w-sm">
-              Empowering organizations with intelligent data pipelines and predictive analytics.
-            </p>
+            </div>
+
+            {/* Link Groups */}
+            {[
+              { title: "Families", links: ["Netwave", "Ariasphere", "Illucine", "Elarion", "Aetheris", "Voltrix", "Zenith"] },
+              { title: "Platform", links: ["XESC AI", "Drivon Cloud", "Horizone 3D", "ACTON Lens", "Amberlord"] },
+              { title: "Developers", links: ["API Docs", "SDK Downloads", "System Status", "Dev Forum", "Research"] },
+              { title: "Company", links: ["About", "Enterprise", "Careers", "Newsroom", "Legal"] }
+            ].map((g) => (
+              <div key={g.title}>
+                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white mb-8">{g.title}</h4>
+                <ul className="space-y-4">
+                  {g.links.map(l => (
+                    <li key={l}><button className="text-sm font-medium text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0">{l}</button></li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
-          <div>
-            <h4 className="font-bold mb-6 text-lg text-white">Solutions</h4>
-            <ul className="space-y-4 text-gray-400">
-              <li><a href="#" className="hover:text-[#5A4DB2] transition-colors">Data Engineering</a></li>
-              <li><a href="#" className="hover:text-[#5A4DB2] transition-colors">Machine Learning</a></li>
-              <li><a href="#" className="hover:text-[#5A4DB2] transition-colors">Business Intelligence</a></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold mb-6 text-lg text-white">Partner Network</h4>
-            <ul className="space-y-4 text-gray-400">
-              <li><button onClick={() => onNavigate('acelbyte')} className="hover:text-[#FDD935] transition-colors flex items-center gap-2 bg-transparent border-none outline-none"><img src="/acelbyte-logo.png" className="w-4 h-4 object-contain" /> Acelbyte Infra</button></li>
-              <li><button onClick={() => onNavigate('looma')} className="hover:text-[#F0805E] transition-colors flex items-center gap-2 bg-transparent border-none outline-none"><img src="/looma-studio-logo.png" className="w-4 h-4 object-contain" /> Looma Studio</button></li>
-            </ul>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto px-6 md:px-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-gray-400 text-sm">
-          <p>&copy; {new Date().getFullYear()} Xoeris Analytics. All rights reserved.</p>
-          <div className="flex gap-6 mt-4 md:mt-0">
-            <a href="#" className="hover:text-white">Privacy</a>
-            <a href="#" className="hover:text-white">Terms</a>
+
+          <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-gray-500 text-[10px] font-black uppercase tracking-widest">
+            <p>© {new Date().getFullYear()} Xoeris Systems. Part of Acelbyte ecosystem.</p>
+            <div className="flex gap-10">
+              <button className="hover:text-white transition-colors">Privacy Policy</button>
+              <button className="hover:text-white transition-colors">Terms of Service</button>
+              <button className="hover:text-white transition-colors">EULA</button>
+            </div>
           </div>
         </div>
       </footer>
