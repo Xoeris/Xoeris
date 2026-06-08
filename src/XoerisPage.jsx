@@ -132,7 +132,7 @@ export default function XoerisPage({ onNavigate }) {
             <p className="text-xl text-gray-300">Unify your data sources and deploy predictive models with zero friction.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div className="group bg-white/5 backdrop-blur-md p-8 border border-white/10 hover:bg-white/10 hover:border-[#5A4DB2] transition-all duration-300 relative overflow-hidden rounded-2xl">
               <div className="absolute top-0 left-0 w-full h-1 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500" style={{ backgroundColor: '#5A4DB2' }}></div>
               <Database size={40} style={{ color: '#5A4DB2' }} className="mb-6" />
@@ -166,6 +166,23 @@ export default function XoerisPage({ onNavigate }) {
               </p>
               <a href="#" className="inline-flex items-center gap-2 font-semibold hover:gap-3 transition-all" style={{ color: '#F0805E' }}>
                 View Dashboards <ChevronRight size={16} />
+              </a>
+            </div>
+
+            <div className="group bg-white/5 backdrop-blur-md p-8 border border-white/10 hover:bg-white/10 hover:border-[#705EBC] transition-all duration-300 relative overflow-hidden rounded-2xl">
+              <div className="absolute top-0 left-0 w-full h-1 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500" style={{ backgroundColor: '#705EBC' }}></div>
+              <Smartphone size={40} style={{ color: '#705EBC' }} className="mb-6" />
+              <h3 className="text-2xl font-bold mb-4">SAMUDRA</h3>
+              <p className="text-gray-300 mb-6 leading-relaxed">
+                Integrated maritime information system for fishermen, featuring fish tracking, weather, and solar-powered connectivity.
+              </p>
+              <a
+                href="/Voltrix/SAMUDRA/app"
+                onClick={(e) => { e.preventDefault(); onNavigate('samudra'); }}
+                className="inline-flex items-center gap-2 font-semibold hover:gap-3 transition-all"
+                style={{ color: '#705EBC' }}
+              >
+                Launch App <ChevronRight size={16} />
               </a>
             </div>
           </div>
