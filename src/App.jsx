@@ -7,12 +7,23 @@ import SamudraPage from './SamudraPage';
 import TartarugaPage from './TartarugaPage';
 import SubscriptionsPage from './SubscriptionsPage';
 
-// Placeholder components for new families - will be moved to separate files later
-const PlaceholderPage = ({ title, onNavigate }) => (
+// Family Pages
+import NetwavePage from './NetwavePage';
+import AriaspherePage from './AriaspherePage';
+import IllucinePage from './IllucinePage';
+import ElarionPage from './ElarionPage';
+import AetherisPage from './AetherisPage';
+import VoltrixPage from './VoltrixPage';
+import ZenithPage from './ZenithPage';
+
+const PlaceholderProduct = ({ title, onNavigate }) => (
   <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-10 text-center">
-    <h1 className="text-6xl font-black mb-6 tracking-tighter">{title}</h1>
-    <p className="text-xl text-gray-400 max-w-lg mb-10">This section of the Xoeris ecosystem is currently under synchronization.</p>
-    <button onClick={() => onNavigate('xoeris')} className="px-8 py-3 bg-[#705EBC] rounded-full font-bold">Return to Core</button>
+    <div className="w-20 h-20 bg-white/5 rounded-3xl mb-10 flex items-center justify-center">
+      <div className="w-2 h-2 rounded-full bg-[#705EBC] animate-ping"></div>
+    </div>
+    <h1 className="text-6xl font-black mb-6 tracking-tighter uppercase">{title}</h1>
+    <p className="text-xl text-gray-400 max-w-lg mb-10">Product technical synchronization in progress. Node access pending.</p>
+    <button onClick={() => onNavigate('xoeris')} className="px-8 py-3 bg-white text-black rounded-full font-bold uppercase text-xs tracking-widest hover:scale-105 transition-transform">Return to Core</button>
   </div>
 );
 
@@ -34,11 +45,9 @@ export default function App() {
     if (hostname.includes('tartaruga') || path.startsWith('/tartaruga')) return 'tartaruga';
     if (path === '/digital-artifacts') return 'digital-artifacts';
 
-    // Xoeris Ecosystem Routing
     if (hostname.includes('xoeris') || path.startsWith('/xoeris') || path !== '/') {
       if (path === '/subscription' || path === '/payment') return 'subscriptions';
 
-      // Strict Nested Hierarchy
       if (path.startsWith('/netwave')) return 'netwave';
       if (path.startsWith('/ariasphere')) return 'ariasphere';
       if (path.startsWith('/illucine')) return 'illucine';
@@ -58,9 +67,6 @@ export default function App() {
         return 'voltrix';
       }
       if (path.startsWith('/zenith')) return 'zenith';
-
-      // Legacy Path Support
-      if (path.includes('/voltrix/samudra/app')) return 'samudra';
 
       return 'xoeris';
     }
@@ -155,7 +161,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen font-sans relative z-0 overflow-x-hidden bg-black text-white">
-      {/* Background Blobs for Xoeris Ecosystem */}
       {!['acelbyte', 'digital-artifacts', 'subscriptions'].includes(currentPage) && (
         <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden opacity-40">
           <div className="blob blob-1" style={{ backgroundColor: colors.yellow }}></div>
@@ -165,7 +170,6 @@ export default function App() {
         </div>
       )}
 
-      {/* Routing */}
       <div key={currentPage}>
         {currentPage === 'acelbyte' && <AcelbytePage onNavigate={handleNavigate} />}
         {currentPage === 'looma' && <LoomaPage onNavigate={handleNavigate} />}
@@ -176,20 +180,20 @@ export default function App() {
         {currentPage === 'digital-artifacts' && <DigitalArtifactsPage onNavigate={handleNavigate} />}
 
         {/* Family Hubs */}
-        {currentPage === 'netwave' && <PlaceholderPage title="NETWAVE" onNavigate={handleNavigate} />}
-        {currentPage === 'ariasphere' && <PlaceholderPage title="ARIASPHERE" onNavigate={handleNavigate} />}
-        {currentPage === 'illucine' && <PlaceholderPage title="ILLUCINE" onNavigate={handleNavigate} />}
-        {currentPage === 'elarion' && <PlaceholderPage title="ELARION" onNavigate={handleNavigate} />}
-        {currentPage === 'aetheris' && <PlaceholderPage title="AETHERIS" onNavigate={handleNavigate} />}
-        {currentPage === 'voltrix' && <PlaceholderPage title="VOLTRIX" onNavigate={handleNavigate} />}
-        {currentPage === 'zenith' && <PlaceholderPage title="ZENITH" onNavigate={handleNavigate} />}
+        {currentPage === 'netwave' && <NetwavePage onNavigate={handleNavigate} />}
+        {currentPage === 'ariasphere' && <AriaspherePage onNavigate={handleNavigate} />}
+        {currentPage === 'illucine' && <IllucinePage onNavigate={handleNavigate} />}
+        {currentPage === 'elarion' && <ElarionPage onNavigate={handleNavigate} />}
+        {currentPage === 'aetheris' && <AetherisPage onNavigate={handleNavigate} />}
+        {currentPage === 'voltrix' && <VoltrixPage onNavigate={handleNavigate} />}
+        {currentPage === 'zenith' && <ZenithPage onNavigate={handleNavigate} />}
 
-        {/* Product Details */}
-        {currentPage === 'elarion-horizone' && <PlaceholderPage title="HORIZONE" onNavigate={handleNavigate} />}
-        {currentPage === 'elarion-acton' && <PlaceholderPage title="ACTON" onNavigate={handleNavigate} />}
-        {currentPage === 'elarion-amberlord' && <PlaceholderPage title="AMBERLORD" onNavigate={handleNavigate} />}
-        {currentPage === 'aetheris-xesc' && <PlaceholderPage title="XESC" onNavigate={handleNavigate} />}
-        {currentPage === 'aetheris-drivon' && <PlaceholderPage title="DRIVON" onNavigate={handleNavigate} />}
+        {/* Product Details (Placeholders) */}
+        {currentPage === 'elarion-horizone' && <PlaceholderProduct title="HORIZONE" onNavigate={handleNavigate} />}
+        {currentPage === 'elarion-acton' && <PlaceholderProduct title="ACTON" onNavigate={handleNavigate} />}
+        {currentPage === 'elarion-amberlord' && <PlaceholderProduct title="AMBERLORD" onNavigate={handleNavigate} />}
+        {currentPage === 'aetheris-xesc' && <PlaceholderProduct title="XESC" onNavigate={handleNavigate} />}
+        {currentPage === 'aetheris-drivon' && <PlaceholderProduct title="DRIVON" onNavigate={handleNavigate} />}
       </div>
 
       <style dangerouslySetInnerHTML={{__html: `

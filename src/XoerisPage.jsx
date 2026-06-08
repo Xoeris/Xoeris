@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Menu, X, Database, Activity, TrendingUp,
-  ChevronRight, ArrowRight, Smartphone,
-  Globe, Zap, Cpu, Hexagon, Shield, Layers,
-  Command, Code2, Cloud, Music, Film, Joystick
+  Menu, X, ChevronRight, ArrowRight, Smartphone,
+  Globe, Music, Cpu, Zap, Shield, Layers, Film, Joystick, Cloud
 } from 'lucide-react';
 import FadeIn from './components/FadeIn';
 
-const FamilyCard = ({ title, desc, icon: Icon, family, onNavigate, color }) => (
+const FamilyCard = ({ title, desc, icon: Icon, family, onNavigate, color, pngIcon }) => (
   <FadeIn>
     <div
       onClick={() => onNavigate(family)}
@@ -15,8 +13,12 @@ const FamilyCard = ({ title, desc, icon: Icon, family, onNavigate, color }) => (
     >
       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-transparent to-transparent group-hover:via-current transition-all duration-1000" style={{ color: color }}></div>
       <div>
-        <div className="w-16 h-16 rounded-2xl bg-white/[0.05] flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500">
-          <Icon size={32} style={{ color: color }} />
+        <div className="w-20 h-20 rounded-2xl bg-white/[0.05] flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500 overflow-hidden">
+          {pngIcon ? (
+            <img src={pngIcon} alt={title} className="w-12 h-12 object-contain" />
+          ) : (
+            <Icon size={32} style={{ color: color }} />
+          )}
         </div>
         <h3 className="text-2xl font-black mb-4 tracking-tight uppercase">{title}</h3>
         <p className="text-gray-400 leading-relaxed font-medium mb-8 group-hover:text-gray-300 transition-colors">{desc}</p>
@@ -44,10 +46,10 @@ export default function XoerisPage({ onNavigate }) {
   const families = [
     { title: "Netwave", family: "netwave", icon: Globe, color: "#3B82F6", desc: "Global networking, high-speed connectivity, and satellite integration nodes." },
     { title: "Ariasphere", family: "ariasphere", icon: Music, color: "#EC4899", desc: "Spatial audio systems, music production suites, and acoustic engineering." },
-    { title: "Illucine", family: "illucine", icon: Film, color: "#F59E0B", desc: "Advanced animation pipelines and real-time film creation frameworks." },
-    { title: "Elarion", family: "elarion", icon: Joystick, color: "#705EBC", desc: "Interconnected apps, 3D engines (Horizone), and optical Neurolens (ACTON)." },
-    { title: "Aetheris", family: "aetheris", icon: Cloud, color: "#10B981", desc: "AI systems (XESC), Cloud infrastructure (Drivon), and operating systems." },
-    { title: "Voltrix", family: "voltrix", icon: Zap, color: "#FDD935", desc: "Core innovation, R&D systems, and integrated hardware (SAMUDRA)." },
+    { title: "Illucine", family: "illucine", icon: Film, color: "#F59E0B", desc: "Advanced animation pipelines and real-time film creation frameworks.", pngIcon: "/xoeris_illucine_logo_icon_2026.png" },
+    { title: "Elarion", family: "elarion", icon: Joystick, color: "#705EBC", desc: "Interconnected apps, 3D engines (Horizone), and optical Neurolens (ACTON).", pngIcon: "/xoeris_elarion_logo_colored.png" },
+    { title: "Aetheris", family: "aetheris", icon: Cloud, color: "#10B981", desc: "AI systems (XESC), Cloud infrastructure (Drivon), and operating systems.", pngIcon: "/xoeris_aetherislogo.png" },
+    { title: "Voltrix", family: "voltrix", icon: Zap, color: "#FDD935", desc: "Core innovation, R&D systems, and integrated hardware (SAMUDRA).", pngIcon: "/xoeris_voltrix_logo_icon_2026.png" },
     { title: "Zenith", family: "zenith", icon: Cpu, color: "#EF4444", desc: "Physics mechanics, CPU/GPU architecture, and core computational engines." }
   ];
 
@@ -249,7 +251,7 @@ export default function XoerisPage({ onNavigate }) {
           </div>
 
           <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-gray-500 text-[10px] font-black uppercase tracking-widest">
-            <p>© {new Date().getFullYear()} Xoeris Systems. Part of Acelbyte ecosystem.</p>
+            <p>© 2020-2026 Xoeris</p>
             <div className="flex gap-10">
               <button className="hover:text-white transition-colors">Privacy Policy</button>
               <button className="hover:text-white transition-colors">Terms of Service</button>
