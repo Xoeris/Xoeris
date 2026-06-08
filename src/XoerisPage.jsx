@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Hexagon, Database, Activity, TrendingUp, ChevronRight, ArrowRight } from 'lucide-react';
+import { Menu, X, Hexagon, Database, Activity, TrendingUp, ChevronRight, ArrowRight, Smartphone } from 'lucide-react';
 import FadeIn from './components/FadeIn';
 
 export default function XoerisPage({ onNavigate }) {
@@ -23,7 +23,6 @@ export default function XoerisPage({ onNavigate }) {
   }, []);
 
   return (
-
     <div className="animate-fade-in relative z-10">
       {/* Navigation */}
       <nav className={`fixed w-full z-50 transition-all duration-300 gpu-accel ${isScrolled ? 'py-4 shadow-lg backdrop-blur-xl bg-black/40 border-b border-white/10' : 'py-6 bg-transparent'}`}>
