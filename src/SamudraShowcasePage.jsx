@@ -5,7 +5,7 @@ export default function SamudraShowcasePage({ onNavigate }) {
   const videoRef = useRef(null);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   const videoFiles = [
@@ -93,7 +93,9 @@ export default function SamudraShowcasePage({ onNavigate }) {
             ref={videoRef}
             src={videoFiles[currentVideoIndex]}
             autoPlay
+            muted
             playsInline
+            preload="auto"
             onEnded={handleVideoEnded}
             className="w-full h-full object-cover cursor-pointer"
             onClick={togglePlay}
