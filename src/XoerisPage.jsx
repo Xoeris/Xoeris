@@ -234,21 +234,44 @@ export default function XoerisPage({ onNavigate }) {
             </div>
 
             {/* Link Groups */}
-            {[
-              { title: "Families", links: ["Netwave", "Ariasphere", "Illucine", "Elarion", "Aetheris", "Voltrix", "Zenith"] },
-              { title: "Platform", links: ["XESC AI", "Drivon Cloud", "Horizone 3D", "ACTON Lens", "Amberlord"] },
-              { title: "Developers", links: ["API Docs", "SDK Downloads", "System Status", "Dev Forum", "Research"] },
-              { title: "Company", links: ["About", "Enterprise", "Careers", "Newsroom", "Legal"] }
-            ].map((g) => (
-              <div key={g.title}>
-                <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white mb-8">{g.title}</h4>
-                <ul className="space-y-4">
-                  {g.links.map(l => (
-                    <li key={l}><button className="text-sm font-medium text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0">{l}</button></li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            <div>
+              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white mb-8">Families</h4>
+              <ul className="space-y-4">
+                {["Netwave", "Ariasphere", "Illucine", "Elarion", "Aetheris", "Voltrix", "Zenith"].map(l => (
+                  <li key={l}><button onClick={() => onNavigate(l.toLowerCase())} className="text-sm font-medium text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0">{l}</button></li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white mb-8">Platform</h4>
+              <ul className="space-y-4">
+                {[
+                  { name: "XESC AI", route: "aetheris-xesc" },
+                  { name: "Drivon Cloud", route: "aetheris-drivon" },
+                  { name: "Horizone 3D", route: "elarion-horizone" },
+                  { name: "ACTON Lens", route: "elarion-acton" },
+                  { name: "Amberlord", route: "elarion-amberlord" }
+                ].map(l => (
+                  <li key={l.name}><button onClick={() => onNavigate(l.route)} className="text-sm font-medium text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0">{l.name}</button></li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white mb-8">Developers</h4>
+              <ul className="space-y-4">
+                {["API Docs", "SDK Downloads", "System Status", "Dev Forum", "Research"].map(l => (
+                  <li key={l}><button onClick={() => onNavigate('developers')} className="text-sm font-medium text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0">{l}</button></li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white mb-8">Company</h4>
+              <ul className="space-y-4">
+                {["About", "Enterprise", "Careers", "Newsroom", "Legal"].map(l => (
+                  <li key={l}><button onClick={() => onNavigate('acelbyte')} className="text-sm font-medium text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0">{l}</button></li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-gray-500 text-[10px] font-black uppercase tracking-widest">

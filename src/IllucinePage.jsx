@@ -4,7 +4,7 @@ import { Film, Camera, Video } from 'lucide-react';
 
 export default function IllucinePage({ onNavigate }) {
   const products = [
-    { id: 1, name: "Prism", route: "illucine", icon: Camera, desc: "A real-time cinematic rendering pipeline for high-fidelity film production." },
+    { id: 1, name: "Prism", route: "illucine-prism", icon: Camera, desc: "A real-time cinematic rendering pipeline for high-fidelity film production." },
     { id: 2, name: "Motion-S", route: "illucine", icon: Video, desc: "Neural motion capture framework that translates human performance into digital data." },
     { id: 3, name: "Frame-X", route: "illucine", icon: Film, desc: "The foundational video encoding protocol designed for the Xoeris ecosystem." }
   ];

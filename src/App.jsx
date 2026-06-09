@@ -21,8 +21,15 @@ import ZenithPage from './ZenithPage';
 
 // Product Deep-Dive Pages
 import HorizoneProductPage from './HorizoneProductPage';
+import ACTONProductPage from './ACTONProductPage';
+import AmberlordProductPage from './AmberlordProductPage';
 import XESCProductPage from './XESCProductPage';
 import DrivonProductPage from './DrivonProductPage';
+import AetherOSProductPage from './AetherOSProductPage';
+import VocalisProductPage from './VocalisProductPage';
+import PrismProductPage from './PrismProductPage';
+import NodeSProductPage from './NodeSProductPage';
+import CoreAProductPage from './CoreAProductPage';
 
 // Support Hubs
 import DeveloperPortal from './DeveloperPortal';
@@ -60,26 +67,39 @@ export default function App() {
       if (path === '/subscription' || path === '/payment') return 'subscriptions';
       if (path === '/developers') return 'developers';
 
-      if (path.startsWith('/netwave')) return 'netwave';
-      if (path.startsWith('/ariasphere')) return 'ariasphere';
-      if (path.startsWith('/illucine')) return 'illucine';
+      if (path.startsWith('/netwave')) {
+        if (path.includes('/nodes')) return 'netwave-nodes';
+        return 'netwave';
+      }
+      if (path.startsWith('/ariasphere')) {
+        if (path.includes('/vocalis')) return 'ariasphere-vocalis';
+        return 'ariasphere';
+      }
+      if (path.startsWith('/illucine')) {
+        if (path.includes('/prism')) return 'illucine-prism';
+        return 'illucine';
+      }
+      if (path.startsWith('/aetheris')) {
+        if (path.includes('/xesc')) return 'aetheris-xesc';
+        if (path.includes('/drivon')) return 'aetheris-drivon';
+        if (path.includes('/aetheros')) return 'aetheris-aetheros';
+        return 'aetheris';
+      }
       if (path.startsWith('/elarion')) {
         if (path.includes('/horizone')) return 'elarion-horizone';
         if (path.includes('/acton')) return 'elarion-acton';
         if (path.includes('/amberlord')) return 'elarion-amberlord';
         return 'elarion';
       }
-      if (path.startsWith('/aetheris')) {
-        if (path.includes('/xesc')) return 'aetheris-xesc';
-        if (path.includes('/drivon')) return 'aetheris-drivon';
-        return 'aetheris';
-      }
       if (path.startsWith('/voltrix')) {
         if (path.includes('/samudra/showcase')) return 'samudra-showcase';
         if (path.includes('/samudra')) return 'samudra';
         return 'voltrix';
       }
-      if (path.startsWith('/zenith')) return 'zenith';
+      if (path.startsWith('/zenith')) {
+        if (path.includes('/corea')) return 'zenith-corea';
+        return 'zenith';
+      }
 
       return 'xoeris';
     }
@@ -91,26 +111,39 @@ export default function App() {
     const handlePopState = () => {
       const path = window.location.pathname.toLowerCase();
       if (path === '/developers') setCurrentPage('developers');
-      else if (path.startsWith('/netwave')) setCurrentPage('netwave');
-      else if (path.startsWith('/ariasphere')) setCurrentPage('ariasphere');
-      else if (path.startsWith('/illucine')) setCurrentPage('illucine');
+      else if (path.startsWith('/netwave')) {
+        if (path.includes('/nodes')) setCurrentPage('netwave-nodes');
+        else setCurrentPage('netwave');
+      }
+      else if (path.startsWith('/ariasphere')) {
+        if (path.includes('/vocalis')) setCurrentPage('ariasphere-vocalis');
+        else setCurrentPage('ariasphere');
+      }
+      else if (path.startsWith('/illucine')) {
+        if (path.includes('/prism')) setCurrentPage('illucine-prism');
+        else setCurrentPage('illucine');
+      }
+      else if (path.startsWith('/aetheris')) {
+        if (path.includes('/xesc')) setCurrentPage('aetheris-xesc');
+        else if (path.includes('/drivon')) setCurrentPage('aetheris-drivon');
+        else if (path.includes('/aetheros')) setCurrentPage('aetheris-aetheros');
+        else setCurrentPage('aetheris');
+      }
       else if (path.startsWith('/elarion')) {
         if (path.includes('/horizone')) setCurrentPage('elarion-horizone');
         else if (path.includes('/acton')) setCurrentPage('elarion-acton');
         else if (path.includes('/amberlord')) setCurrentPage('elarion-amberlord');
         else setCurrentPage('elarion');
       }
-      else if (path.startsWith('/aetheris')) {
-        if (path.includes('/xesc')) setCurrentPage('aetheris-xesc');
-        else if (path.includes('/drivon')) setCurrentPage('aetheris-drivon');
-        else setCurrentPage('aetheris');
-      }
       else if (path.startsWith('/voltrix')) {
         if (path.includes('/samudra/showcase')) setCurrentPage('samudra-showcase');
         else if (path.includes('/samudra')) setCurrentPage('samudra');
         else setCurrentPage('voltrix');
       }
-      else if (path.startsWith('/zenith')) setCurrentPage('zenith');
+      else if (path.startsWith('/zenith')) {
+        if (path.includes('/corea')) setCurrentPage('zenith-corea');
+        else setCurrentPage('zenith');
+      }
       else if (path === '/xoeris') setCurrentPage('xoeris');
       else if (path === '/loomastudio') setCurrentPage('looma');
       else if (path === '/tartaruga') setCurrentPage('tartaruga');
@@ -129,8 +162,11 @@ export default function App() {
       xoeris: 'Xoeris Ecosystem',
       developers: 'Developer Portal | Xoeris',
       netwave: 'Xoeris Netwave',
+      'netwave-nodes': 'Xoeris Node-S',
       ariasphere: 'Xoeris Ariasphere',
+      'ariasphere-vocalis': 'Xoeris Vocalis',
       illucine: 'Xoeris Illucine',
+      'illucine-prism': 'Xoeris Prism',
       elarion: 'Xoeris Elarion',
       'elarion-horizone': 'Xoeris Horizone',
       'elarion-acton': 'Xoeris ACTON',
@@ -138,10 +174,12 @@ export default function App() {
       aetheris: 'Xoeris Aetheris',
       'aetheris-xesc': 'XESC',
       'aetheris-drivon': 'Xoeris Drivon',
+      'aetheris-aetheros': 'Aether OS',
       voltrix: 'Xoeris Voltrix',
       samudra: 'SAMUDRA | Xoeris',
       'samudra-showcase': 'SAMUDRA Showcase',
       zenith: 'Xoeris Zenith',
+      'zenith-corea': 'Xoeris Core-A',
       subscriptions: 'Subscription | Xoeris',
       'digital-artifacts': 'Digital Artifacts | Acelbyte'
     };
@@ -155,8 +193,11 @@ export default function App() {
       xoeris: '/xoeris',
       developers: '/developers',
       netwave: '/netwave',
+      'netwave-nodes': '/netwave/nodes',
       ariasphere: '/ariasphere',
+      'ariasphere-vocalis': '/ariasphere/vocalis',
       illucine: '/illucine',
+      'illucine-prism': '/illucine/prism',
       elarion: '/elarion',
       'elarion-horizone': '/elarion/horizone',
       'elarion-acton': '/elarion/acton',
@@ -164,10 +205,12 @@ export default function App() {
       aetheris: '/aetheris',
       'aetheris-xesc': '/aetheris/xesc',
       'aetheris-drivon': '/aetheris/drivon',
+      'aetheris-aetheros': '/aetheris/aetheros',
       voltrix: '/voltrix',
       samudra: '/voltrix/samudra/app',
       'samudra-showcase': '/voltrix/samudra/showcase',
       zenith: '/zenith',
+      'zenith-corea': '/zenith/corea',
       subscriptions: '/subscription',
       'digital-artifacts': '/digital-artifacts'
     };
@@ -210,10 +253,15 @@ export default function App() {
 
         {/* Product Details */}
         {currentPage === 'elarion-horizone' && <HorizoneProductPage onNavigate={handleNavigate} />}
-        {currentPage === 'elarion-acton' && <PlaceholderProduct title="ACTON" onNavigate={handleNavigate} />}
-        {currentPage === 'elarion-amberlord' && <PlaceholderProduct title="AMBERLORD" onNavigate={handleNavigate} />}
+        {currentPage === 'elarion-acton' && <ACTONProductPage onNavigate={handleNavigate} />}
+        {currentPage === 'elarion-amberlord' && <AmberlordProductPage onNavigate={handleNavigate} />}
         {currentPage === 'aetheris-xesc' && <XESCProductPage onNavigate={handleNavigate} />}
         {currentPage === 'aetheris-drivon' && <DrivonProductPage onNavigate={handleNavigate} />}
+        {currentPage === 'aetheris-aetheros' && <AetherOSProductPage onNavigate={handleNavigate} />}
+        {currentPage === 'ariasphere-vocalis' && <VocalisProductPage onNavigate={handleNavigate} />}
+        {currentPage === 'illucine-prism' && <PrismProductPage onNavigate={handleNavigate} />}
+        {currentPage === 'netwave-nodes' && <NodeSProductPage onNavigate={handleNavigate} />}
+        {currentPage === 'zenith-corea' && <CoreAProductPage onNavigate={handleNavigate} />}
 
         {/* Support Hubs */}
         {currentPage === 'developers' && <DeveloperPortal onNavigate={handleNavigate} />}

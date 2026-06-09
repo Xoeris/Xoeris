@@ -6,7 +6,7 @@ export default function AetherisPage({ onNavigate }) {
   const products = [
     { id: 1, name: "XESC", route: "aetheris-xesc", pngIcon: "/xesc_icon.png", desc: "Xoeris Enhanced System Computing. A neural processing framework for autonomous intelligence." },
     { id: 2, name: "Drivon", route: "aetheris-drivon", icon: Cloud, desc: "Distributed storage and cloud synchronization systems with zero-latency retrieval." },
-    { id: 3, name: "Aether OS", route: "aetheris", icon: Terminal, desc: "The underlying operating framework for the entire Xoeris hardware ecosystem." }
+    { id: 3, name: "Aether OS", route: "aetheris-aetheros", icon: Terminal, desc: "The underlying operating framework for the entire Xoeris hardware ecosystem." }
   ];
 
   return (
