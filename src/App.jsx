@@ -108,6 +108,13 @@ export default function App() {
   });
 
   useEffect(() => {
+    // Auto-redirect /xoeris to / when on the xoeris subdomain
+    const path = window.location.pathname.toLowerCase();
+    const hostname = window.location.hostname.toLowerCase();
+    if (hostname.includes('xoeris') && path === '/xoeris') {
+      window.history.replaceState({}, '', '/');
+    }
+
     const handlePopState = () => {
       const path = window.location.pathname.toLowerCase();
       if (path === '/developers') setCurrentPage('developers');
@@ -252,7 +259,11 @@ export default function App() {
     };
 
     const newPath = pathMap[page] || '/';
-    window.history.pushState({}, '', newPath);
+
+    // Auto-clean path for xoeris subdomain
+    const finalPath = (window.location.hostname.includes('xoeris') && newPath === '/xoeris') ? '/' : newPath;
+
+    window.history.pushState({}, '', finalPath);
     setCurrentPage(page);
     window.scrollTo(0, 0);
   };
