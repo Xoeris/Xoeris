@@ -11,7 +11,7 @@ export default function DrivonProductPage({ onNavigate }) {
   const cloudFeatures = [
     { name: "Elastic Compute", desc: "Dynamically scale Zenith GPU power to your Drivon storage for cloud-based rendering." },
     { name: "Node Federation", desc: "Decentralized architecture that automatically routes data through the fastest Netwave path." },
-    { name: "Archive Horizon", desc: "Long-term "cold" storage with sub-second wake times for massive data archives." }
+    { name: "Archive Horizon", desc: "Long-term 'cold' storage with sub-second wake times for massive data archives." }
   ];
 
   const stats = [
