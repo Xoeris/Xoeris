@@ -183,7 +183,43 @@ export default function App() {
       subscriptions: 'Subscription | Xoeris',
       'digital-artifacts': 'Digital Artifacts | Acelbyte'
     };
+
+    const icons = {
+      acelbyte: '/acelbyte-logo.png',
+      looma: '/looma-studio-logo.png',
+      xoeris: '/xoeris-logo.png',
+      developers: '/xoeris-logo.png',
+      netwave: '/xoeris-logo.png',
+      'netwave-nodes': '/xoeris-logo.png',
+      ariasphere: '/xoeris-logo.png',
+      'ariasphere-vocalis': '/xoeris-logo.png',
+      illucine: '/xoeris_illucine_logo_icon_2026.png',
+      'illucine-prism': '/xoeris_illucine_logo_icon_2026.png',
+      elarion: '/xoeris_elarion_logo_colored.png',
+      'elarion-horizone': '/xoeris_voltrix_horizone_logo_icon_colored.png',
+      'elarion-acton': '/xoeris_elarion_logo_colored.png',
+      'elarion-amberlord': '/xoeris_elarion_logo_colored.png',
+      aetheris: '/xoeris_aetherislogo.png',
+      'aetheris-xesc': '/xesc_icon.png',
+      'aetheris-drivon': '/xoeris_aetherislogo.png',
+      'aetheris-aetheros': '/xoeris_aetherislogo.png',
+      voltrix: '/xoeris_voltrix_logo_icon_2026.png',
+      samudra: '/xoeris_voltrix_logo_icon_2026.png',
+      'samudra-showcase': '/xoeris_voltrix_logo_icon_2026.png',
+      zenith: '/xoeris-logo.png',
+      'zenith-corea': '/xoeris-logo.png',
+      subscriptions: '/xoeris-logo.png',
+      'digital-artifacts': '/acelbyte-logo.png',
+      tartaruga: '/tartaruga-logo.png'
+    };
+
     document.title = titles[currentPage] || 'Xoeris';
+
+    // Update Favicon
+    const link = document.querySelector("link[rel~='icon']");
+    if (link) {
+      link.href = icons[currentPage] || '/acelbyte-logo.png';
+    }
   }, [currentPage]);
 
   const handleNavigate = (page) => {
