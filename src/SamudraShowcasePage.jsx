@@ -22,7 +22,9 @@ export default function SamudraShowcasePage({ onNavigate }) {
     "/samudra/Xoeris SAMUDRA Device Brand Camera 1091 - 1160.mp4",
     "/samudra/Xoeris SAMUDRA Device Brand Camera 1161 - 1221.mp4",
     "/samudra/Xoeris SAMUDRA Device Brand Camera 1222-1440.mp4"
-  ];
+  ].map(path => encodeURI(path));
+
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -32,19 +34,34 @@ export default function SamudraShowcasePage({ onNavigate }) {
 
   useEffect(() => {
     if (videoRef.current) {
+      setIsLoading(true);
       videoRef.current.load();
       const playPromise = videoRef.current.play();
       if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.log("Auto-play blocked or failed:", error);
-          setIsPlaying(false);
-        });
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+            setIsLoading(false);
+          })
+          .catch(error => {
+            console.log("Auto-play blocked or failed:", error);
+            setIsPlaying(false);
+            setIsLoading(false);
+          });
       }
     }
   }, [currentVideoIndex]);
 
   const handleVideoEnded = () => {
     setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videoFiles.length);
+  };
+
+  const handleVideoError = (e) => {
+    console.error("Video error details:", e.target.error);
+    // If a specific segment fails, try to skip to the next one after a delay
+    setTimeout(() => {
+      handleVideoEnded();
+    }, 2000);
   };
 
   const togglePlay = () => {
@@ -104,14 +121,24 @@ export default function SamudraShowcasePage({ onNavigate }) {
             playsInline
             preload="auto"
             onEnded={handleVideoEnded}
+            onError={handleVideoError}
+            onWaiting={() => setIsLoading(true)}
+            onPlaying={() => setIsLoading(false)}
             className="w-full h-full object-cover cursor-pointer"
             onClick={togglePlay}
           >
             <source src={videoFiles[currentVideoIndex]} type="video/mp4" />
           </video>
 
+          {/* Loading Spinner */}
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-20">
+              <div className="w-12 h-12 border-4 border-[#705EBC]/30 border-t-[#705EBC] rounded-full animate-spin"></div>
+            </div>
+          )}
+
           {/* Big Play Button for failed autoplay/manual pause */}
-          {!isPlaying && (
+          {!isPlaying && !isLoading && (
             <div
               className="absolute inset-0 flex items-center justify-center bg-black/20 cursor-pointer z-10"
               onClick={togglePlay}
