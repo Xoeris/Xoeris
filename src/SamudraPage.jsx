@@ -301,6 +301,9 @@ export default function SamudraPage({ onNavigate }) {
           </div>
         </div>
         <div className="flex gap-2">
+          <button onClick={() => onNavigate('samudra-showcase')} className="p-2 text-gray-400 active:scale-90 transition-transform">
+            <Maximize2 size={20} className="text-[#705EBC]" />
+          </button>
           <button className="p-2 text-gray-400 active:scale-90 transition-transform">
             <Bell size={20} />
           </button>

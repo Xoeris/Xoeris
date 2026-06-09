@@ -7,6 +7,9 @@ import SamudraPage from './SamudraPage';
 import TartarugaPage from './TartarugaPage';
 import SubscriptionsPage from './SubscriptionsPage';
 
+// SAMUDRA Pages
+import SamudraShowcasePage from './SamudraShowcasePage';
+
 // Family Pages
 import NetwavePage from './NetwavePage';
 import AriaspherePage from './AriaspherePage';
@@ -72,6 +75,7 @@ export default function App() {
         return 'aetheris';
       }
       if (path.startsWith('/voltrix')) {
+        if (path.includes('/samudra/showcase')) return 'samudra-showcase';
         if (path.includes('/samudra')) return 'samudra';
         return 'voltrix';
       }
@@ -102,7 +106,8 @@ export default function App() {
         else setCurrentPage('aetheris');
       }
       else if (path.startsWith('/voltrix')) {
-        if (path.includes('/samudra')) setCurrentPage('samudra');
+        if (path.includes('/samudra/showcase')) setCurrentPage('samudra-showcase');
+        else if (path.includes('/samudra')) setCurrentPage('samudra');
         else setCurrentPage('voltrix');
       }
       else if (path.startsWith('/zenith')) setCurrentPage('zenith');
@@ -135,6 +140,7 @@ export default function App() {
       'aetheris-drivon': 'Xoeris Drivon',
       voltrix: 'Xoeris Voltrix',
       samudra: 'SAMUDRA | Xoeris',
+      'samudra-showcase': 'SAMUDRA Showcase',
       zenith: 'Xoeris Zenith',
       subscriptions: 'Subscription | Xoeris',
       'digital-artifacts': 'Digital Artifacts | Acelbyte'
@@ -159,7 +165,8 @@ export default function App() {
       'aetheris-xesc': '/aetheris/xesc',
       'aetheris-drivon': '/aetheris/drivon',
       voltrix: '/voltrix',
-      samudra: '/voltrix/samudra',
+      samudra: '/voltrix/samudra/app',
+      'samudra-showcase': '/voltrix/samudra/showcase',
       zenith: '/zenith',
       subscriptions: '/subscription',
       'digital-artifacts': '/digital-artifacts'
@@ -173,7 +180,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen font-sans relative z-0 overflow-x-hidden bg-black text-white">
-      {!['acelbyte', 'digital-artifacts', 'subscriptions'].includes(currentPage) && (
+      {!['acelbyte', 'digital-artifacts', 'subscriptions', 'samudra-showcase'].includes(currentPage) && (
         <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden opacity-40">
           <div className="blob blob-1" style={{ backgroundColor: colors.yellow }}></div>
           <div className="blob blob-2" style={{ backgroundColor: colors.coral }}></div>
@@ -187,6 +194,7 @@ export default function App() {
         {currentPage === 'looma' && <LoomaPage onNavigate={handleNavigate} />}
         {currentPage === 'xoeris' && <XoerisPage onNavigate={handleNavigate} />}
         {currentPage === 'samudra' && <SamudraPage onNavigate={handleNavigate} />}
+        {currentPage === 'samudra-showcase' && <SamudraShowcasePage onNavigate={handleNavigate} />}
         {currentPage === 'tartaruga' && <TartarugaPage onNavigate={handleNavigate} />}
         {currentPage === 'subscriptions' && <SubscriptionsPage onNavigate={handleNavigate} />}
         {currentPage === 'digital-artifacts' && <DigitalArtifactsPage onNavigate={handleNavigate} />}
