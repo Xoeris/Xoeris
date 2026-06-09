@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import {
   Menu, X, ChevronRight, ArrowRight, Smartphone,
-  Globe, Music, Cpu, Zap, Shield, Layers, Film, Joystick, Cloud
+  Globe, Music, Cpu, Zap, Shield, Layers, Film, Joystick, Cloud,
+  Database, Activity, TrendingUp
 } from 'lucide-react';
 import FadeIn from './components/FadeIn';
 

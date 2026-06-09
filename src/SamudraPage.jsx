@@ -4,7 +4,7 @@ import {
   Weight, Activity, CheckCircle, Smartphone,
   ArrowLeft, Bell, Settings, Info, Navigation2,
   Wind, Droplets, Zap, ChevronRight,
-  Plus, Minus, Power
+  Plus, Minus, Power, Maximize2
 } from 'lucide-react';
 
 export default function SamudraPage({ onNavigate }) {
