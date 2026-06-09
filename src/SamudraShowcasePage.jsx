@@ -81,9 +81,8 @@ export default function SamudraShowcasePage({ onNavigate }) {
           {isMobile ? 'Back to App' : 'Back to Voltrix'}
         </button>
         <div className="flex flex-col items-end text-right">
-           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#705EBC]">Voltrix R&D Showcase</span>
-           <span className="text-xl font-black tracking-tighter uppercase text-white">SAMUDRA Visuals</span>
-           <span className="text-[10px] text-gray-500 font-mono mt-1">CAMERA_STREAM_{currentVideoIndex + 1}</span>
+           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#705EBC]">Xoeris Voltrix</span>
+           <span className="text-xl font-black tracking-tighter uppercase text-white">SAMUDRA Showcase</span>
         </div>
       </header>
 
