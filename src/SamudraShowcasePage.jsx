@@ -3,28 +3,13 @@ import { ArrowLeft, Play, Pause, Volume2, VolumeX, Maximize } from 'lucide-react
 
 export default function SamudraShowcasePage({ onNavigate }) {
   const videoRef = useRef(null);
-  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-
-  const videoFiles = [
-    "/samudra/Xoeris SAMUDRA Device Brand Camera 0-120.mp4",
-    "/samudra/Xoeris SAMUDRA Device Brand Camera 121-240.mp4",
-    "/samudra/Xoeris SAMUDRA Device Brand Camera 241 - 322.mp4",
-    "/samudra/Xoeris SAMUDRA Device Brand Camera 323-391.mp4",
-    "/samudra/Xoeris SAMUDRA Device Brand Camera 465 - 575.mp4",
-    "/samudra/Xoeris SAMUDRA Device Brand Camera 576 - 642.mp4",
-    "/samudra/Xoeris SAMUDRA Device Brand Camera 643 - 840.mp4",
-    "/samudra/Xoeris SAMUDRA Device Brand Camera 841 - 885.mp4",
-    "/samudra/Xoeris SAMUDRA Device Brand Camera 886-980.mp4",
-    "/samudra/Xoeris SAMUDRA Device Brand Camera 981 - 1090.mp4",
-    "/samudra/Xoeris SAMUDRA Device Brand Camera 1091 - 1160.mp4",
-    "/samudra/Xoeris SAMUDRA Device Brand Camera 1161 - 1221.mp4",
-    "/samudra/Xoeris SAMUDRA Device Brand Camera 1222-1440.mp4"
-  ].map(path => encodeURI(path));
-
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const videoSrc = "/samudra_showcase.mp4";
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -34,6 +19,7 @@ export default function SamudraShowcasePage({ onNavigate }) {
 
   useEffect(() => {
     if (videoRef.current) {
+      setError(null);
       setIsLoading(true);
       videoRef.current.load();
       const playPromise = videoRef.current.play();
@@ -43,25 +29,27 @@ export default function SamudraShowcasePage({ onNavigate }) {
             setIsPlaying(true);
             setIsLoading(false);
           })
-          .catch(error => {
-            console.log("Auto-play blocked or failed:", error);
+          .catch(err => {
+            console.log("Auto-play blocked or failed:", err);
             setIsPlaying(false);
             setIsLoading(false);
           });
       }
     }
-  }, [currentVideoIndex]);
-
-  const handleVideoEnded = () => {
-    setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videoFiles.length);
-  };
+  }, []);
 
   const handleVideoError = (e) => {
-    console.error("Video error details:", e.target.error);
-    // If a specific segment fails, try to skip to the next one after a delay
-    setTimeout(() => {
-      handleVideoEnded();
-    }, 2000);
+    const videoError = e.target.error;
+    let message = "Video failed to load";
+    if (videoError) {
+      if (videoError.code === 1) message = "Aborted by user";
+      else if (videoError.code === 2) message = "Network error";
+      else if (videoError.code === 3) message = "Video corrupted or unsupported format";
+      else if (videoError.code === 4) message = "Video file not found on server";
+    }
+    console.error("Video error:", message, videoError);
+    setError(message);
+    setIsLoading(false);
   };
 
   const togglePlay = () => {
@@ -114,26 +102,42 @@ export default function SamudraShowcasePage({ onNavigate }) {
       <div className="relative flex-1 flex items-center justify-center p-4 md:p-20">
         <div className="relative w-full max-w-6xl aspect-video rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_0_80px_rgba(112,94,188,0.2)] bg-black">
           <video
-            key={videoFiles[currentVideoIndex]}
             ref={videoRef}
+            src={videoSrc}
             autoPlay
             muted
+            loop
             playsInline
             preload="auto"
-            onEnded={handleVideoEnded}
             onError={handleVideoError}
             onWaiting={() => setIsLoading(true)}
             onPlaying={() => setIsLoading(false)}
+            onCanPlay={() => setIsLoading(false)}
             className="w-full h-full object-cover cursor-pointer"
             onClick={togglePlay}
-          >
-            <source src={videoFiles[currentVideoIndex]} type="video/mp4" />
-          </video>
+          />
 
           {/* Loading Spinner */}
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-20">
               <div className="w-12 h-12 border-4 border-[#705EBC]/30 border-t-[#705EBC] rounded-full animate-spin"></div>
+            </div>
+          )}
+
+          {/* Error Message */}
+          {error && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 z-30 p-6 text-center">
+              <div className="text-[#705EBC] mb-4">
+                <VolumeX size={48} />
+              </div>
+              <p className="text-white font-bold text-lg mb-2">{error}</p>
+              <p className="text-gray-400 text-sm mb-6">Please check your connection or file path.</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-6 py-2 bg-[#705EBC] text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-[#826fd1] transition-all"
+              >
+                Reload Page
+              </button>
             </div>
           )}
 
@@ -160,12 +164,6 @@ export default function SamudraShowcasePage({ onNavigate }) {
                 </button>
              </div>
              <div className="flex items-center gap-4">
-                <div className="hidden md:block h-1 w-32 bg-white/10 rounded-full overflow-hidden">
-                   <div
-                      className="h-full bg-[#705EBC] transition-all duration-300"
-                      style={{ width: `${((currentVideoIndex + 1) / videoFiles.length) * 100}%` }}
-                   ></div>
-                </div>
                 <button onClick={handleFullscreen} className="text-white hover:text-[#705EBC] transition-colors bg-transparent border-none outline-none cursor-pointer">
                   <Maximize size={24} />
                 </button>
@@ -179,7 +177,7 @@ export default function SamudraShowcasePage({ onNavigate }) {
          <div className="flex items-center gap-4 text-gray-500 font-medium text-[10px] uppercase tracking-[0.3em]">
             <span>System Terminal</span>
             <div className="w-1 h-1 rounded-full bg-[#705EBC] animate-pulse"></div>
-            <span>Visual Node SYNC: {Math.round(((currentVideoIndex + 1) / videoFiles.length) * 100)}%</span>
+            <span>Visual Node SYNC: 100%</span>
          </div>
       </footer>
     </div>
