@@ -31,10 +31,17 @@ export default function SamudraShowcasePage({ onNavigate }) {
   }, []);
 
   useEffect(() => {
-    if (videoRef.current && isPlaying) {
-      videoRef.current.play().catch(error => console.log("Auto-play failed:", error));
+    if (videoRef.current) {
+      videoRef.current.load();
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.log("Auto-play blocked or failed:", error);
+          setIsPlaying(false);
+        });
+      }
     }
-  }, [currentVideoIndex, isPlaying]);
+  }, [currentVideoIndex]);
 
   const handleVideoEnded = () => {
     setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videoFiles.length);
@@ -90,8 +97,8 @@ export default function SamudraShowcasePage({ onNavigate }) {
       <div className="relative flex-1 flex items-center justify-center p-4 md:p-20">
         <div className="relative w-full max-w-6xl aspect-video rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_0_80px_rgba(112,94,188,0.2)] bg-black">
           <video
+            key={videoFiles[currentVideoIndex]}
             ref={videoRef}
-            src={videoFiles[currentVideoIndex]}
             autoPlay
             muted
             playsInline
@@ -99,7 +106,21 @@ export default function SamudraShowcasePage({ onNavigate }) {
             onEnded={handleVideoEnded}
             className="w-full h-full object-cover cursor-pointer"
             onClick={togglePlay}
-          />
+          >
+            <source src={videoFiles[currentVideoIndex]} type="video/mp4" />
+          </video>
+
+          {/* Big Play Button for failed autoplay/manual pause */}
+          {!isPlaying && (
+            <div
+              className="absolute inset-0 flex items-center justify-center bg-black/20 cursor-pointer z-10"
+              onClick={togglePlay}
+            >
+              <div className="w-20 h-20 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white transition-transform hover:scale-110">
+                <Play size={40} fill="currentColor" className="ml-1" />
+              </div>
+            </div>
+          )}
 
           {/* Overlay Controls */}
           <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 bg-gradient-to-t from-black/80 to-transparent flex justify-between items-center opacity-0 hover:opacity-100 transition-opacity duration-300">
