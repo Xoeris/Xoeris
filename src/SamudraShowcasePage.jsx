@@ -3,9 +3,26 @@ import { ArrowLeft, Play, Pause, Volume2, VolumeX, Maximize } from 'lucide-react
 
 export default function SamudraShowcasePage({ onNavigate }) {
   const videoRef = useRef(null);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  const videoFiles = [
+    "/samudra/Xoeris SAMUDRA Device Brand Camera 0-120.mp4",
+    "/samudra/Xoeris SAMUDRA Device Brand Camera 121-240.mp4",
+    "/samudra/Xoeris SAMUDRA Device Brand Camera 241 - 322.mp4",
+    "/samudra/Xoeris SAMUDRA Device Brand Camera 323-391.mp4",
+    "/samudra/Xoeris SAMUDRA Device Brand Camera 465 - 575.mp4",
+    "/samudra/Xoeris SAMUDRA Device Brand Camera 576 - 642.mp4",
+    "/samudra/Xoeris SAMUDRA Device Brand Camera 643 - 840.mp4",
+    "/samudra/Xoeris SAMUDRA Device Brand Camera 841 - 885.mp4",
+    "/samudra/Xoeris SAMUDRA Device Brand Camera 886-980.mp4",
+    "/samudra/Xoeris SAMUDRA Device Brand Camera 981 - 1090.mp4",
+    "/samudra/Xoeris SAMUDRA Device Brand Camera 1091 - 1160.mp4",
+    "/samudra/Xoeris SAMUDRA Device Brand Camera 1161 - 1221.mp4",
+    "/samudra/Xoeris SAMUDRA Device Brand Camera 1222-1440.mp4"
+  ];
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -13,10 +30,23 @@ export default function SamudraShowcasePage({ onNavigate }) {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  useEffect(() => {
+    if (videoRef.current && isPlaying) {
+      videoRef.current.play().catch(error => console.log("Auto-play failed:", error));
+    }
+  }, [currentVideoIndex, isPlaying]);
+
+  const handleVideoEnded = () => {
+    setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % videoFiles.length);
+  };
+
   const togglePlay = () => {
     if (videoRef.current) {
-      if (isPlaying) videoRef.current.pause();
-      else videoRef.current.play();
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
       setIsPlaying(!isPlaying);
     }
   };
@@ -50,9 +80,10 @@ export default function SamudraShowcasePage({ onNavigate }) {
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
           {isMobile ? 'Back to App' : 'Back to Voltrix'}
         </button>
-        <div className="flex flex-col items-end">
+        <div className="flex flex-col items-end text-right">
            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#705EBC]">Voltrix R&D Showcase</span>
            <span className="text-xl font-black tracking-tighter uppercase text-white">SAMUDRA Visuals</span>
+           <span className="text-[10px] text-gray-500 font-mono mt-1">CAMERA_STREAM_{currentVideoIndex + 1}</span>
         </div>
       </header>
 
@@ -61,10 +92,10 @@ export default function SamudraShowcasePage({ onNavigate }) {
         <div className="relative w-full max-w-6xl aspect-video rounded-[2.5rem] overflow-hidden border border-white/10 shadow-[0_0_80px_rgba(112,94,188,0.2)] bg-black">
           <video
             ref={videoRef}
-            src="/samudra_showcase.mp4"
+            src={videoFiles[currentVideoIndex]}
             autoPlay
-            loop
             playsInline
+            onEnded={handleVideoEnded}
             className="w-full h-full object-cover cursor-pointer"
             onClick={togglePlay}
           />
@@ -72,16 +103,24 @@ export default function SamudraShowcasePage({ onNavigate }) {
           {/* Overlay Controls */}
           <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 bg-gradient-to-t from-black/80 to-transparent flex justify-between items-center opacity-0 hover:opacity-100 transition-opacity duration-300">
              <div className="flex gap-6 items-center">
-                <button onClick={togglePlay} className="text-white hover:text-[#705EBC] transition-colors bg-transparent border-none">
+                <button onClick={togglePlay} className="text-white hover:text-[#705EBC] transition-colors bg-transparent border-none outline-none cursor-pointer">
                   {isPlaying ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" />}
                 </button>
-                <button onClick={toggleMute} className="text-white hover:text-[#705EBC] transition-colors bg-transparent border-none">
+                <button onClick={toggleMute} className="text-white hover:text-[#705EBC] transition-colors bg-transparent border-none outline-none cursor-pointer">
                   {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
                 </button>
              </div>
-             <button onClick={handleFullscreen} className="text-white hover:text-[#705EBC] transition-colors bg-transparent border-none">
-                <Maximize size={24} />
-             </button>
+             <div className="flex items-center gap-4">
+                <div className="hidden md:block h-1 w-32 bg-white/10 rounded-full overflow-hidden">
+                   <div
+                      className="h-full bg-[#705EBC] transition-all duration-300"
+                      style={{ width: `${((currentVideoIndex + 1) / videoFiles.length) * 100}%` }}
+                   ></div>
+                </div>
+                <button onClick={handleFullscreen} className="text-white hover:text-[#705EBC] transition-colors bg-transparent border-none outline-none cursor-pointer">
+                  <Maximize size={24} />
+                </button>
+             </div>
           </div>
         </div>
       </div>
@@ -91,7 +130,7 @@ export default function SamudraShowcasePage({ onNavigate }) {
          <div className="flex items-center gap-4 text-gray-500 font-medium text-[10px] uppercase tracking-[0.3em]">
             <span>System Terminal</span>
             <div className="w-1 h-1 rounded-full bg-[#705EBC] animate-pulse"></div>
-            <span>v2.0 Visual Node</span>
+            <span>Visual Node SYNC: {Math.round(((currentVideoIndex + 1) / videoFiles.length) * 100)}%</span>
          </div>
       </footer>
     </div>
