@@ -63,11 +63,11 @@ export default function App() {
     <BrowserRouter basename="/gbijeltim">
       <AuthProvider>
         <Routes>
-          {/* Public Routes - Now Protected */}
-          <Route path="/jemaat" element={<ProtectedRoute><JemaatPage /></ProtectedRoute>} />
-          <Route path="/tentang" element={<ProtectedRoute><TentangPage /></ProtectedRoute>} />
-          <Route path="/galeri" element={<ProtectedRoute><GaleriPage /></ProtectedRoute>} />
-          <Route path="/lokasi" element={<ProtectedRoute><LokasiPage /></ProtectedRoute>} />
+          {/* Public Routes */}
+          <Route path="/jemaat" element={<JemaatPage />} />
+          <Route path="/tentang" element={<TentangPage />} />
+          <Route path="/galeri" element={<GaleriPage />} />
+          <Route path="/lokasi" element={<LokasiPage />} />
 
           {/* Admin Routes */}
           <Route path="/admin" element={<AdminRoute />} />
