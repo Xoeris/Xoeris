@@ -24,6 +24,9 @@ interface User {
     editInventaris?: boolean;
     viewReports?: boolean;
     viewPengumuman?: boolean;
+    editPengumuman?: boolean;
+    viewGallery?: boolean;
+    editGallery?: boolean;
   };
   createdAt: string;
   updatedAt: string;

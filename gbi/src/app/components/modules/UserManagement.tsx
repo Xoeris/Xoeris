@@ -28,6 +28,10 @@ interface User {
     viewInventaris: boolean;
     editInventaris: boolean;
     viewReports: boolean;
+    viewPengumuman: boolean;
+    editPengumuman: boolean;
+    viewGallery: boolean;
+    editGallery: boolean;
   };
   createdAt: string;
   updatedAt: string;
@@ -63,7 +67,11 @@ export default function UserManagement() {
     editKeuangan: false,
     viewInventaris: false,
     editInventaris: false,
-    viewReports: false
+    viewReports: false,
+    viewPengumuman: false,
+    editPengumuman: false,
+    viewGallery: false,
+    editGallery: false
   });
 
   useEffect(() => {
@@ -583,6 +591,42 @@ export default function UserManagement() {
                 />
               }
               label="View Reports"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={permissions.viewPengumuman}
+                  onChange={(e) => setPermissions({ ...permissions, viewPengumuman: e.target.checked })}
+                />
+              }
+              label="View Pengumuman"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={permissions.editPengumuman}
+                  onChange={(e) => setPermissions({ ...permissions, editPengumuman: e.target.checked })}
+                />
+              }
+              label="Edit Pengumuman"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={permissions.viewGallery}
+                  onChange={(e) => setPermissions({ ...permissions, viewGallery: e.target.checked })}
+                />
+              }
+              label="View Gallery"
+            />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={permissions.editGallery}
+                  onChange={(e) => setPermissions({ ...permissions, editGallery: e.target.checked })}
+                />
+              }
+              label="Edit Gallery"
             />
           </div>
         </DialogContent>
