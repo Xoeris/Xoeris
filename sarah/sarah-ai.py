@@ -158,12 +158,10 @@ def handle_xoeris_hijack(message):
             print(f"Failed to send line: {e}")
 
 
-# Fix: Using custom lambda function to ignore @botusername in group chats
 @bot.message_handler(func=lambda message: message.text and message.text.split()[0].split('@')[0] == '/xesc' and len(message.text.split()) > 1 and message.text.split()[1] == 'notes')
 def send_notes(message):
-    # Custom notes for Acelbyte Discussion
     notes_content = (
-        "📝 *List of files in Acelbyte Discussion:*\n\n"
+        "📝 *List of files in this chat:*\n\n"
         "Click a button below to download the file directly!"
     )
     
