@@ -159,7 +159,7 @@ def handle_xoeris_hijack(message):
 
 
 # Fix: Using custom lambda function to ignore @botusername in group chats
-@bot.message_handler(func=lambda message: message.text and message.text.split()[0].split('@')[0] == '/notes')
+@bot.message_handler(func=lambda message: message.text and message.text.split()[0].split('@')[0] == '/xesc' and len(message.text.split()) > 1 and message.text.split()[1] == 'notes')
 def send_notes(message):
     # Custom notes for Acelbyte Discussion
     notes_content = (
