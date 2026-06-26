@@ -33,7 +33,7 @@ def set_owner_status(is_off):
     # Store in Telegram pinned message
     try:
         status_text = "status: off" if is_off else "status: on"
-        msg = bot.send_message(OWNER_ID, f"🔧 System State: {status_text}")
+        msg = bot.send_message(OWNER_ID, f"System State: {status_text}")
         bot.pin_chat_message(OWNER_ID, msg.message_id, disable_notification=True)
     except Exception as e:
         print(f"Failed to pin status in Telegram: {e}")
@@ -65,7 +65,7 @@ app = Flask(__name__)
 # Fix: Using custom lambda function to ignore @botusername in group chats
 @bot.message_handler(func=lambda message: message.text and message.text.split()[0].split('@')[0] in ['/start', '/help'])
 def send_welcome(message):
-    bot.reply_to(message, "Hello! 🚀 I am an always-active bot hosted on Vercel.")
+    bot.reply_to(message, "Hello. I am currently online and ready to assist.")
 
 # Handler to toggle owner status (Only owner can use this)
 @bot.message_handler(func=lambda message: message.text and message.text.split()[0].split('@')[0] in ['/off', '/on'])
@@ -76,10 +76,10 @@ def toggle_status(message):
     command = message.text.split()[0].split('@')[0]
     if command == '/off':
         set_owner_status(True)
-        bot.reply_to(message, "📴 Status updated: You are now OFFLINE. Auto-reply is enabled.")
+        bot.reply_to(message, "Status updated: You are now offline. Auto-reply is active.")
     else:
         set_owner_status(False)
-        bot.reply_to(message, "🔛 Status updated: You are now ONLINE. Auto-reply is disabled.")
+        bot.reply_to(message, "Status updated: You are now online. Auto-reply is disabled.")
 
 # Handler to receive Telegram verification code for the Userbot
 @bot.message_handler(func=lambda message: message.text and message.text.lower().startswith('code:') and is_owner(message.from_user.id))
@@ -88,11 +88,11 @@ def handle_code_input(message):
     if code.isdigit() and len(code) == 5:
         try:
             requests.post("https://kvdb.io/MKr1Xpux1H8zR3Wf1c9v/code", data=code)
-            bot.reply_to(message, f"✅ Code {code} received and stored!")
+            bot.reply_to(message, f"Code {code} has been successfully received and securely stored.")
         except Exception as e:
-            bot.reply_to(message, f"❌ Failed to store code: {e}")
+            bot.reply_to(message, f"Failed to store code: {e}")
     else:
-        bot.reply_to(message, "⚠️ Invalid format. Please send in format: `code: 12345` (exactly 5 digits).")
+        bot.reply_to(message, "Invalid format. Please provide the code in the exact format: `code: 12345` (5 digits).")
 
 
 # Auto-reply to private messages when owner is offline
@@ -109,24 +109,24 @@ def auto_reply_offline(message):
     
     bot.reply_to(
         message,
-        "🤖 *SARAH Auto-Reply:*\n\n"
-        "I am currently offline or away. I'll get back to you as soon as I'm back!",
+        "*SARAH Auto-Reply:*\n\n"
+        "I am currently away. I will respond to your message as soon as I return.",
         parse_mode="Markdown"
     )
 
 
-# Handler for XoerisHijack simulation command
+# Handler for hijack simulation command
 @bot.message_handler(func=lambda message: message.text and (
-    message.text.strip() == './telegram sudo ./python XoerisHijack.py' or
-    message.text.strip() == './telegram sudo \\./python XoerisHijack.py'
+    message.text.strip() == './xesc hijack' or
+    message.text.strip() == './xesc \\./python hijack.py'
 ))
 @bot.channel_post_handler(func=lambda message: message.text and (
-    message.text.strip() == './telegram sudo ./python XoerisHijack.py' or
-    message.text.strip() == './telegram sudo \\./python XoerisHijack.py'
+    message.text.strip() == './xesc hijack' or
+    message.text.strip() == './xesc \\./python hijack.py'
 ))
 def handle_xoeris_hijack(message):
     lines = [
-        "$ ./telegram sudo ./python XoerisHijack.py",
+        "$ ./xesc hijack",
         "[Xoeris Framework v9.6.1]",
         "Initializing Remote Session...",
         "Bypassing Security Layer........ OK",
@@ -157,12 +157,70 @@ def handle_xoeris_hijack(message):
         except Exception as e:
             print(f"Failed to send line: {e}")
 
+# Handler for mute specific user command
+@bot.message_handler(func=lambda message: message.text and (
+    message.text.strip() == './xesc mute user' or
+    message.text.strip() == './xesc \./python mute user.py'
+))
+@bot.channel_post_handler(func=lambda message: message.text and (
+    message.text.strip() == './xesc mute user' or
+    message.text.strip() == './xesc \./python mute user.py'
+))
+def handle_mute_user(message):
+    # Verify owner authority before proceeding
+    if not is_owner(message.from_user.id):
+        return
+
+    # Ensure the command is executed as a reply to the target user
+    if not message.reply_to_message:
+        bot.reply_to(message, "Execution Error: You must reply to the specific user you wish to mute.")
+        return
+
+    target_user = message.reply_to_message.from_user
+
+    # Terminal-style output simulation
+    lines = [
+        "$ ./xesc mute user",
+        "[Xoeris Admin Module v1.2]",
+        f"Target Acquired: {target_user.first_name} (ID: {target_user.id})",
+        "Applying gag order protocol......... OK",
+        "Revoking transmission rights........ OK",
+        "Operation Complete. Target is now muted."
+    ]
+    
+    for line in lines:
+        try:
+            bot.send_message(message.chat.id, line)
+        except Exception as e:
+            print(f"Failed to send terminal line: {e}")
+
+    # Execute the actual Telegram restriction
+    try:
+        bot.restrict_chat_member(
+            message.chat.id,
+            target_user.id,
+            permissions=ChatPermissions(
+                can_send_messages=False,
+                can_send_audios=False,
+                can_send_documents=False,
+                can_send_photos=False,
+                can_send_videos=False,
+                can_send_video_notes=False,
+                can_send_voice_notes=False,
+                can_send_polls=False,
+                can_send_other_messages=False,
+                can_add_web_page_previews=False
+            )
+        )
+    except Exception as e:
+        bot.send_message(message.chat.id, f"System Failure: Unable to apply restrictions. Ensure I possess administrator privileges. Details: {e}")
+
 
 @bot.message_handler(func=lambda message: message.text and message.text.split()[0].split('@')[0] == '/xesc' and len(message.text.split()) > 1 and message.text.split()[1] == 'notes')
 def send_notes(message):
     notes_content = (
-        "📝 *List of files in this chat:*\n\n"
-        "Click a button below to download the file directly!"
+        "*Available Files:*\n\n"
+        "Select a file below to initiate the download."
     )
     
     # Create Inline Keyboard Buttons to avoid the @username text issue
@@ -220,7 +278,7 @@ def send_requested_file(message):
     
     if command in FILES_MAP:
         file_path = FILES_MAP[command]
-        status_msg = bot.reply_to(message, f"⏳ Uploading {command} from local storage...")
+        status_msg = bot.reply_to(message, f"Retrieving {command} from local storage...")
         
         try:
             # Build the absolute path to the file
@@ -237,15 +295,15 @@ def send_requested_file(message):
                     reply_to_message_id=message.message_id
                 )
             
-            # Clean up by deleting the "Uploading..." loading message
+            # Clean up by deleting the "Retrieving..." loading message
             bot.delete_message(message.chat.id, status_msg.message_id)
             
         except FileNotFoundError:
-            bot.edit_message_text(f"❌ File not found! Make sure you uploaded '{file_path}' to your GitHub repository.", 
+            bot.edit_message_text(f"File not found. Please ensure '{file_path}' is present in the repository.", 
                                   chat_id=message.chat.id, 
                                   message_id=status_msg.message_id)
         except Exception as e:
-            bot.edit_message_text(f"❌ Failed to send file. Error: {e}", 
+            bot.edit_message_text(f"Failed to transmit file. Error: {e}", 
                                   chat_id=message.chat.id, 
                                   message_id=status_msg.message_id)
 
@@ -258,7 +316,7 @@ def handle_file_callback(call):
     # Give a quick 'loading' toast at the top of the user's screen
     bot.answer_callback_query(call.id, f"Fetching {command}...")
     
-    status_msg = bot.send_message(call.message.chat.id, f"⏳ Uploading {command} from local storage...")
+    status_msg = bot.send_message(call.message.chat.id, f"Retrieving {command} from local storage...")
     
     try:
         current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -273,11 +331,11 @@ def handle_file_callback(call):
         bot.delete_message(call.message.chat.id, status_msg.message_id)
         
     except FileNotFoundError:
-        bot.edit_message_text(f"❌ File not found! '{file_path}' is missing.", 
+        bot.edit_message_text(f"File not found. '{file_path}' is missing.", 
                               chat_id=call.message.chat.id, 
                               message_id=status_msg.message_id)
     except Exception as e:
-        bot.edit_message_text(f"❌ Failed to send file. Error: {e}", 
+        bot.edit_message_text(f"Failed to transmit file. Error: {e}", 
                               chat_id=call.message.chat.id, 
                               message_id=status_msg.message_id)
 
@@ -315,13 +373,13 @@ def handle_new_members(message):
             # 2. Create the inline CAPTCHA button targeted at their specific User ID
             markup = InlineKeyboardMarkup()
             callback_data = f"captcha_{new_user.id}"
-            markup.add(InlineKeyboardButton("I am human 🤖❌", callback_data=callback_data))
+            markup.add(InlineKeyboardButton("Verify Human Identity", callback_data=callback_data))
             
             # 3. Send the challenge to the chat
             welcome_text = (
-                f"Welcome to the group, [{new_user.first_name}](tg://user?id={new_user.id})! 👋\n\n"
-                f"To protect this group from bots, you have been muted. "
-                f"Please click the button below to verify you are human and unlock chat privileges."
+                f"Welcome, [{new_user.first_name}](tg://user?id={new_user.id}).\n\n"
+                f"To maintain group security, you are temporarily muted. "
+                f"Please verify your humanity using the button below to unlock chat privileges."
             )
             bot.send_message(
                 message.chat.id,
@@ -362,11 +420,11 @@ def verify_captcha(call):
             )
             
             # 2. Alert the user that verification succeeded
-            bot.answer_callback_query(call.id, "Verification successful! You can now chat.")
+            bot.answer_callback_query(call.id, "Verification successful. Your chat privileges have been restored.")
             
             # 3. Update the CAPTCHA message to show they passed
             bot.edit_message_text(
-                f"✅ [{call.from_user.first_name}](tg://user?id={call.from_user.id}) has been successfully verified!",
+                f"[{call.from_user.first_name}](tg://user?id={call.from_user.id}) has successfully verified their identity.",
                 chat_id=call.message.chat.id,
                 message_id=call.message.message_id,
                 parse_mode="Markdown"
@@ -378,7 +436,7 @@ def verify_captcha(call):
             
     else:
         # If someone else tries to click it, warn them
-        bot.answer_callback_query(call.id, "❌ This verification button is not for you!", show_alert=True)
+        bot.answer_callback_query(call.id, "This verification prompt is assigned to another user.", show_alert=True)
 
 # -------------------------------------------------------------------
 # 2. CORE WEBHOOK ROUTE (Telegram sends messages here)
@@ -427,7 +485,7 @@ def cron_job():
         return "TARGET_CHAT_ID not set in Vercel environment variables.", 400
     
     try:
-        bot.send_message(chat_id, "⏰ Automatic scheduled message from Vercel!")
+        bot.send_message(chat_id, "Automated scheduled ping executed.")
         return "Scheduled message sent!", 200
     except Exception as e:
         return f"Error sending message: {e}", 500
@@ -439,12 +497,12 @@ def cron_job():
 @app.route('/keep_alive', methods=['GET'])
 def keep_alive():
     """Ping this route quietly to prevent Vercel from sleeping (fixes delay)."""
-    return "Bot is warm and awake! 🔥", 200
+    return "System is active and responsive.", 200
 
 # Basic health check route
 @app.route('/bot_status')
 def bot_status():
-    return "Bot is running on Vercel! 🟢"
+    return "System operational on Vercel."
 
 # Required for Vercel
 if __name__ == '__main__':
