@@ -209,23 +209,9 @@ export default function XoerisPage({ onNavigate }) {
               </ul>
             </div>
             <div>
-              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white mb-8">Platform</h4>
-              <ul className="space-y-4">
-                {[
-                  { name: "XESC AI", route: "aetheris-xesc" },
-                  { name: "Drivon Cloud", route: "aetheris-drivon" },
-                  { name: "Horizone 3D", route: "elarion-horizone" },
-                  { name: "ACTON Lens", route: "elarion-acton" },
-                  { name: "Amberlord", route: "elarion-amberlord" }
-                ].map(l => (
-                  <li key={l.name}><button onClick={() => onNavigate(l.route)} className="text-sm font-medium text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0">{l.name}</button></li>
-                ))}
-              </ul>
-            </div>
-            <div>
               <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white mb-8">Developers</h4>
               <ul className="space-y-4">
-                {["API Docs", "SDK Downloads", "System Status", "Dev Forum", "Research"].map(l => (
+                {["API Docs"].map(l => (
                   <li key={l}><button onClick={() => onNavigate('developers')} className="text-sm font-medium text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0">{l}</button></li>
                 ))}
               </ul>
@@ -233,7 +219,7 @@ export default function XoerisPage({ onNavigate }) {
             <div>
               <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white mb-8">Company</h4>
               <ul className="space-y-4">
-                {["About", "Enterprise", "Careers", "Newsroom", "Legal"].map(l => (
+                {["About"].map(l => (
                   <li key={l}><button onClick={() => onNavigate('acelbyte')} className="text-sm font-medium text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0">{l}</button></li>
                 ))}
               </ul>
