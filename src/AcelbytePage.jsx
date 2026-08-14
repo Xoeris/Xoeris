@@ -588,7 +588,6 @@ export default function AcelbytePage({ onNavigate }) {
             <div>
               <h4 className="text-xs font-black text-[#FDD935] uppercase tracking-[0.2em] mb-6 drop-shadow-[0_0_5px_rgba(253,217,53,0.5)]">Ecosystem</h4>
               <ul className="space-y-4 text-gray-400 font-medium">
-                <li><a href="https://loomastudio.acelbyte.com" onClick={(e) => { e.preventDefault(); onNavigate('looma'); }} className="hover:text-white transition-colors duration-300 ease-hyper flex items-center gap-2 group"><img src="/looma-studio-logo.png" className="w-3.5 h-3.5 object-contain opacity-60 group-hover:opacity-100 transition-opacity" /> Looma Studio</a></li>
                 <li><a href="https://xoeris.acelbyte.com" onClick={(e) => { e.preventDefault(); onNavigate('xoeris'); }} className="hover:text-white transition-colors duration-300 ease-hyper flex items-center gap-2 group"><img src="/xoeris-logo.png" className="w-3.5 h-3.5 object-contain opacity-60 group-hover:opacity-100 transition-opacity" /> Xoeris Data</a></li>
                 <li><a href="https://tartaruga.acelbyte.com" onClick={(e) => { e.preventDefault(); onNavigate('tartaruga'); }} className="hover:text-white transition-colors duration-300 ease-hyper flex items-center gap-2 group"><img src="/tartaruga-logo.png" className="w-3.5 h-3.5 object-contain opacity-60 group-hover:opacity-100 transition-opacity" /> Tartaruga</a></li>
               </ul>

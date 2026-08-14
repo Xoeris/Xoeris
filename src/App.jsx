@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AcelbytePage from './AcelbytePage';
 import DigitalArtifactsPage from './DigitalArtifactsPage';
-import LoomaPage from './LoomaPage';
 import XoerisPage from './XoerisPage';
 import SamudraPage from './SamudraPage';
 import TartarugaPage from './TartarugaPage';
@@ -54,7 +53,6 @@ export default function App() {
     const hostname = window.location.hostname;
     const path = window.location.pathname.toLowerCase();
 
-    if (hostname.includes('loomastudio') || path.startsWith('/loomastudio')) return 'looma';
     if (hostname.includes('tartaruga') || path.startsWith('/tartaruga')) return 'tartaruga';
     if (path === '/digital-artifacts') return 'digital-artifacts';
     if (path === '/about/acelbyte' || path === '/acelbyte') return 'acelbyte';
@@ -123,7 +121,6 @@ export default function App() {
       else if (path.includes('/zenith/corea')) setCurrentPage('zenith-corea');
       else if (path === '/xoeris' || path === '/about') setCurrentPage('xoeris');
       else if (path === '/about/acelbyte' || path === '/acelbyte') setCurrentPage('acelbyte');
-      else if (path === '/loomastudio') setCurrentPage('looma');
       else if (path === '/tartaruga') setCurrentPage('tartaruga');
       else if (path === '/digital-artifacts') setCurrentPage('digital-artifacts');
       else if (path === '/subscription') setCurrentPage('subscriptions');
@@ -136,7 +133,6 @@ export default function App() {
   useEffect(() => {
     const titles = {
       acelbyte: 'Acelbyte',
-      looma: 'Looma Studio',
       xoeris: 'Xoeris Ecosystem',
       developers: 'Developer Portal | Xoeris',
       'netwave-nodes': 'Xoeris Node-S',
@@ -159,7 +155,6 @@ export default function App() {
 
     const icons = {
       acelbyte: '/acelbyte-logo.png',
-      looma: '/looma-studio-logo.png',
       xoeris: '/xoeris-logo.png',
       developers: '/xoeris-logo.png',
       'netwave-nodes': '/xoeris-logo.png',
@@ -194,7 +189,6 @@ export default function App() {
     const pathMap = {
       about: '/about',
       acelbyte: '/about/acelbyte',
-      looma: '/loomastudio',
       xoeris: '/',
       developers: '/developers',
       'netwave-nodes': '/netwave/nodes',
@@ -236,7 +230,6 @@ export default function App() {
 
       <div key={currentPage}>
         {currentPage === 'acelbyte' && <AcelbytePage onNavigate={handleNavigate} />}
-        {currentPage === 'looma' && <LoomaPage onNavigate={handleNavigate} />}
         {currentPage === 'xoeris' && <XoerisPage onNavigate={handleNavigate} />}
         {currentPage === 'samudra' && <SamudraPage onNavigate={handleNavigate} />}
         {currentPage === 'samudra-showcase' && <SamudraShowcasePage onNavigate={handleNavigate} />}
