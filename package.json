@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npx vite build && npm run build-gbi",
-    "build-gbi": "cd gbi && npm install && npm run build && node -e \"const fs=require('fs'); fs.cpSync('dist', '../dist/gbijeltim', {recursive:true});\"",
+    "build": "npx vite build",
     "preview": "vite preview"
   },
   "dependencies": {

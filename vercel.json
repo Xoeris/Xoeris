@@ -19,10 +19,6 @@
       "destination": "sarah/sarah-ai.py"
     },
     {
-      "source": "/gbijeltim(.*)",
-      "destination": "/gbijeltim/index.html"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
