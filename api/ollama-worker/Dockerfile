@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y python3 python3-pip curl && rm -rf /var
 
 WORKDIR /app
 
-COPY requirements.txt .
+COPY api/ollama-worker/requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt --break-system-packages
 
 # --- Bake the model into the image ---
@@ -18,8 +18,8 @@ RUN pip3 install --no-cache-dir -r requirements.txt --break-system-packages
 # model, then let the entrypoint script own it at runtime.
 RUN (ollama serve &) && sleep 5 && ollama pull qwen2.5:1.5b
 
-COPY handler.py .
-COPY start.sh .
+COPY api/ollama-worker/handler.py .
+COPY api/ollama-worker/start.sh .
 RUN chmod +x start.sh
 
 ENV OLLAMA_MODEL=qwen2.5:1.5b
