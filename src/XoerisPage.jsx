@@ -54,11 +54,10 @@ export default function XoerisPage({ onNavigate }) {
       {/* Global Navigation */}
       <nav className={`fixed w-full z-[200] transition-all duration-500 ${isScrolled ? 'py-4 shadow-2xl backdrop-blur-2xl bg-black/60 border-b border-white/5' : 'py-8 bg-transparent'}`}>
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex justify-between items-center">
-          <button onClick={() => onNavigate('xoeris')} className="flex items-center gap-3 group bg-transparent border-none">
+          <button onClick={() => onNavigate('xoeris')} className="flex items-center group bg-transparent border-none">
             <div className="w-12 h-12 transition-transform duration-500 group-hover:scale-110">
                <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="w-full h-full object-contain" />
             </div>
-            <span className="text-xl font-black tracking-[0.2em] text-white">XOERIS</span>
           </button>
 
           {/* Families Mega Menu Link (Desktop) */}
@@ -185,9 +184,8 @@ export default function XoerisPage({ onNavigate }) {
         <div className="max-w-[1400px] mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-16 mb-32">
             <div className="col-span-2">
-              <button onClick={() => onNavigate('xoeris')} className="flex items-center gap-3 mb-10 group bg-transparent border-none">
+              <button onClick={() => onNavigate('xoeris')} className="flex items-center mb-10 group bg-transparent border-none">
                 <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="w-10 h-10 object-contain" />
-                <span className="text-2xl font-black tracking-widest text-white">XOERIS</span>
               </button>
               <p className="text-gray-500 font-medium max-w-xs leading-relaxed mb-10">
                 Pioneering the intersection of intelligence and artistic expression through a unified technology stack.
