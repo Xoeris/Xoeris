@@ -150,7 +150,7 @@ export default function XoerisPage({ onNavigate }) {
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 grid lg:grid-cols-2 gap-20 items-center">
           <FadeIn>
             <h2 className="text-sm font-black text-[#705EBC] uppercase tracking-[0.4em] mb-8">Modular OS Platform</h2>
-            <h3 className="text-5xl md:text-7xl font-black tracking-tighter mb-10 leading-tight">XIME</h3>
+            <img src="/xime_logo_text.png" alt="XIME" className="h-16 md:h-24 object-contain mb-10" />
             <p className="text-xl text-gray-400 leading-relaxed mb-12 font-medium">
               Xoeris Interactive Modular Ecosystem (XIME) is a modular operating system platform developed by Xoeris, providing a unified foundation for system services, user interfaces, media, applications, and interactive experiences.
             </p>
