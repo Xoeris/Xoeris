@@ -62,56 +62,52 @@ export default function App() {
     if (hostname.includes('loomastudio') || path.startsWith('/loomastudio')) return 'looma';
     if (hostname.includes('tartaruga') || path.startsWith('/tartaruga')) return 'tartaruga';
     if (path === '/digital-artifacts') return 'digital-artifacts';
+    if (path === '/about/acelbyte' || path === '/acelbyte') return 'acelbyte';
 
-    if (hostname.includes('xoeris') || path.startsWith('/xoeris') || path !== '/') {
-      if (path === '/subscription' || path === '/payment') return 'subscriptions';
-      if (path === '/developers') return 'developers';
+    if (path === '/subscription' || path === '/payment') return 'subscriptions';
+    if (path === '/developers') return 'developers';
 
-      if (path.startsWith('/netwave')) {
-        if (path.includes('/nodes')) return 'netwave-nodes';
-        return 'netwave';
-      }
-      if (path.startsWith('/ariasphere')) {
-        if (path.includes('/vocalis')) return 'ariasphere-vocalis';
-        return 'ariasphere';
-      }
-      if (path.startsWith('/illucine')) {
-        if (path.includes('/prism')) return 'illucine-prism';
-        return 'illucine';
-      }
-      if (path.startsWith('/aetheris')) {
-        if (path.includes('/xesc')) return 'aetheris-xesc';
-        if (path.includes('/drivon')) return 'aetheris-drivon';
-        if (path.includes('/aetheros')) return 'aetheris-aetheros';
-        return 'aetheris';
-      }
-      if (path.startsWith('/elarion')) {
-        if (path.includes('/horizone')) return 'elarion-horizone';
-        if (path.includes('/acton')) return 'elarion-acton';
-        if (path.includes('/amberlord')) return 'elarion-amberlord';
-        return 'elarion';
-      }
-      if (path.startsWith('/voltrix')) {
-        if (path.includes('/samudra/showcase')) return 'samudra-showcase';
-        if (path.includes('/samudra')) return 'samudra';
-        return 'voltrix';
-      }
-      if (path.startsWith('/zenith')) {
-        if (path.includes('/corea')) return 'zenith-corea';
-        return 'zenith';
-      }
-
-      return 'xoeris';
+    if (path.startsWith('/netwave')) {
+      if (path.includes('/nodes')) return 'netwave-nodes';
+      return 'netwave';
+    }
+    if (path.startsWith('/ariasphere')) {
+      if (path.includes('/vocalis')) return 'ariasphere-vocalis';
+      return 'ariasphere';
+    }
+    if (path.startsWith('/illucine')) {
+      if (path.includes('/prism')) return 'illucine-prism';
+      return 'illucine';
+    }
+    if (path.startsWith('/aetheris')) {
+      if (path.includes('/xesc')) return 'aetheris-xesc';
+      if (path.includes('/drivon')) return 'aetheris-drivon';
+      if (path.includes('/aetheros')) return 'aetheris-aetheros';
+      return 'aetheris';
+    }
+    if (path.startsWith('/elarion')) {
+      if (path.includes('/horizone')) return 'elarion-horizone';
+      if (path.includes('/acton')) return 'elarion-acton';
+      if (path.includes('/amberlord')) return 'elarion-amberlord';
+      return 'elarion';
+    }
+    if (path.startsWith('/voltrix')) {
+      if (path.includes('/samudra/showcase')) return 'samudra-showcase';
+      if (path.includes('/samudra')) return 'samudra';
+      return 'voltrix';
+    }
+    if (path.startsWith('/zenith')) {
+      if (path.includes('/corea')) return 'zenith-corea';
+      return 'zenith';
     }
 
-    return 'acelbyte';
+    return 'xoeris';
   });
 
   useEffect(() => {
-    // Auto-redirect /xoeris to / when on the xoeris subdomain
+    // Auto-redirect /xoeris to /
     const path = window.location.pathname.toLowerCase();
-    const hostname = window.location.hostname.toLowerCase();
-    if (hostname.includes('xoeris') && path === '/xoeris') {
+    if (path === '/xoeris') {
       window.history.replaceState({}, '', '/');
     }
 
@@ -152,11 +148,12 @@ export default function App() {
         else setCurrentPage('zenith');
       }
       else if (path === '/xoeris') setCurrentPage('xoeris');
+      else if (path === '/about/acelbyte' || path === '/acelbyte') setCurrentPage('acelbyte');
       else if (path === '/loomastudio') setCurrentPage('looma');
       else if (path === '/tartaruga') setCurrentPage('tartaruga');
       else if (path === '/digital-artifacts') setCurrentPage('digital-artifacts');
       else if (path === '/subscription') setCurrentPage('subscriptions');
-      else setCurrentPage('acelbyte');
+      else setCurrentPage('xoeris');
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -231,9 +228,9 @@ export default function App() {
 
   const handleNavigate = (page) => {
     const pathMap = {
-      acelbyte: '/',
+      acelbyte: '/about/acelbyte',
       looma: '/loomastudio',
-      xoeris: '/xoeris',
+      xoeris: '/',
       developers: '/developers',
       netwave: '/netwave',
       'netwave-nodes': '/netwave/nodes',
@@ -259,9 +256,7 @@ export default function App() {
     };
 
     const newPath = pathMap[page] || '/';
-
-    // Auto-clean path for xoeris subdomain
-    const finalPath = (window.location.hostname.includes('xoeris') && newPath === '/xoeris') ? '/' : newPath;
+    const finalPath = (newPath === '/xoeris') ? '/' : newPath;
 
     window.history.pushState({}, '', finalPath);
     setCurrentPage(page);
