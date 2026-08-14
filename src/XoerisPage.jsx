@@ -45,13 +45,8 @@ export default function XoerisPage({ onNavigate }) {
   }, [isScrolled]);
 
   const families = [
-    { title: "Netwave", family: "netwave", icon: Globe, color: "#3B82F6", desc: "Global networking, high-speed connectivity, and satellite integration nodes." },
-    { title: "Ariasphere", family: "ariasphere", icon: Music, color: "#EC4899", desc: "Spatial audio systems, music production suites, and acoustic engineering." },
     { title: "Illucine", family: "illucine", icon: Film, color: "#F59E0B", desc: "Advanced animation pipelines and real-time film creation frameworks.", pngIcon: "/xoeris_illucine_logo_icon_2026.png" },
-    { title: "Elarion", family: "elarion", icon: Joystick, color: "#705EBC", desc: "Interconnected apps, 3D engines (Horizone), and optical Neurolens (ACTON).", pngIcon: "/xoeris_elarion_logo_colored.png" },
-    { title: "Aetheris", family: "aetheris", icon: Cloud, color: "#10B981", desc: "AI systems (XESC), Cloud infrastructure (Drivon), and operating systems.", pngIcon: "/xoeris_aetherislogo.png" },
-    { title: "Voltrix", family: "voltrix", icon: Zap, color: "#FDD935", desc: "Core innovation, R&D systems, and integrated hardware (SAMUDRA).", pngIcon: "/xoeris_voltrix_logo_icon_2026.png" },
-    { title: "Zenith", family: "zenith", icon: Cpu, color: "#EF4444", desc: "Physics mechanics, CPU/GPU architecture, and core computational engines." }
+    { title: "Elarion", family: "elarion", icon: Joystick, color: "#705EBC", desc: "Interconnected apps, 3D engines (Horizone), and optical Neurolens (ACTON).", pngIcon: "/xoeris_elarion_logo_colored.png" }
   ];
 
   return (
@@ -237,8 +232,8 @@ export default function XoerisPage({ onNavigate }) {
             <div>
               <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white mb-8">Families</h4>
               <ul className="space-y-4">
-                {["Netwave", "Ariasphere", "Illucine", "Elarion", "Aetheris", "Voltrix", "Zenith"].map(l => (
-                  <li key={l}><button onClick={() => onNavigate(l.toLowerCase())} className="text-sm font-medium text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0">{l}</button></li>
+                {["Illucine", "Elarion"].map(l => (
+                  <li key={l}><button onClick={() => onNavigate(l.toLowerCase())} className="text-[#a1a1aa] hover:text-white transition-colors text-sm font-medium bg-transparent border-none p-0">{l}</button></li>
                 ))}
               </ul>
             </div>

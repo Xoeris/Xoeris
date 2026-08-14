@@ -11,13 +11,8 @@ import SubscriptionsPage from './SubscriptionsPage';
 import SamudraShowcasePage from './SamudraShowcasePage';
 
 // Family Pages
-import NetwavePage from './NetwavePage';
-import AriaspherePage from './AriaspherePage';
 import IllucinePage from './IllucinePage';
 import ElarionPage from './ElarionPage';
-import AetherisPage from './AetherisPage';
-import VoltrixPage from './VoltrixPage';
-import ZenithPage from './ZenithPage';
 
 // Product Deep-Dive Pages
 import HorizoneProductPage from './HorizoneProductPage';
@@ -67,14 +62,8 @@ export default function App() {
     if (path === '/subscription' || path === '/payment') return 'subscriptions';
     if (path === '/developers') return 'developers';
 
-    if (path.startsWith('/netwave')) {
-      if (path.includes('/nodes')) return 'netwave-nodes';
-      return 'netwave';
-    }
-    if (path.startsWith('/ariasphere')) {
-      if (path.includes('/vocalis')) return 'ariasphere-vocalis';
-      return 'ariasphere';
-    }
+    if (path.startsWith('/netwave/nodes')) return 'netwave-nodes';
+    if (path.startsWith('/ariasphere/vocalis')) return 'ariasphere-vocalis';
     if (path.startsWith('/illucine')) {
       if (path.includes('/prism')) return 'illucine-prism';
       return 'illucine';
@@ -83,7 +72,6 @@ export default function App() {
       if (path.includes('/xesc')) return 'aetheris-xesc';
       if (path.includes('/drivon')) return 'aetheris-drivon';
       if (path.includes('/aetheros')) return 'aetheris-aetheros';
-      return 'aetheris';
     }
     if (path.startsWith('/elarion')) {
       if (path.includes('/horizone')) return 'elarion-horizone';
@@ -94,12 +82,8 @@ export default function App() {
     if (path.startsWith('/voltrix')) {
       if (path.includes('/samudra/showcase')) return 'samudra-showcase';
       if (path.includes('/samudra')) return 'samudra';
-      return 'voltrix';
     }
-    if (path.startsWith('/zenith')) {
-      if (path.includes('/corea')) return 'zenith-corea';
-      return 'zenith';
-    }
+    if (path.startsWith('/zenith/corea')) return 'zenith-corea';
 
     return 'xoeris';
   });
@@ -114,14 +98,8 @@ export default function App() {
     const handlePopState = () => {
       const path = window.location.pathname.toLowerCase();
       if (path === '/developers') setCurrentPage('developers');
-      else if (path.startsWith('/netwave')) {
-        if (path.includes('/nodes')) setCurrentPage('netwave-nodes');
-        else setCurrentPage('netwave');
-      }
-      else if (path.startsWith('/ariasphere')) {
-        if (path.includes('/vocalis')) setCurrentPage('ariasphere-vocalis');
-        else setCurrentPage('ariasphere');
-      }
+      else if (path.includes('/netwave/nodes')) setCurrentPage('netwave-nodes');
+      else if (path.includes('/ariasphere/vocalis')) setCurrentPage('ariasphere-vocalis');
       else if (path.startsWith('/illucine')) {
         if (path.includes('/prism')) setCurrentPage('illucine-prism');
         else setCurrentPage('illucine');
@@ -130,7 +108,6 @@ export default function App() {
         if (path.includes('/xesc')) setCurrentPage('aetheris-xesc');
         else if (path.includes('/drivon')) setCurrentPage('aetheris-drivon');
         else if (path.includes('/aetheros')) setCurrentPage('aetheris-aetheros');
-        else setCurrentPage('aetheris');
       }
       else if (path.startsWith('/elarion')) {
         if (path.includes('/horizone')) setCurrentPage('elarion-horizone');
@@ -141,12 +118,8 @@ export default function App() {
       else if (path.startsWith('/voltrix')) {
         if (path.includes('/samudra/showcase')) setCurrentPage('samudra-showcase');
         else if (path.includes('/samudra')) setCurrentPage('samudra');
-        else setCurrentPage('voltrix');
       }
-      else if (path.startsWith('/zenith')) {
-        if (path.includes('/corea')) setCurrentPage('zenith-corea');
-        else setCurrentPage('zenith');
-      }
+      else if (path.includes('/zenith/corea')) setCurrentPage('zenith-corea');
       else if (path === '/xoeris') setCurrentPage('xoeris');
       else if (path === '/about/acelbyte' || path === '/acelbyte') setCurrentPage('acelbyte');
       else if (path === '/loomastudio') setCurrentPage('looma');
@@ -165,9 +138,7 @@ export default function App() {
       looma: 'Looma Studio',
       xoeris: 'Xoeris Ecosystem',
       developers: 'Developer Portal | Xoeris',
-      netwave: 'Xoeris Netwave',
       'netwave-nodes': 'Xoeris Node-S',
-      ariasphere: 'Xoeris Ariasphere',
       'ariasphere-vocalis': 'Xoeris Vocalis',
       illucine: 'Xoeris Illucine',
       'illucine-prism': 'Xoeris Prism',
@@ -175,14 +146,11 @@ export default function App() {
       'elarion-horizone': 'Xoeris Horizone',
       'elarion-acton': 'Xoeris ACTON',
       'elarion-amberlord': 'Amberlord',
-      aetheris: 'Xoeris Aetheris',
       'aetheris-xesc': 'XESC',
       'aetheris-drivon': 'Xoeris Drivon',
       'aetheris-aetheros': 'Aether OS',
-      voltrix: 'Xoeris Voltrix',
       samudra: 'SAMUDRA | Xoeris',
       'samudra-showcase': 'SAMUDRA Showcase',
-      zenith: 'Xoeris Zenith',
       'zenith-corea': 'Xoeris Core-A',
       subscriptions: 'Subscription | Xoeris',
       'digital-artifacts': 'Digital Artifacts | Acelbyte'
@@ -193,9 +161,7 @@ export default function App() {
       looma: '/looma-studio-logo.png',
       xoeris: '/xoeris-logo.png',
       developers: '/xoeris-logo.png',
-      netwave: '/xoeris-logo.png',
       'netwave-nodes': '/xoeris-logo.png',
-      ariasphere: '/xoeris-logo.png',
       'ariasphere-vocalis': '/xoeris-logo.png',
       illucine: '/xoeris_illucine_logo_icon_2026.png',
       'illucine-prism': '/xoeris_illucine_logo_icon_2026.png',
@@ -203,14 +169,11 @@ export default function App() {
       'elarion-horizone': '/xoeris_voltrix_horizone_logo_icon_colored.png',
       'elarion-acton': '/xoeris_elarion_logo_colored.png',
       'elarion-amberlord': '/xoeris_elarion_logo_colored.png',
-      aetheris: '/xoeris_aetherislogo.png',
       'aetheris-xesc': '/xesc_icon.png',
       'aetheris-drivon': '/xoeris_aetherislogo.png',
       'aetheris-aetheros': '/xoeris_aetherislogo.png',
-      voltrix: '/xoeris_voltrix_logo_icon_2026.png',
       samudra: '/xoeris_voltrix_logo_icon_2026.png',
       'samudra-showcase': '/xoeris_voltrix_logo_icon_2026.png',
-      zenith: '/xoeris-logo.png',
       'zenith-corea': '/xoeris-logo.png',
       subscriptions: '/xoeris-logo.png',
       'digital-artifacts': '/acelbyte-logo.png',
@@ -232,9 +195,7 @@ export default function App() {
       looma: '/loomastudio',
       xoeris: '/',
       developers: '/developers',
-      netwave: '/netwave',
       'netwave-nodes': '/netwave/nodes',
-      ariasphere: '/ariasphere',
       'ariasphere-vocalis': '/ariasphere/vocalis',
       illucine: '/illucine',
       'illucine-prism': '/illucine/prism',
@@ -242,14 +203,11 @@ export default function App() {
       'elarion-horizone': '/elarion/horizone',
       'elarion-acton': '/elarion/acton',
       'elarion-amberlord': '/elarion/amberlord',
-      aetheris: '/aetheris',
       'aetheris-xesc': '/aetheris/xesc',
       'aetheris-drivon': '/aetheris/drivon',
       'aetheris-aetheros': '/aetheris/aetheros',
-      voltrix: '/voltrix',
       samudra: '/voltrix/samudra/app',
       'samudra-showcase': '/voltrix/samudra/showcase',
-      zenith: '/zenith',
       'zenith-corea': '/zenith/corea',
       subscriptions: '/subscription',
       'digital-artifacts': '/digital-artifacts'
@@ -285,13 +243,8 @@ export default function App() {
         {currentPage === 'digital-artifacts' && <DigitalArtifactsPage onNavigate={handleNavigate} />}
 
         {/* Family Hubs */}
-        {currentPage === 'netwave' && <NetwavePage onNavigate={handleNavigate} />}
-        {currentPage === 'ariasphere' && <AriaspherePage onNavigate={handleNavigate} />}
         {currentPage === 'illucine' && <IllucinePage onNavigate={handleNavigate} />}
         {currentPage === 'elarion' && <ElarionPage onNavigate={handleNavigate} />}
-        {currentPage === 'aetheris' && <AetherisPage onNavigate={handleNavigate} />}
-        {currentPage === 'voltrix' && <VoltrixPage onNavigate={handleNavigate} />}
-        {currentPage === 'zenith' && <ZenithPage onNavigate={handleNavigate} />}
 
         {/* Product Details */}
         {currentPage === 'elarion-horizone' && <HorizoneProductPage onNavigate={handleNavigate} />}
