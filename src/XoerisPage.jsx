@@ -104,12 +104,8 @@ export default function XoerisPage({ onNavigate }) {
       {/* Hero: The Intelligence Core */}
       <section className="relative pt-60 pb-32 px-6 md:px-12 flex flex-col items-center text-center overflow-hidden min-h-screen">
         <FadeIn className="relative z-10 max-w-5xl">
-          <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/[0.03] border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] mb-10 text-white shadow-2xl backdrop-blur-md">
-            <span className="w-2 h-2 rounded-full bg-[#705EBC] animate-pulse"></span>
-            Ecosystem v2.0 Sync Active
-          </div>
           <h1 className="text-7xl md:text-9xl font-black leading-[0.95] mb-10 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-gray-600">
-            INTEGRATED <br/> INTELLIGENCE.
+            XOERIS
           </h1>
           <p className="text-xl md:text-2xl text-gray-400 mb-16 max-w-3xl mx-auto leading-relaxed font-medium">
             Xoeris is a multi-layered technology ecosystem converging advanced computing, AI frameworks, and professional creative tools into a single interconnected universe.
@@ -134,7 +130,7 @@ export default function XoerisPage({ onNavigate }) {
           <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
             <div className="max-w-2xl">
               <h2 className="text-sm font-black text-[#705EBC] uppercase tracking-[0.4em] mb-6">The Universe</h2>
-              <h3 className="text-5xl md:text-7xl font-black tracking-tighter leading-tight">EXPLORE THE <br/> 7 FAMILIES.</h3>
+              <h3 className="text-5xl md:text-7xl font-black tracking-tighter leading-tight">EXPLORE THE <br/> FAMILIES.</h3>
             </div>
             <p className="text-gray-500 font-bold uppercase tracking-widest text-xs border-l-2 border-[#705EBC] pl-6 py-2">
               Cross-Platform <br/> Synchronization
@@ -142,35 +138,10 @@ export default function XoerisPage({ onNavigate }) {
           </div>
         </FadeIn>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
           {families.map((f, i) => (
             <FamilyCard key={f.title} {...f} onNavigate={onNavigate} />
           ))}
-
-          {/* Spotlight: SAMUDRA (Integrated R&D) */}
-          <FadeIn className="lg:col-span-2">
-            <div
-              onClick={() => onNavigate('samudra')}
-              className="group relative h-full bg-gradient-to-br from-[#151518] to-black border border-white/10 p-10 rounded-[2.5rem] cursor-pointer hover:border-[#FDD935]/30 transition-all duration-500 overflow-hidden"
-            >
-              <div className="relative z-10 flex flex-col md:flex-row justify-between items-center gap-10">
-                <div className="max-w-lg">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FDD935]/10 border border-[#FDD935]/20 text-[9px] font-black uppercase tracking-[0.2em] mb-8 text-[#FDD935]">
-                    Featured R&D System
-                  </div>
-                  <h3 className="text-4xl font-black mb-6 tracking-tighter uppercase">SAMUDRA Maritime</h3>
-                  <p className="text-gray-400 text-lg leading-relaxed mb-8">Integrated maritime intelligence system. Fish tracking, solar power management, and real-time boat telemetry for the modern fleet.</p>
-                  <div className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-[#FDD935]">
-                    Launch System Terminal <ChevronRight size={16} />
-                  </div>
-                </div>
-                <div className="w-64 h-64 relative bg-[#FDD935]/5 rounded-full flex items-center justify-center border border-[#FDD935]/10 group-hover:scale-110 transition-transform duration-700">
-                   <Smartphone size={80} className="text-[#FDD935] drop-shadow-[0_0_20px_rgba(253,217,53,0.5)]" />
-                </div>
-              </div>
-              <div className="absolute top-0 right-0 w-96 h-96 bg-[#FDD935] opacity-[0.03] blur-[100px] pointer-events-none"></div>
-            </div>
-          </FadeIn>
         </div>
       </section>
 

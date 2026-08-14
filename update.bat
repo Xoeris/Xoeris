@@ -4,6 +4,9 @@ echo =========================================
 echo  Pushing Updates to Xoeris GitHub Repo
 echo =========================================
 
+echo Building Xoeris Website...
+call npm run build
+
 REM Add git safe directory exception in case of ownership mismatched environment
 git config --global --add safe.directory E:/Home/Projects/Users/Acelbyte/Categories/Programmings/projects/Xoeris/websites/Xoeris >nul 2>&1
 
