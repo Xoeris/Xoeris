@@ -58,6 +58,7 @@ export default function App() {
     if (hostname.includes('tartaruga') || path.startsWith('/tartaruga')) return 'tartaruga';
     if (path === '/digital-artifacts') return 'digital-artifacts';
     if (path === '/about/acelbyte' || path === '/acelbyte') return 'acelbyte';
+    if (path === '/about') return 'xoeris';
 
     if (path === '/subscription' || path === '/payment') return 'subscriptions';
     if (path === '/developers') return 'developers';
@@ -120,7 +121,7 @@ export default function App() {
         else if (path.includes('/samudra')) setCurrentPage('samudra');
       }
       else if (path.includes('/zenith/corea')) setCurrentPage('zenith-corea');
-      else if (path === '/xoeris') setCurrentPage('xoeris');
+      else if (path === '/xoeris' || path === '/about') setCurrentPage('xoeris');
       else if (path === '/about/acelbyte' || path === '/acelbyte') setCurrentPage('acelbyte');
       else if (path === '/loomastudio') setCurrentPage('looma');
       else if (path === '/tartaruga') setCurrentPage('tartaruga');
@@ -191,6 +192,7 @@ export default function App() {
 
   const handleNavigate = (page) => {
     const pathMap = {
+      about: '/about',
       acelbyte: '/about/acelbyte',
       looma: '/loomastudio',
       xoeris: '/',

@@ -149,10 +149,10 @@ export default function XoerisPage({ onNavigate }) {
       <section className="py-32 bg-white/[0.02] border-y border-white/5 relative overflow-hidden">
         <div className="max-w-[1400px] mx-auto px-6 md:px-12 grid lg:grid-cols-2 gap-20 items-center">
           <FadeIn>
-            <h2 className="text-sm font-black text-gray-500 uppercase tracking-[0.4em] mb-8">Zenith Engine</h2>
-            <h3 className="text-5xl md:text-7xl font-black tracking-tighter mb-10 leading-tight">BUILT FOR THE <br/> NEXT EPOCH.</h3>
+            <h2 className="text-sm font-black text-[#705EBC] uppercase tracking-[0.4em] mb-8">Modular OS Platform</h2>
+            <h3 className="text-5xl md:text-7xl font-black tracking-tighter mb-10 leading-tight">XIME</h3>
             <p className="text-xl text-gray-400 leading-relaxed mb-12 font-medium">
-              Every Xoeris product is powered by the Zenith Engine. From the physics in Amberlord to the data processing in XESC, Zenith provides the raw computational force required for real-time synchronization.
+              Xoeris Interactive Modular Ecosystem (XIME) is a modular operating system platform developed by Xoeris, providing a unified foundation for system services, user interfaces, media, applications, and interactive experiences.
             </p>
             <div className="grid grid-cols-2 gap-8">
               <div>
@@ -175,7 +175,7 @@ export default function XoerisPage({ onNavigate }) {
                   <div className="w-10 h-10 rounded-lg bg-[#705EBC] flex items-center justify-center"><Layers size={20}/></div>
                   <div className="font-black text-sm uppercase tracking-tighter">Unified OS Architecture</div>
                 </div>
-                <p className="text-[11px] text-gray-500 leading-tight">Synchronizing 12M+ devices across Netwave nodes.</p>
+                <p className="text-[11px] text-gray-500 leading-tight">Synchronizing ecosystem nodes.</p>
              </div>
           </div>
         </div>
@@ -220,7 +220,7 @@ export default function XoerisPage({ onNavigate }) {
               <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-white mb-8">Company</h4>
               <ul className="space-y-4">
                 {["About"].map(l => (
-                  <li key={l}><button onClick={() => onNavigate('acelbyte')} className="text-sm font-medium text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0">{l}</button></li>
+                  <li key={l}><button onClick={() => onNavigate('about')} className="text-sm font-medium text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0">{l}</button></li>
                 ))}
               </ul>
             </div>
