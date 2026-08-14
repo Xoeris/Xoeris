@@ -133,7 +133,7 @@ export default function App() {
   useEffect(() => {
     const titles = {
       acelbyte: 'Acelbyte',
-      xoeris: 'Xoeris Ecosystem',
+      xoeris: 'Xoeris',
       developers: 'Developer Portal | Xoeris',
       'netwave-nodes': 'Xoeris Node-S',
       'ariasphere-vocalis': 'Xoeris Vocalis',
@@ -155,10 +155,10 @@ export default function App() {
 
     const icons = {
       acelbyte: '/acelbyte-logo.png',
-      xoeris: '/xoeris-logo.png',
-      developers: '/xoeris-logo.png',
-      'netwave-nodes': '/xoeris-logo.png',
-      'ariasphere-vocalis': '/xoeris-logo.png',
+      xoeris: '/xoeris_logo_color.png',
+      developers: '/xoeris_logo_color.png',
+      'netwave-nodes': '/xoeris_logo_color.png',
+      'ariasphere-vocalis': '/xoeris_logo_color.png',
       illucine: '/xoeris_illucine_logo_icon_2026.png',
       'illucine-prism': '/xoeris_illucine_logo_icon_2026.png',
       elarion: '/xoeris_elarion_logo_colored.png',
@@ -170,8 +170,8 @@ export default function App() {
       'aetheris-aetheros': '/xoeris_aetherislogo.png',
       samudra: '/xoeris_voltrix_logo_icon_2026.png',
       'samudra-showcase': '/xoeris_voltrix_logo_icon_2026.png',
-      'zenith-corea': '/xoeris-logo.png',
-      subscriptions: '/xoeris-logo.png',
+      'zenith-corea': '/xoeris_logo_color.png',
+      subscriptions: '/xoeris_logo_color.png',
       'digital-artifacts': '/acelbyte-logo.png',
       tartaruga: '/tartaruga-logo.png'
     };
@@ -181,7 +181,7 @@ export default function App() {
     // Update Favicon
     const link = document.querySelector("link[rel~='icon']");
     if (link) {
-      link.href = icons[currentPage] || '/acelbyte-logo.png';
+      link.href = icons[currentPage] || '/xoeris_logo_color.png';
     }
   }, [currentPage]);
 
