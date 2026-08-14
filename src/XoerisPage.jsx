@@ -96,7 +96,6 @@ export default function XoerisPage({ onNavigate }) {
               <button key={f.title} onClick={() => { onNavigate(f.family); setMobileMenuOpen(false); }} className="text-2xl font-black uppercase tracking-widest text-left" style={{ color: f.color }}>{f.title}</button>
             ))}
             <div className="h-px w-full bg-white/10"></div>
-            <button onClick={() => onNavigate('acelbyte')} className="text-lg font-bold text-gray-400">Back to Acelbyte</button>
           </div>
         )}
       </nav>
@@ -104,9 +103,9 @@ export default function XoerisPage({ onNavigate }) {
       {/* Hero: The Intelligence Core */}
       <section className="relative pt-60 pb-32 px-6 md:px-12 flex flex-col items-center text-center overflow-hidden min-h-screen">
         <FadeIn className="relative z-10 max-w-5xl">
-          <h1 className="text-7xl md:text-9xl font-black leading-[0.95] mb-10 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-gray-600">
-            XOERIS
-          </h1>
+          <div className="flex justify-center mb-10">
+            <img src="/xoeris_logo_emblem.png" alt="XOERIS" className="h-28 md:h-44 object-contain" />
+          </div>
           <p className="text-xl md:text-2xl text-gray-400 mb-16 max-w-3xl mx-auto leading-relaxed font-medium">
             Xoeris is a multi-layered technology ecosystem converging advanced computing, AI frameworks, and professional creative tools into a single interconnected universe.
           </p>
