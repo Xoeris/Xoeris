@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AcelbytePage from './AcelbytePage';
+import AboutPage from './AboutPage';
 import DigitalArtifactsPage from './DigitalArtifactsPage';
 import XoerisPage from './XoerisPage';
 import SamudraPage from './SamudraPage';
@@ -56,7 +57,7 @@ export default function App() {
     if (hostname.includes('tartaruga') || path.startsWith('/tartaruga')) return 'tartaruga';
     if (path === '/digital-artifacts') return 'digital-artifacts';
     if (path === '/about/acelbyte' || path === '/acelbyte') return 'acelbyte';
-    if (path === '/about') return 'xoeris';
+    if (path === '/about') return 'about';
 
     if (path === '/subscription' || path === '/payment') return 'subscriptions';
     if (path === '/developers') return 'developers';
@@ -119,7 +120,8 @@ export default function App() {
         else if (path.includes('/samudra')) setCurrentPage('samudra');
       }
       else if (path.includes('/zenith/corea')) setCurrentPage('zenith-corea');
-      else if (path === '/xoeris' || path === '/about') setCurrentPage('xoeris');
+      else if (path === '/xoeris') setCurrentPage('xoeris');
+      else if (path === '/about') setCurrentPage('about');
       else if (path === '/about/acelbyte' || path === '/acelbyte') setCurrentPage('acelbyte');
       else if (path === '/tartaruga') setCurrentPage('tartaruga');
       else if (path === '/digital-artifacts') setCurrentPage('digital-artifacts');
@@ -134,6 +136,7 @@ export default function App() {
     const titles = {
       acelbyte: 'Acelbyte',
       xoeris: 'Xoeris',
+      about: 'About | Xoeris',
       developers: 'Developer Portal | Xoeris',
       'netwave-nodes': 'Xoeris Node-S',
       'ariasphere-vocalis': 'Xoeris Vocalis',
@@ -230,6 +233,7 @@ export default function App() {
 
       <div key={currentPage}>
         {currentPage === 'acelbyte' && <AcelbytePage onNavigate={handleNavigate} />}
+        {currentPage === 'about' && <AboutPage onNavigate={handleNavigate} />}
         {currentPage === 'xoeris' && <XoerisPage onNavigate={handleNavigate} />}
         {currentPage === 'samudra' && <SamudraPage onNavigate={handleNavigate} />}
         {currentPage === 'samudra-showcase' && <SamudraShowcasePage onNavigate={handleNavigate} />}
