@@ -9,11 +9,19 @@
       }
     },
     {
+      "src": "api/vercel-proxy/api/v1/chat/completions.js",
+      "use": "@vercel/node"
+    },
+    {
       "src": "package.json",
       "use": "@vercel/static-build"
     }
   ],
   "rewrites": [
+    {
+      "source": "/v1/chat/completions",
+      "destination": "api/vercel-proxy/api/v1/chat/completions.js"
+    },
     {
       "source": "/(webhook|set_webhook|cron|keep_alive|bot_status)",
       "destination": "sarah/sarah-ai.py"

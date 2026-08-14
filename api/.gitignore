@@ -1,0 +1,25 @@
+# Secrets — never commit these
+.env
+.env.local
+*.env
+
+# Model weights — too large for git, and not secrets so much as just
+# binary artifacts that don't belong in version control
+*.xesc
+*.xem
+*.pt
+*.pth
+*.safetensors
+/models/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Vercel
+.vercel/
+
+# OS junk
+.DS_Store
