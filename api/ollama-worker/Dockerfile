@@ -26,4 +26,9 @@ RUN chmod +x start.sh
 ENV OLLAMA_MODEL=qwen2.5:1.5b
 ENV OLLAMA_HOST=0.0.0.0:11434
 
+# The base ollama/ollama image sets ENTRYPOINT ["/bin/ollama"], which would
+# turn CMD into an argument to `ollama` (i.e. it'd try to run
+# `ollama ./start.sh`) instead of actually executing start.sh. Reset the
+# entrypoint so CMD runs as the real container command.
+ENTRYPOINT []
 CMD ["./start.sh"]
