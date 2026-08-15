@@ -89,7 +89,7 @@ export default async function handler(req) {
 function json(obj, status) {
   return new Response(JSON.stringify(obj), {
     status,
-    headers: { 
+    headers: {
       "content-type": "application/json",
       "Access-Control-Allow-Origin": "*"
     },
