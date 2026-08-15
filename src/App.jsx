@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AcelbytePage from './AcelbytePage';
 import AboutPage from './AboutPage';
+import ChatPage from './ChatPage';
 import DigitalArtifactsPage from './DigitalArtifactsPage';
 import XoerisPage from './XoerisPage';
 import SamudraPage from './SamudraPage';
@@ -58,6 +59,7 @@ export default function App() {
     if (path === '/digital-artifacts') return 'digital-artifacts';
     if (path === '/about/acelbyte' || path === '/acelbyte') return 'acelbyte';
     if (path === '/about') return 'about';
+    if (path === '/chat' || hostname.includes('xalme')) return 'chat';
 
     if (path === '/subscription' || path === '/payment') return 'subscriptions';
     if (path === '/developers') return 'developers';
@@ -122,6 +124,7 @@ export default function App() {
       else if (path.includes('/zenith/corea')) setCurrentPage('zenith-corea');
       else if (path === '/xoeris') setCurrentPage('xoeris');
       else if (path === '/about') setCurrentPage('about');
+      else if (path === '/chat') setCurrentPage('chat');
       else if (path === '/about/acelbyte' || path === '/acelbyte') setCurrentPage('acelbyte');
       else if (path === '/tartaruga') setCurrentPage('tartaruga');
       else if (path === '/digital-artifacts') setCurrentPage('digital-artifacts');
@@ -137,6 +140,7 @@ export default function App() {
       acelbyte: 'Acelbyte',
       xoeris: 'Xoeris',
       about: 'About | Xoeris',
+      chat: 'Xalme Chat | Xoeris',
       developers: 'Developer Portal | Xoeris',
       'netwave-nodes': 'Xoeris Node-S',
       'ariasphere-vocalis': 'Xoeris Vocalis',
@@ -191,6 +195,7 @@ export default function App() {
   const handleNavigate = (page) => {
     const pathMap = {
       about: '/about',
+      chat: '/chat',
       acelbyte: '/about/acelbyte',
       xoeris: '/',
       developers: '/developers',
@@ -234,6 +239,7 @@ export default function App() {
       <div key={currentPage}>
         {currentPage === 'acelbyte' && <AcelbytePage onNavigate={handleNavigate} />}
         {currentPage === 'about' && <AboutPage onNavigate={handleNavigate} />}
+        {currentPage === 'chat' && <ChatPage onNavigate={handleNavigate} />}
         {currentPage === 'xoeris' && <XoerisPage onNavigate={handleNavigate} />}
         {currentPage === 'samudra' && <SamudraPage onNavigate={handleNavigate} />}
         {currentPage === 'samudra-showcase' && <SamudraShowcasePage onNavigate={handleNavigate} />}
