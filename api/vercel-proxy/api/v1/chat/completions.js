@@ -17,6 +17,19 @@ const RUNPOD_API_KEY = process.env.RUNPOD_API_KEY;
 const VALID_KEYS = new Set((process.env.XOERIS_API_KEYS || "").split(",").filter(Boolean));
 
 export default async function handler(req) {
+  // --- CORS preflight ---
+  if (req.method === "OPTIONS") {
+    return new Response(null, {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        "Access-Control-Max-Age": "86400"
+      }
+    });
+  }
+
   if (req.method !== "POST") {
     return json({ error: "Method not allowed" }, 405);
   }
@@ -76,6 +89,9 @@ export default async function handler(req) {
 function json(obj, status) {
   return new Response(JSON.stringify(obj), {
     status,
-    headers: { "content-type": "application/json" },
+    headers: { 
+      "content-type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    },
   });
 }
