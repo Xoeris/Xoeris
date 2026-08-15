@@ -106,14 +106,14 @@ export default function XoerisPage({ onNavigate }) {
             <img src="/xoeris_logo_emblem.png" alt="XOERIS" className="h-28 md:h-44 object-contain" />
           </div>
           <p className="text-xl md:text-2xl text-gray-400 mb-16 max-w-3xl mx-auto leading-relaxed font-medium">
-            Xoeris is a multi-layered technology ecosystem converging advanced computing, AI frameworks, and professional creative tools into a single interconnected universe.
+            Xoeris develops software platforms, operating system modules, and digital tools tailored to streamline professional animation and application workflows.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <button onClick={() => onNavigate('elarion-horizone')} className="group flex items-center gap-3 px-10 py-5 bg-[#705EBC] text-white text-sm font-black uppercase tracking-widest rounded-2xl hover:scale-105 transition-all shadow-[0_20px_50px_rgba(112,94,188,0.3)]">
               Explore Horizone <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
             </button>
             <button onClick={() => onNavigate('acelbyte')} className="flex items-center gap-3 px-10 py-5 bg-white/5 border border-white/10 text-white text-sm font-black uppercase tracking-widest rounded-2xl hover:bg-white/10 transition-all backdrop-blur-md">
-              View Whitepapers
+              View Documentation
             </button>
           </div>
         </FadeIn>
@@ -127,11 +127,11 @@ export default function XoerisPage({ onNavigate }) {
         <FadeIn>
           <div className="flex flex-col md:flex-row justify-between items-end mb-24 gap-8">
             <div className="max-w-2xl">
-              <h2 className="text-sm font-black text-[#705EBC] uppercase tracking-[0.4em] mb-6">The Universe</h2>
-              <h3 className="text-5xl md:text-7xl font-black tracking-tighter leading-tight">EXPLORE THE <br/> FAMILIES.</h3>
+              <h2 className="text-sm font-black text-[#705EBC] uppercase tracking-[0.4em] mb-6">Our Portfolio</h2>
+              <h3 className="text-5xl md:text-7xl font-black tracking-tighter leading-tight">EXPLORE PRODUCT <br/> FAMILIES.</h3>
             </div>
             <p className="text-gray-500 font-bold uppercase tracking-widest text-xs border-l-2 border-[#705EBC] pl-6 py-2">
-              Cross-Platform <br/> Synchronization
+              Cross-Platform <br/> Integration
             </p>
           </div>
         </FadeIn>
@@ -155,11 +155,11 @@ export default function XoerisPage({ onNavigate }) {
             <div className="grid grid-cols-2 gap-8">
               <div>
                 <div className="text-3xl font-black text-white mb-2">99.9%</div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-gray-500">Uptime Reliability</div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-gray-500">Service Availability</div>
               </div>
               <div>
                 <div className="text-3xl font-black text-white mb-2">&lt; 1ms</div>
-                <div className="text-[10px] font-black uppercase tracking-widest text-gray-500">Node Latency</div>
+                <div className="text-[10px] font-black uppercase tracking-widest text-gray-500">Response Latency</div>
               </div>
             </div>
           </FadeIn>
@@ -188,7 +188,7 @@ export default function XoerisPage({ onNavigate }) {
                 <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="h-10 w-40 object-contain object-left" />
               </button>
               <p className="text-gray-500 font-medium max-w-xs leading-relaxed mb-10">
-                Pioneering the intersection of intelligence and artistic expression through a unified technology stack.
+                Pioneering professional software ecosystems and interactive modular environments.
               </p>
               <div className="flex gap-4">
                  <div className="w-10 h-10 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-colors cursor-pointer"><Globe size={18}/></div>

@@ -62,10 +62,10 @@ export default function AboutPage({ onNavigate }) {
       <section className="relative pt-60 pb-32 px-6 md:px-12 flex flex-col items-center text-center overflow-hidden">
         <FadeIn className="relative z-10 max-w-4xl">
           <h1 className="text-5xl md:text-7xl font-black leading-[0.95] mb-10 tracking-tighter uppercase text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-gray-500">
-            Pioneering the Next <br/> Paradigm of Technology
+            Developing Professional <br/> Software Platforms
           </h1>
           <p className="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed font-medium mb-12">
-            Xoeris is an advanced engineering and product design firm dedicated to creating interconnected digital universes, specialized operating systems, and intelligent frameworks.
+            Xoeris is a software engineering and product design firm dedicated to creating interconnected digital applications, specialized operating systems, and developer tools.
           </p>
         </FadeIn>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#705EBC] rounded-full blur-[200px] opacity-10 pointer-events-none"></div>
@@ -76,16 +76,16 @@ export default function AboutPage({ onNavigate }) {
         <div className="grid md:grid-cols-2 gap-16 items-start">
           <FadeIn>
             <h2 className="text-xs font-black text-[#705EBC] uppercase tracking-[0.4em] mb-4">Our Mission</h2>
-            <h3 className="text-3xl md:text-4xl font-black tracking-tight mb-6">INTEGRATING SYSTEM AND SENSE</h3>
+            <h3 className="text-3xl md:text-4xl font-black tracking-tight mb-6">INTEGRATING SYSTEM AND UTILITY</h3>
             <p className="text-gray-400 leading-relaxed font-medium">
-              We build tools and environments that unify raw computational power with human creativity. From real-time visual rendering pipelines to robust system-level services, our target is zero-friction execution.
+              We design tools and systems that combine robust computational performance with intuitive user design. From real-time rendering pipelines to core OS modules, our priority is workflow optimization.
             </p>
           </FadeIn>
           <FadeIn>
             <h2 className="text-xs font-black text-[#705EBC] uppercase tracking-[0.4em] mb-4">Our Vision</h2>
             <h3 className="text-3xl md:text-4xl font-black tracking-tight mb-6">THE MODULAR ECOSYSTEM</h3>
             <p className="text-gray-400 leading-relaxed font-medium">
-              We envision a future where software platforms are not rigid monoliths, but modular networks of high-performance components. XIME represents the core foundation of this paradigm, adapting and expanding dynamically.
+              We envision software architectures that are built on modular, high-performance components. XIME represents the framework for this vision, delivering scalability and ease of integration.
             </p>
           </FadeIn>
         </div>
@@ -101,21 +101,21 @@ export default function AboutPage({ onNavigate }) {
             <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors">
               <Cpu className="text-[#705EBC] mb-6" size={32} />
               <h4 className="text-xl font-black uppercase tracking-tight mb-4">Performance First</h4>
-              <p className="text-gray-400 text-sm leading-relaxed">Optimization at every level. We develop lightweight, high-throughput architectures designed to handle complex workloads with minimal footprint.</p>
+              <p className="text-gray-400 text-sm leading-relaxed">System-level optimization. We build responsive, low-latency architectures designed to handle intensive operations with high efficiency.</p>
             </div>
           </FadeIn>
           <FadeIn>
             <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors">
               <Layers className="text-[#705EBC] mb-6" size={32} />
               <h4 className="text-xl font-black uppercase tracking-tight mb-4">Modular Design</h4>
-              <p className="text-gray-400 text-sm leading-relaxed">Flexibility through modularity. Components are built to operate independently but coordinate seamlessly across system networks.</p>
+              <p className="text-gray-400 text-sm leading-relaxed">System flexibility. Software features are structured as independent components that integrate seamlessly across platform nodes.</p>
             </div>
           </FadeIn>
           <FadeIn>
             <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors">
               <Shield className="text-[#705EBC] mb-6" size={32} />
-              <h4 className="text-xl font-black uppercase tracking-tight mb-4">Resiliency</h4>
-              <p className="text-gray-400 text-sm leading-relaxed">Reliable and fault-tolerant system models. Built to maintain operational integrity in demanding multi-node environments.</p>
+              <h4 className="text-xl font-black uppercase tracking-tight mb-4">Security</h4>
+              <p className="text-gray-400 text-sm leading-relaxed">Reliable and stable operations. Built to ensure data protection and runtime stability across all connected applications.</p>
             </div>
           </FadeIn>
         </div>
@@ -130,7 +130,7 @@ export default function AboutPage({ onNavigate }) {
                 <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="h-10 w-40 object-contain object-left" />
               </button>
               <p className="text-gray-500 font-medium max-w-xs leading-relaxed mb-10">
-                Pioneering the intersection of intelligence and artistic expression through a unified technology stack.
+                Pioneering professional software ecosystems and interactive modular environments.
               </p>
             </div>
             <div>

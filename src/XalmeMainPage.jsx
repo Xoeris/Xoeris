@@ -27,10 +27,10 @@ export default function XalmeMainPage({ onNavigate }) {
           <Cpu className="text-[#705EBC]" size={28} />
         </div>
         <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tight mb-6 leading-none">
-          Xalme Intelligence
+          Xalme Assistant
         </h1>
         <p className="text-base md:text-lg text-gray-400 font-medium leading-relaxed max-w-2xl mb-12">
-          An advanced neural execution assistant designed and trained exclusively by Xoeris. Running behind private system APIs to orchestrate autonomous execution, digital security systems, and operations telemetry.
+          An AI assistant framework developed by Xoeris to support code generation, project planning, and systems configuration tasks.
         </p>
 
         {/* Action Panel Grid */}
@@ -38,28 +38,28 @@ export default function XalmeMainPage({ onNavigate }) {
           <div className="p-6 rounded-[2rem] bg-white/[0.01] border border-white/5 text-left flex flex-col justify-between">
             <div>
               <Terminal className="text-[#705EBC] mb-4" size={24} />
-              <h3 className="text-sm font-black uppercase tracking-wider mb-2">Neural Console</h3>
-              <p className="text-xs text-gray-500 font-medium leading-relaxed">Authorized clearance grants operator chat panel access to interface directly with Xalme intelligence.</p>
+              <h3 className="text-sm font-black uppercase tracking-wider mb-2">Interactive Chat</h3>
+              <p className="text-xs text-gray-500 font-medium leading-relaxed">Access the chat dashboard using developer credentials to run code execution tests.</p>
             </div>
             <button
               onClick={() => onNavigate('chat')}
               className="mt-6 flex items-center gap-2 text-xs font-black uppercase tracking-widest text-[#705EBC] hover:text-white transition-colors bg-transparent border-none p-0 text-left"
             >
-              Access console <ArrowRight size={14} />
+              Open chat console <ArrowRight size={14} />
             </button>
           </div>
 
           <div className="p-6 rounded-[2rem] bg-white/[0.01] border border-white/5 text-left flex flex-col justify-between">
             <div>
               <ShieldCheck className="text-[#705EBC] mb-4" size={24} />
-              <h3 className="text-sm font-black uppercase tracking-wider mb-2">Ecosystem Integration</h3>
-              <p className="text-xs text-gray-500 font-medium leading-relaxed">Xalme serves as the core intelligence framework for XIME, driving execution telemetry and service layers.</p>
+              <h3 className="text-sm font-black uppercase tracking-wider mb-2">Platform Integration</h3>
+              <p className="text-xs text-gray-500 font-medium leading-relaxed">Xalme integrates into the XIME workspace ecosystem to provide runtime helper utilities.</p>
             </div>
             <button
               onClick={() => onNavigate('xoeris')}
               className="mt-6 flex items-center gap-2 text-xs font-black uppercase tracking-widest text-gray-400 hover:text-white transition-colors bg-transparent border-none p-0 text-left"
             >
-              View core <ArrowRight size={14} />
+              Go to platform <ArrowRight size={14} />
             </button>
           </div>
         </div>

@@ -18,7 +18,7 @@ export default function ChatPage({ onNavigate }) {
 
   // Chat state
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Xalme execution core active. Send query to begin.' }
+    { role: 'assistant', content: 'Xalme assistant ready. Enter your prompt to begin.' }
   ]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -38,7 +38,7 @@ export default function ChatPage({ onNavigate }) {
       localStorage.setItem('xoeris_chat_auth', 'true');
       setAuthError('');
     } else {
-      setAuthError('Access denied: Invalid operational credentials.');
+      setAuthError('Access denied: Invalid credentials.');
     }
   };
 
@@ -125,8 +125,8 @@ export default function ChatPage({ onNavigate }) {
               <div className="w-16 h-16 rounded-[1.25rem] bg-[#705EBC]/10 border border-[#705EBC]/20 flex items-center justify-center mx-auto mb-6">
                 <Cpu className="text-[#705EBC]" size={28} />
               </div>
-              <h1 className="text-2xl font-black uppercase tracking-tight mb-2">Xalme Execution Core</h1>
-              <p className="text-xs text-gray-500 font-medium leading-relaxed">Authorized clearance required. Connect using credentials to access system telemetry.</p>
+              <h1 className="text-2xl font-black uppercase tracking-tight mb-2">Developer Sign In</h1>
+              <p className="text-xs text-gray-500 font-medium leading-relaxed">Sign in with your developer account to access the chat dashboard.</p>
             </div>
 
             {/* Login Selection */}
@@ -159,14 +159,14 @@ export default function ChatPage({ onNavigate }) {
                   className="w-full py-4 px-6 bg-white text-black rounded-2xl flex items-center justify-center gap-3 text-sm font-black uppercase tracking-wider hover:scale-[1.02] active:scale-95 transition-transform"
                 >
                   <Mail size={16} />
-                  Access via Credentials
+                  Sign In with Password
                 </button>
               </div>
             ) : (
               /* Email Credentials Input Form */
               <form onSubmit={handleLoginSubmit} className="flex flex-col gap-5">
                 <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Secure Email</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Email Address</label>
                   <div className="relative flex items-center">
                     <Mail className="absolute left-4 text-gray-500" size={16} />
                     <input
@@ -181,13 +181,13 @@ export default function ChatPage({ onNavigate }) {
                 </div>
 
                 <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Security Clearance</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Password</label>
                   <div className="relative flex items-center">
                     <Lock className="absolute left-4 text-gray-500" size={16} />
                     <input
                       type="password"
                       required
-                      placeholder="Clearance Key"
+                      placeholder="Password"
                       value={passwordInput}
                       onChange={(e) => setPasswordInput(e.target.value)}
                       className="w-full pl-12 pr-4 py-4 bg-white/[0.02] border border-white/5 rounded-2xl text-sm font-medium outline-none focus:border-[#705EBC]/40 transition-colors"
@@ -214,7 +214,7 @@ export default function ChatPage({ onNavigate }) {
                     type="submit"
                     className="flex-1 py-4 bg-[#705EBC] hover:bg-[#5b4aa6] text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-colors shadow-[0_10px_30px_rgba(112,94,188,0.2)]"
                   >
-                    Authorize
+                    Sign In
                   </button>
                 </div>
               </form>
@@ -224,7 +224,7 @@ export default function ChatPage({ onNavigate }) {
 
         {/* Footer */}
         <footer className="px-6 py-6 text-center text-[10px] font-black text-gray-600 uppercase tracking-widest z-10">
-          © 2026 Xoeris. Protected Infrastructure.
+          © 2026 Xoeris. All rights reserved.
         </footer>
       </div>
     );
@@ -261,7 +261,7 @@ export default function ChatPage({ onNavigate }) {
           <nav className="px-3 py-2 flex flex-col gap-1">
             <button className="w-full py-3 px-4 rounded-xl flex items-center gap-3 text-xs font-black uppercase tracking-wider bg-white/[0.02] text-white text-left">
               <MessageSquare size={14} className="text-[#705EBC]" />
-              Telemetry Chat
+              Assistant Chat
             </button>
             <button disabled className="w-full py-3 px-4 rounded-xl flex items-center gap-3 text-xs font-bold uppercase tracking-wider text-gray-600 text-left cursor-not-allowed">
               <FolderOpen size={14} />
@@ -289,7 +289,7 @@ export default function ChatPage({ onNavigate }) {
             onClick={handleLogout}
             className="w-full py-2 bg-red-500/5 hover:bg-red-500/10 hover:text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
           >
-            Lock Core
+            Sign Out
           </button>
         </div>
       </aside>
@@ -315,7 +315,7 @@ export default function ChatPage({ onNavigate }) {
               <Menu size={20} />
             </button>
             <div className="flex items-center gap-2">
-              <span className="text-sm font-black uppercase tracking-widest text-gray-400">Xalme // Console</span>
+              <span className="text-sm font-black uppercase tracking-widest text-gray-400">Xalme // Chat Dashboard</span>
             </div>
           </div>
 
@@ -323,7 +323,7 @@ export default function ChatPage({ onNavigate }) {
             {/* Active status */}
             <div className="hidden sm:flex items-center gap-2 bg-[#705EBC]/10 border border-[#705EBC]/20 px-3 py-1.5 rounded-full">
               <div className="w-2 h-2 rounded-full bg-[#705EBC] animate-pulse"></div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-[#705EBC]">Secure Link</span>
+              <span className="text-[10px] font-black uppercase tracking-wider text-[#705EBC]">Connected</span>
             </div>
           </div>
         </header>
@@ -340,7 +340,7 @@ export default function ChatPage({ onNavigate }) {
                   }`}
               >
                 <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-gray-500">
-                  {msg.role === 'user' ? 'Operator' : 'Xalme Core-1'}
+                  {msg.role === 'user' ? 'User' : 'Assistant'}
                 </div>
                 <div
                   className={`px-5 py-3.5 rounded-[1.5rem] leading-relaxed text-sm font-medium border ${msg.role === 'user'
