@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, ArrowLeft, RefreshCw, LogIn, Mail, Lock, ShieldAlert, Cpu, Sparkles, Check, Globe, Plus, Compass, ChevronDown, Menu, User, Settings, FolderOpen, Code } from 'lucide-react';
+import { Send, ArrowLeft, RefreshCw, LogIn, Mail, Lock, ShieldAlert, Cpu, Sparkles, Check, Globe, Plus, Compass, ChevronDown, Menu, User, Settings, FolderOpen, Code, MessageSquare } from 'lucide-react';
 
 const PUBLIC_API_KEY = import.meta.env.VITE_XOERIS_PUBLIC_KEY || '';
 
