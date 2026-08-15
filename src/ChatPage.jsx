@@ -1,19 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Cpu, Key, AlertTriangle, ArrowLeft, RefreshCw } from 'lucide-react';
+import { Send, Cpu, AlertTriangle, ArrowLeft, RefreshCw } from 'lucide-react';
+
+// Public demo key baked in at build time (Vite exposes VITE_* env vars to
+// the client bundle). This is intentionally public-facing — it must be
+// present in the server's XOERIS_API_KEYS list, and should be treated as
+// a low-trust "anyone can use it" key until real per-user auth + rate
+// limiting (Vercel KV/Upstash) is wired up server-side.
+const PUBLIC_API_KEY = import.meta.env.VITE_XOERIS_PUBLIC_KEY || '';
 
 export default function ChatPage({ onNavigate }) {
   const [messages, setMessages] = useState([
     { role: 'assistant', content: 'Xalme execution core active. Send query to begin.' }
   ]);
   const [input, setInput] = useState('');
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('xoeris_chat_key') || '');
   const [loading, setLoading] = useState(false);
   const [statusText, setStatusText] = useState('');
   const messagesEndRef = useRef(null);
-
-  useEffect(() => {
-    localStorage.setItem('xoeris_chat_key', apiKey);
-  }, [apiKey]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -23,8 +25,8 @@ export default function ChatPage({ onNavigate }) {
     e.preventDefault();
     if (!input.trim() || loading) return;
 
-    if (!apiKey.trim()) {
-      setStatusText('API Key is required to authorize requests.');
+    if (!PUBLIC_API_KEY) {
+      setStatusText('Chat is temporarily unavailable (missing client key).');
       return;
     }
 
@@ -39,7 +41,7 @@ export default function ChatPage({ onNavigate }) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey.trim()}`
+          'Authorization': `Bearer ${PUBLIC_API_KEY}`
         },
         body: JSON.stringify({
           messages: [
@@ -81,18 +83,6 @@ export default function ChatPage({ onNavigate }) {
             <span className="text-sm font-black uppercase tracking-widest text-gray-400">Xalme // Core</span>
           </div>
         </div>
-
-        {/* API Key Box */}
-        <div className="flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl max-w-xs sm:max-w-md">
-          <Key size={14} className="text-gray-500" />
-          <input
-            type="password"
-            placeholder="XOERIS_API_KEY"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            className="bg-transparent text-xs outline-none border-none text-white w-28 sm:w-48 placeholder:text-gray-600"
-          />
-        </div>
       </header>
 
       {/* Main Chat Feed */}
@@ -100,21 +90,19 @@ export default function ChatPage({ onNavigate }) {
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`flex flex-col gap-2 max-w-[85%] ${
-              msg.role === 'user' ? 'self-end items-end' : 'self-start items-start'
-            }`}
+            className={`flex flex-col gap-2 max-w-[85%] ${msg.role === 'user' ? 'self-end items-end' : 'self-start items-start'
+              }`}
           >
             <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-gray-500">
               {msg.role === 'user' ? 'Operator' : 'Xalme Core-1'}
             </div>
             <div
-              className={`px-5 py-3.5 rounded-[1.5rem] leading-relaxed text-sm font-medium border ${
-                msg.role === 'user'
+              className={`px-5 py-3.5 rounded-[1.5rem] leading-relaxed text-sm font-medium border ${msg.role === 'user'
                   ? 'bg-[#705EBC]/10 border-[#705EBC]/20 text-white rounded-tr-none'
                   : msg.content.startsWith('[ERROR]')
-                  ? 'bg-red-500/10 border-red-500/20 text-red-400 rounded-tl-none font-mono text-xs'
-                  : 'bg-white/[0.02] border-white/5 text-gray-200 rounded-tl-none'
-              }`}
+                    ? 'bg-red-500/10 border-red-500/20 text-red-400 rounded-tl-none font-mono text-xs'
+                    : 'bg-white/[0.02] border-white/5 text-gray-200 rounded-tl-none'
+                }`}
             >
               {msg.content}
             </div>
