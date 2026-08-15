@@ -234,9 +234,9 @@ export default function ChatPage({ onNavigate }) {
     <div className="min-h-screen bg-black text-white flex font-sans selection:bg-[#705EBC]/30 overflow-hidden">
       
       {/* Sidebar Navigation */}
-      <aside className={`${
+      <aside className={`fixed md:relative top-0 bottom-0 left-0 ${
         sidebarOpen ? 'w-64' : 'w-0 -translate-x-full'
-      } border-r border-white/5 bg-[#0a0a0c] flex flex-col justify-between transition-all duration-300 overflow-hidden z-40 shrink-0`}>
+      } border-r border-white/5 bg-[#0a0a0c] flex flex-col justify-between transition-all duration-300 overflow-hidden z-50 shrink-0 h-full`}>
         <div>
           {/* Header */}
           <div className="p-6 flex items-center justify-between border-b border-white/5">
@@ -294,8 +294,16 @@ export default function ChatPage({ onNavigate }) {
         </div>
       </aside>
 
+      {/* Mobile Sidebar Overlay Backdrop */}
+      {sidebarOpen && (
+        <div 
+          onClick={() => setSidebarOpen(false)} 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+        />
+      )}
+
       {/* Main View Area */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen">
+      <div className="flex-1 flex flex-col min-w-0 h-screen w-full">
         
         {/* Top Header */}
         <header className="border-b border-white/5 bg-black/80 backdrop-blur-md px-6 py-4 flex justify-between items-center z-30">
