@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import AcelbytePage from './AcelbytePage';
 import AboutPage from './AboutPage';
 import ChatPage from './ChatPage';
+import ErrorPage from './ErrorPage';
+import UnderConstructionPage from './UnderConstructionPage';
+import XalmeMainPage from './XalmeMainPage';
 import DigitalArtifactsPage from './DigitalArtifactsPage';
 import XoerisPage from './XoerisPage';
 import SamudraPage from './SamudraPage';
@@ -55,11 +58,20 @@ export default function App() {
     const hostname = window.location.hostname;
     const path = window.location.pathname.toLowerCase();
 
+    // Check hostnames first
+    if (hostname.includes('api.xoeris.com')) return 'error-api';
+    if (hostname.includes('dl.private.drive.xoeris.com')) return 'error-dl';
+    if (hostname.includes('drive.xoeris.com')) return 'under-construction';
+    if (hostname.includes('xalme.xoeris.com')) {
+      if (path === '/chat') return 'chat';
+      return 'xalme-main';
+    }
+
     if (hostname.includes('tartaruga') || path.startsWith('/tartaruga')) return 'tartaruga';
     if (path === '/digital-artifacts') return 'digital-artifacts';
     if (path === '/about/acelbyte' || path === '/acelbyte') return 'acelbyte';
     if (path === '/about') return 'about';
-    if (path === '/chat' || hostname.includes('xalme')) return 'chat';
+    if (path === '/chat') return 'chat';
 
     if (path === '/subscription' || path === '/payment') return 'subscriptions';
     if (path === '/developers') return 'developers';
@@ -98,7 +110,30 @@ export default function App() {
     }
 
     const handlePopState = () => {
+      const hostname = window.location.hostname;
       const path = window.location.pathname.toLowerCase();
+
+      if (hostname.includes('api.xoeris.com')) {
+        setCurrentPage('error-api');
+        return;
+      }
+      if (hostname.includes('dl.private.drive.xoeris.com')) {
+        setCurrentPage('error-dl');
+        return;
+      }
+      if (hostname.includes('drive.xoeris.com')) {
+        setCurrentPage('under-construction');
+        return;
+      }
+      if (hostname.includes('xalme.xoeris.com')) {
+        if (path === '/chat') {
+          setCurrentPage('chat');
+        } else {
+          setCurrentPage('xalme-main');
+        }
+        return;
+      }
+
       if (path === '/developers') setCurrentPage('developers');
       else if (path.includes('/netwave/nodes')) setCurrentPage('netwave-nodes');
       else if (path.includes('/ariasphere/vocalis')) setCurrentPage('ariasphere-vocalis');
@@ -141,6 +176,10 @@ export default function App() {
       xoeris: 'Xoeris',
       about: 'About | Xoeris',
       chat: 'Xalme Chat | Xoeris',
+      'xalme-main': 'Xalme AI | Xoeris',
+      'under-construction': 'Under Construction | Xoeris',
+      'error-api': 'Restricted Endpoint | Xoeris',
+      'error-dl': 'Restricted Storage | Xoeris',
       developers: 'Developer Portal | Xoeris',
       'netwave-nodes': 'Xoeris Node-S',
       'ariasphere-vocalis': 'Xoeris Vocalis',
@@ -240,6 +279,10 @@ export default function App() {
         {currentPage === 'acelbyte' && <AcelbytePage onNavigate={handleNavigate} />}
         {currentPage === 'about' && <AboutPage onNavigate={handleNavigate} />}
         {currentPage === 'chat' && <ChatPage onNavigate={handleNavigate} />}
+        {currentPage === 'xalme-main' && <XalmeMainPage onNavigate={handleNavigate} />}
+        {currentPage === 'under-construction' && <UnderConstructionPage />}
+        {currentPage === 'error-api' && <ErrorPage title="Restricted API Endpoint" />}
+        {currentPage === 'error-dl' && <ErrorPage title="Restricted Private Storage" />}
         {currentPage === 'xoeris' && <XoerisPage onNavigate={handleNavigate} />}
         {currentPage === 'samudra' && <SamudraPage onNavigate={handleNavigate} />}
         {currentPage === 'samudra-showcase' && <SamudraShowcasePage onNavigate={handleNavigate} />}
