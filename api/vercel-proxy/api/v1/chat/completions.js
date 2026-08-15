@@ -75,7 +75,26 @@ export default async function handler(req) {
   );
 
   if (!runpodRes.ok) {
-    return json({ error: "Upstream inference error" }, 502);
+    // TEMP DEBUG: surface RunPod's actual status/body so we can see why
+    // the upstream call failed (bad endpoint ID, bad API key, etc).
+    // Remove this once the root cause is confirmed — don't ship raw
+    // upstream error bodies to the public API long-term.
+    let runpodBody;
+    try {
+      runpodBody = await runpodRes.text();
+    } catch {
+      runpodBody = "<could not read body>";
+    }
+    return json(
+      {
+        error: "Upstream inference error",
+        debug_runpod_status: runpodRes.status,
+        debug_runpod_body: runpodBody,
+        debug_endpoint_id_set: Boolean(RUNPOD_ENDPOINT_ID),
+        debug_api_key_set: Boolean(RUNPOD_API_KEY),
+      },
+      502
+    );
   }
 
   const runpodJson = await runpodRes.json();
