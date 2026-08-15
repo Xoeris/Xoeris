@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, ArrowLeft, RefreshCw, LogIn, Mail, Lock, ShieldAlert, Cpu, Sparkles, Check, Globe } from 'lucide-react';
+import { Send, ArrowLeft, RefreshCw, LogIn, Mail, Lock, ShieldAlert, Cpu, Sparkles, Check, Globe, Plus, Compass, ChevronDown, Menu, User, Settings, FolderOpen, Code } from 'lucide-react';
 
 const PUBLIC_API_KEY = import.meta.env.VITE_XOERIS_PUBLIC_KEY || '';
 
@@ -12,6 +12,9 @@ export default function ChatPage({ onNavigate }) {
   const [emailInput, setEmailInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [authError, setAuthError] = useState('');
+
+  // UI state
+  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   // Chat state
   const [messages, setMessages] = useState([
@@ -132,7 +135,7 @@ export default function ChatPage({ onNavigate }) {
                 {/* Dummy non-interactable buttons */}
                 <button disabled className="w-full py-4 px-6 bg-white/[0.02] border border-white/5 rounded-2xl flex items-center justify-center gap-3 text-sm font-bold text-gray-600 cursor-not-allowed">
                   <svg className="h-5 w-5 opacity-40" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12.24 10.285V13.4h6.887c-.275 1.565-1.88 4.604-6.887 4.604-4.33 0-7.866-3.577-7.866-8s3.536-8 7.866-8c2.46 0 4.105 1.025 5.047 1.926l2.427-2.334C17.955 2.192 15.34 1 12.24 1 5.92 1 1 5.92 1 12.2s4.92 11.2 11.24 11.2c6.6 0 11-4.64 11-11.2 0-.756-.08-1.333-.18-1.915H12.24z"/>
+                    <path d="M12.24 10.285V13.4h6.887c-.275 1.565-1.88 4.604-6.887 4.604-4.33 0-7.866-3.577-7.866-8s3.536-8 7.866-8c2.46 0 4.105 1.025 5.047 1.926l2.427-2.334C17.955 2.192 15.34 1 12.24 1 5.92 1 12.2s4.92 11.2 11.24 11.2c6.6 0 11-4.64 11-11.2 0-.756-.08-1.333-.18-1.915H12.24z"/>
                   </svg>
                   Continue with Google
                 </button>
@@ -227,112 +230,171 @@ export default function ChatPage({ onNavigate }) {
     );
   }
 
-  // Auth Screen Render End
-
   return (
-    <div className="min-h-screen bg-black text-white flex flex-col font-sans selection:bg-[#705EBC]/30">
-      {/* Top Header */}
-      <header className="border-b border-white/5 bg-black/80 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-50">
-        <div className="flex items-center gap-3">
-          <button onClick={() => onNavigate('xoeris')} className="p-2 hover:bg-white/5 rounded-lg transition-colors">
-            <ArrowLeft size={20} />
-          </button>
-          <div className="flex items-center gap-2">
-            <img src="/xoeris_logo_emblem.png" alt="Xoeris Logo" className="h-6 w-6 object-contain" />
-            <span className="text-sm font-black uppercase tracking-widest text-gray-400">Xalme // Core</span>
+    <div className="min-h-screen bg-black text-white flex font-sans selection:bg-[#705EBC]/30 overflow-hidden">
+      
+      {/* Sidebar Navigation */}
+      <aside className={`${
+        sidebarOpen ? 'w-64' : 'w-0 -translate-x-full'
+      } border-r border-white/5 bg-[#0a0a0c] flex flex-col justify-between transition-all duration-300 overflow-hidden z-40 shrink-0`}>
+        <div>
+          {/* Header */}
+          <div className="p-6 flex items-center justify-between border-b border-white/5">
+            <button onClick={() => onNavigate('xoeris')} className="flex items-center gap-2.5">
+              <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="h-6 w-6 object-contain" />
+              <span className="text-xs font-black uppercase tracking-wider text-white">Xalme AI</span>
+            </button>
           </div>
+
+          {/* Quick actions */}
+          <div className="p-4">
+            <button 
+              onClick={() => setMessages([{ role: 'assistant', content: 'Xalme execution core active. Send query to begin.' }])}
+              className="w-full py-3 px-4 bg-white/[0.03] border border-white/5 hover:border-[#705EBC]/30 hover:bg-white/[0.05] rounded-xl flex items-center gap-2.5 text-xs font-black uppercase tracking-widest transition-all"
+            >
+              <Plus size={14} className="text-[#705EBC]" />
+              New session
+            </button>
+          </div>
+
+          {/* Sidebar Menu items */}
+          <nav className="px-3 py-2 flex flex-col gap-1">
+            <button className="w-full py-3 px-4 rounded-xl flex items-center gap-3 text-xs font-black uppercase tracking-wider bg-white/[0.02] text-white text-left">
+              <MessageSquare size={14} className="text-[#705EBC]" />
+              Telemetry Chat
+            </button>
+            <button disabled className="w-full py-3 px-4 rounded-xl flex items-center gap-3 text-xs font-bold uppercase tracking-wider text-gray-600 text-left cursor-not-allowed">
+              <FolderOpen size={14} />
+              Artifacts
+            </button>
+            <button disabled className="w-full py-3 px-4 rounded-xl flex items-center gap-3 text-xs font-bold uppercase tracking-wider text-gray-600 text-left cursor-not-allowed">
+              <Code size={14} />
+              Model Code
+            </button>
+          </nav>
         </div>
 
-        <div className="flex items-center gap-4">
-          {/* Active status */}
-          <div className="hidden sm:flex items-center gap-2 bg-[#705EBC]/10 border border-[#705EBC]/20 px-3 py-1.5 rounded-full">
-            <div className="w-2 h-2 rounded-full bg-[#705EBC] animate-pulse"></div>
-            <span className="text-[10px] font-black uppercase tracking-wider text-[#705EBC]">Secure Link</span>
+        {/* User Card footer inside Sidebar */}
+        <div className="p-4 border-t border-white/5 flex flex-col gap-2">
+          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.01]">
+            <div className="w-8 h-8 rounded-lg bg-[#705EBC]/10 flex items-center justify-center text-[#705EBC]">
+              <User size={16} />
+            </div>
+            <div className="flex flex-col min-w-0">
+              <span className="text-xs font-black uppercase tracking-wide truncate text-gray-300">Operator</span>
+              <span className="text-[9px] font-medium text-gray-600 truncate">dev@xoeris.com</span>
+            </div>
           </div>
-
           <button
             onClick={handleLogout}
-            className="px-4 py-2 bg-white/5 hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20 border border-white/10 rounded-xl text-xs font-black uppercase tracking-widest transition-all"
+            className="w-full py-2 bg-red-500/5 hover:bg-red-500/10 hover:text-red-400 border border-red-500/10 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all"
           >
             Lock Core
           </button>
         </div>
-      </header>
+      </aside>
 
-      {/* Main Chat Feed */}
-      <main className="flex-grow flex flex-col max-w-4xl w-full mx-auto justify-between">
+      {/* Main View Area */}
+      <div className="flex-1 flex flex-col min-w-0 h-screen">
         
-        {/* Chat Messages */}
-        <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-6">
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`flex flex-col gap-2 max-w-[85%] ${msg.role === 'user' ? 'self-end items-end' : 'self-start items-start'
-                }`}
+        {/* Top Header */}
+        <header className="border-b border-white/5 bg-black/80 backdrop-blur-md px-6 py-4 flex justify-between items-center z-30">
+          <div className="flex items-center gap-4">
+            <button 
+              onClick={() => setSidebarOpen(!sidebarOpen)} 
+              className="p-2 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-white"
             >
-              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-gray-500">
-                {msg.role === 'user' ? 'Operator' : 'Xalme Core-1'}
-              </div>
+              <Menu size={20} />
+            </button>
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-black uppercase tracking-widest text-gray-400">Xalme // Console</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            {/* Active status */}
+            <div className="hidden sm:flex items-center gap-2 bg-[#705EBC]/10 border border-[#705EBC]/20 px-3 py-1.5 rounded-full">
+              <div className="w-2 h-2 rounded-full bg-[#705EBC] animate-pulse"></div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-[#705EBC]">Secure Link</span>
+            </div>
+          </div>
+        </header>
+
+        {/* Main Chat Feed */}
+        <main className="flex-grow flex flex-col justify-between overflow-hidden relative">
+          
+          {/* Chat Messages */}
+          <div className="flex-1 p-6 overflow-y-auto flex flex-col gap-6">
+            {messages.map((msg, index) => (
               <div
-                className={`px-5 py-3.5 rounded-[1.5rem] leading-relaxed text-sm font-medium border ${msg.role === 'user'
-                    ? 'bg-[#705EBC]/10 border-[#705EBC]/20 text-white rounded-tr-none'
-                    : msg.content.startsWith('[ERROR]')
-                      ? 'bg-red-500/10 border-red-500/20 text-red-400 rounded-tl-none font-mono text-xs'
-                      : 'bg-white/[0.02] border-white/5 text-gray-200 rounded-tl-none'
+                key={index}
+                className={`flex flex-col gap-2 max-w-[85%] ${msg.role === 'user' ? 'self-end items-end' : 'self-start items-start'
                   }`}
               >
-                {msg.content}
-              </div>
-            </div>
-          ))}
-          {loading && (
-            <div className="flex items-center gap-3 text-xs text-gray-500 font-bold uppercase tracking-wider">
-              <RefreshCw size={14} className="animate-spin text-[#705EBC]" />
-              {statusText || 'Syncing...'}
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Input Bar Form */}
-        <div className="p-6 bg-gradient-to-t from-black via-black to-transparent">
-          <form onSubmit={handleSend} className="bg-white/[0.02] border border-white/5 rounded-3xl p-3 flex flex-col gap-3">
-            {/* Action Bar Header */}
-            <div className="flex items-center justify-between px-3 pt-2">
-              <div className="flex items-center gap-2 bg-white/[0.05] border border-white/10 px-3 py-1.5 rounded-full">
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Model: GPT-5.2</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-white/[0.05] flex items-center justify-center text-gray-500 cursor-not-allowed hover:text-white transition-colors">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v4"/></svg>
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wider text-gray-500">
+                  {msg.role === 'user' ? 'Operator' : 'Xalme Core-1'}
                 </div>
-                <div className="w-8 h-8 rounded-full bg-white/[0.05] flex items-center justify-center text-gray-500 cursor-not-allowed hover:text-white transition-colors">
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                <div
+                  className={`px-5 py-3.5 rounded-[1.5rem] leading-relaxed text-sm font-medium border ${msg.role === 'user'
+                      ? 'bg-[#705EBC]/10 border-[#705EBC]/20 text-white rounded-tr-none'
+                      : msg.content.startsWith('[ERROR]')
+                        ? 'bg-red-500/10 border-red-500/20 text-red-400 rounded-tl-none font-mono text-xs'
+                        : 'bg-white/[0.02] border-white/5 text-gray-200 rounded-tl-none'
+                    }`}
+                >
+                  {msg.content}
                 </div>
               </div>
-            </div>
+            ))}
+            {loading && (
+              <div className="flex items-center gap-3 text-xs text-gray-500 font-bold uppercase tracking-wider">
+                <RefreshCw size={14} className="animate-spin text-[#705EBC]" />
+                {statusText || 'Syncing...'}
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
 
-            {/* Input Message Area */}
-            <div className="flex items-center gap-3 bg-white/[0.02] border border-white/5 rounded-2xl px-4 py-3">
-              <input
-                type="text"
-                placeholder="Ask a follow-up..."
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                disabled={loading}
-                className="flex-grow bg-transparent text-sm font-medium outline-none border-none text-white placeholder:text-gray-600 disabled:opacity-50"
-              />
-              <button
-                type="submit"
-                disabled={loading || !input.trim()}
-                className="bg-[#705EBC] hover:scale-105 active:scale-95 disabled:scale-100 disabled:opacity-50 text-white p-3.5 rounded-xl flex items-center justify-center transition-all shadow-[0_10px_30px_rgba(112,94,188,0.2)]"
-              >
-                <Send size={16} />
-              </button>
-            </div>
-          </form>
-        </div>
-      </main>
+          {/* Input Bar Form */}
+          <div className="p-6 bg-gradient-to-t from-black via-black to-transparent z-20">
+            <form onSubmit={handleSend} className="max-w-4xl mx-auto bg-[#0a0a0c] border border-white/5 rounded-3xl p-3 flex flex-col gap-3 shadow-[0_15px_40px_rgba(0,0,0,0.6)]">
+              {/* Action Bar Header */}
+              <div className="flex items-center justify-between px-3 pt-2">
+                <div className="flex items-center gap-2 bg-white/[0.05] border border-white/10 px-3 py-1.5 rounded-full">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Model: Xalme-1.1</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-white/[0.05] flex items-center justify-center text-gray-500 cursor-not-allowed hover:text-white transition-colors">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 19v4"/></svg>
+                  </div>
+                  <div className="w-8 h-8 rounded-full bg-white/[0.05] flex items-center justify-center text-gray-500 cursor-not-allowed hover:text-white transition-colors">
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Input Message Area */}
+              <div className="flex items-center gap-3 bg-white/[0.02] border border-white/5 rounded-2xl px-4 py-3">
+                <input
+                  type="text"
+                  placeholder="Ask a follow-up..."
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  disabled={loading}
+                  className="flex-grow bg-transparent text-sm font-medium outline-none border-none text-white placeholder:text-gray-600 disabled:opacity-50"
+                />
+                <button
+                  type="submit"
+                  disabled={loading || !input.trim()}
+                  className="bg-[#705EBC] hover:scale-105 active:scale-95 disabled:scale-100 disabled:opacity-50 text-white p-3.5 rounded-xl flex items-center justify-center transition-all shadow-[0_10px_30px_rgba(112,94,188,0.2)]"
+                >
+                  <Send size={16} />
+                </button>
+              </div>
+            </form>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
