@@ -16,6 +16,7 @@ RUN pip3 install --no-cache-dir -r requirements.txt --break-system-packages
 # --- Bake the model into the image ---
 # Start the ollama server in the background just long enough to pull the
 # model, then let the entrypoint script own it at runtime.
+# Force cache invalidation trigger: 2026-08-15-12-38
 RUN (ollama serve &) && sleep 5 && ollama pull qwen2.5:1.5b
 
 COPY api/ollama-worker/handler.py .
