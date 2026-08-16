@@ -5,7 +5,7 @@ import { Radio, Globe, Zap } from 'lucide-react';
 export default function NodeSProductPage({ onNavigate }) {
   const networkFeatures = [
     { name: "Satellite Link 2.0", desc: "Integrated orbital transceiver for global coverage, even in the most remote maritime zones." },
-    { name: "Mesh Handover", desc: "Seamless switching between local Netwave nodes and satellite links with zero packet loss." },
+    { name: "Mesh Handover", desc: "Automatic switching between local Netwave nodes and satellite links with zero packet loss." },
     { name: "Quantum-Key Distribution", desc: "Secure data transmission protected by Voltrix-researched hardware encryption." }
   ];
 
@@ -47,7 +47,7 @@ export default function NodeSProductPage({ onNavigate }) {
       />
 
       <section className="py-32 px-6 md:px-12 flex flex-col items-center text-center bg-gradient-to-b from-transparent to-[#3B82F6]/10">
-         <h3 className="text-4xl md:text-6xl font-black mb-10 tracking-tighter uppercase">Connect Everything.</h3>
+         <h3 className="text-4xl md:text-6xl font-black mb-10 tracking-tighter uppercase">Deployment.</h3>
          <p className="text-gray-400 max-w-xl mb-12 text-lg">Node-S is now shipping to enterprise maritime and logistics partners globally.</p>
          <button className="px-12 py-6 bg-[#3B82F6] text-white text-sm font-black uppercase tracking-widest rounded-2xl hover:scale-105 transition-all shadow-[0_20px_50px_rgba(59,130,246,0.3)]">Inquire for Deployment</button>
       </section>

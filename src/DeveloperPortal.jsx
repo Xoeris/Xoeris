@@ -17,8 +17,8 @@ export default function DeveloperPortal({ onNavigate }) {
           <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-[10px] font-black uppercase tracking-widest text-blue-400 mb-8">
             <Terminal size={14} /> Developer Environment Active
           </div>
-          <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-10 uppercase">Build the <br/> Impossible.</h1>
-          <p className="text-xl text-gray-400 max-w-2xl leading-relaxed font-medium">Access the raw power of the Xoeris technology stack. Integrate neural intelligence, distributed storage, and global networking into your applications.</p>
+          <h1 className="text-6xl md:text-8xl font-black tracking-tighter mb-10 uppercase">Developer <br/> Portal.</h1>
+          <p className="text-xl text-gray-400 max-w-2xl leading-relaxed font-medium">Integrate Xoeris core modules, distributed storage APIs, and netwave interfaces directly into your applications.</p>
         </header>
 
         <section className="grid lg:grid-cols-3 gap-8 mb-32">

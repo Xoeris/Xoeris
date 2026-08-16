@@ -114,7 +114,7 @@ export default function TartarugaPage({ onNavigate }) {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F9CB43] via-[#E88C6D] to-[#705EBC] bg-[length:200%_auto] animate-gradient-shift">SEAWEED</span>
             </h1>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
-              Elevating the snack experience with premium ingredients and unmatched crunch. 
+              Crispy seaweed snacks made with quality ingredients and a clean roasted flavor. 
               Discover the authentic taste of Tartaruga.
             </p>
           </FadeIn>

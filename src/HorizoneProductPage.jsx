@@ -9,7 +9,7 @@ export default function HorizoneProductPage({ onNavigate }) {
   ];
 
   const workflowFeatures = [
-    { name: "Unified Asset Cloud", desc: "Seamless synchronization with Drivon for instant access to high-fidelity 3D assets." },
+    { name: "Unified Asset Cloud", desc: "Direct synchronization with Drivon for instant access to high-fidelity 3D assets." },
     { name: "Multi-Platform Export", desc: "Deploy to Xoeris OS, Mobile, and high-performance server clusters with one click." },
     { name: "Real-time Collaboration", desc: "Low-latency node-based editing synchronized across global Netwave connections." }
   ];
@@ -40,14 +40,14 @@ export default function HorizoneProductPage({ onNavigate }) {
       />
 
       <FeatureShowcase
-        title="Seamless Workflow"
+        title="Integrated Workflow"
         items={workflowFeatures}
         reverse={true}
       />
 
       <section className="py-32 px-6 md:px-12 flex flex-col items-center text-center bg-gradient-to-b from-transparent to-[#705EBC]/10">
-         <h3 className="text-4xl md:text-6xl font-black mb-10 tracking-tighter uppercase">Build the Future.</h3>
-         <p className="text-gray-400 max-w-xl mb-12 text-lg">Join the thousands of architects and developers building the Xoeris universe with Horizone.</p>
+         <h3 className="text-4xl md:text-6xl font-black mb-10 tracking-tighter uppercase">Get Started.</h3>
+         <p className="text-gray-400 max-w-xl mb-12 text-lg">Join the architects and developers building the Xoeris ecosystem with Horizone.</p>
          <button className="px-12 py-6 bg-[#705EBC] text-white text-sm font-black uppercase tracking-widest rounded-2xl hover:scale-105 transition-all shadow-[0_20px_50px_rgba(112,94,188,0.4)]">Get Horizone Early Access</button>
       </section>
     </ProductLayout>

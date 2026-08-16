@@ -108,7 +108,7 @@ export default function AboutPage({ onNavigate }) {
             <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors">
               <Layers className="text-[#705EBC] mb-6" size={32} />
               <h4 className="text-xl font-black uppercase tracking-tight mb-4">Modular Design</h4>
-              <p className="text-gray-400 text-sm leading-relaxed">System flexibility. Software features are structured as independent components that integrate seamlessly across platform nodes.</p>
+              <p className="text-gray-400 text-sm leading-relaxed">System flexibility. Software features are structured as independent components that integrate directly across platform nodes.</p>
             </div>
           </FadeIn>
           <FadeIn>

@@ -13,7 +13,7 @@ export default function IllucinePage({ onNavigate }) {
     <FamilyLayout
       title="Illucine"
       tagline="Cinematic Frameworks"
-      description="Redefining visual storytelling. Implementing professional-grade animation and film pipelines that operate at the speed of thought."
+      description="Developing rendering engines, motion capture utilities, and video protocols for high-fidelity animation pipelines."
       color="#F59E0B"
       onNavigate={onNavigate}
     >

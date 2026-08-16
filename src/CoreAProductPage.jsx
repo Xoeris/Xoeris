@@ -28,7 +28,7 @@ export default function CoreAProductPage({ onNavigate }) {
       family="Zenith"
       familyRoute="zenith"
       tagline="Foundational Silicon Architecture"
-      description="Core-A is the heart of the Xoeris ecosystem. A revolutionary processor architecture engineered for the most demanding computational tasks."
+      description="Core-A is the heart of the Xoeris ecosystem. A specialized processor architecture engineered for high-performance computational tasks."
       color="#EF4444"
       icon={Cpu}
       onNavigate={onNavigate}
@@ -47,7 +47,7 @@ export default function CoreAProductPage({ onNavigate }) {
       />
 
       <section className="py-32 px-6 md:px-12 flex flex-col items-center text-center bg-gradient-to-b from-transparent to-[#EF4444]/10">
-         <h3 className="text-4xl md:text-6xl font-black mb-10 tracking-tighter uppercase">Power the Next Era.</h3>
+         <h3 className="text-4xl md:text-6xl font-black mb-10 tracking-tighter uppercase">Zenith Core-A.</h3>
          <p className="text-gray-400 max-w-xl mb-12 text-lg">Core-A architecture is currently available for Zenith-class workstations and high-performance clusters.</p>
          <button className="px-12 py-6 bg-[#EF4444] text-white text-sm font-black uppercase tracking-widest rounded-2xl hover:scale-105 transition-all shadow-[0_20px_50px_rgba(239,68,68,0.3)]">View Architecture Whitepapers</button>
       </section>

@@ -457,7 +457,7 @@ export default function AcelbytePage({ onNavigate }) {
 
             <div className="mt-16 text-center max-w-3xl mx-auto">
               <p className="text-lg text-gray-400 italic font-medium leading-relaxed">
-                "Acelbyte's work is characterized by a dedication to excellence and a passion for pushing creative boundaries. His ability to seamlessly integrate technology and artistry makes him a distinctive and promising figure in the creative community."
+                "Acelbyte's work is characterized by a dedication to technical details and creative applications. His work integrates technology and digital design, focusing on functional software products."
               </p>
             </div>
           </FadeIn>
