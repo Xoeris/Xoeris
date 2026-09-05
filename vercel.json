@@ -30,6 +30,10 @@
       "destination": "sarah/sarah-ai.py"
     },
     {
+      "source": "/api/search",
+      "destination": "api/search.js"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

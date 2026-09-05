@@ -10,6 +10,7 @@ import XoerisPage from './XoerisPage';
 import SamudraPage from './SamudraPage';
 import TartarugaPage from './TartarugaPage';
 import SubscriptionsPage from './SubscriptionsPage';
+import AureviaPage from './AureviaPage';
 
 // SAMUDRA Pages
 import SamudraShowcasePage from './SamudraShowcasePage';
@@ -59,6 +60,7 @@ export default function App() {
     const path = window.location.pathname.toLowerCase();
 
     // Check hostnames first
+    if (hostname.includes('aurevia.xoeris.com') || hostname.includes('aurevia')) return 'aurevia';
     if (hostname.includes('api.xoeris.com')) return 'error-api';
     if (hostname.includes('dl.private.drive.xoeris.com')) return 'error-dl';
     if (hostname.includes('drive.xoeris.com')) return 'under-construction';
@@ -68,6 +70,7 @@ export default function App() {
     }
 
     if (hostname.includes('tartaruga') || path.startsWith('/tartaruga')) return 'tartaruga';
+    if (path.startsWith('/aurevia') || path.startsWith('/search')) return 'aurevia';
     if (path === '/digital-artifacts') return 'digital-artifacts';
     if (path === '/about/acelbyte' || path === '/acelbyte') return 'acelbyte';
     if (path === '/about') return 'about';
@@ -113,6 +116,10 @@ export default function App() {
       const hostname = window.location.hostname;
       const path = window.location.pathname.toLowerCase();
 
+      if (hostname.includes('aurevia.xoeris.com') || hostname.includes('aurevia')) {
+        setCurrentPage('aurevia');
+        return;
+      }
       if (hostname.includes('api.xoeris.com')) {
         setCurrentPage('error-api');
         return;
@@ -164,6 +171,7 @@ export default function App() {
       else if (path === '/tartaruga') setCurrentPage('tartaruga');
       else if (path === '/digital-artifacts') setCurrentPage('digital-artifacts');
       else if (path === '/subscription') setCurrentPage('subscriptions');
+      else if (path.startsWith('/aurevia') || path.startsWith('/search')) setCurrentPage('aurevia');
       else setCurrentPage('xoeris');
     };
     window.addEventListener('popstate', handlePopState);
@@ -172,6 +180,7 @@ export default function App() {
 
   useEffect(() => {
     const titles = {
+      aurevia: 'Aurevia Search',
       acelbyte: 'Acelbyte',
       xoeris: 'Xoeris',
       about: 'About | Xoeris',
@@ -200,6 +209,7 @@ export default function App() {
     };
 
     const icons = {
+      aurevia: '/xoeris_logo_color.png',
       acelbyte: '/acelbyte-logo.png',
       xoeris: '/xoeris_logo_color.png',
       developers: '/xoeris_logo_color.png',
@@ -233,6 +243,7 @@ export default function App() {
 
   const handleNavigate = (page) => {
     const pathMap = {
+      aurevia: '/aurevia',
       about: '/about',
       chat: '/chat',
       acelbyte: '/about/acelbyte',
@@ -266,7 +277,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen font-sans relative z-0 overflow-x-hidden bg-black text-white">
-      {!['acelbyte', 'digital-artifacts', 'subscriptions', 'samudra-showcase'].includes(currentPage) && (
+      {!['acelbyte', 'digital-artifacts', 'subscriptions', 'samudra-showcase', 'aurevia'].includes(currentPage) && (
         <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden opacity-40">
           <div className="blob blob-1" style={{ backgroundColor: colors.yellow }}></div>
           <div className="blob blob-2" style={{ backgroundColor: colors.coral }}></div>
@@ -276,6 +287,7 @@ export default function App() {
       )}
 
       <div key={currentPage}>
+        {currentPage === 'aurevia' && <AureviaPage onNavigate={handleNavigate} />}
         {currentPage === 'acelbyte' && <AcelbytePage onNavigate={handleNavigate} />}
         {currentPage === 'about' && <AboutPage onNavigate={handleNavigate} />}
         {currentPage === 'chat' && <ChatPage onNavigate={handleNavigate} />}
