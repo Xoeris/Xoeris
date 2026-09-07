@@ -35,7 +35,7 @@ export default async function handler(req, res) {
     `;
   } catch (error) {
     console.error('Error creating table:', error);
-    // Ignore error if it's just about permissions or already exists
+    return res.status(500).json({ error: 'Failed to create table', details: error.message });
   }
 
   if (req.method === 'GET') {
@@ -74,7 +74,7 @@ export default async function handler(req, res) {
       return res.status(200).json({ message: 'User created or updated successfully', username, email });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ error: 'Failed to create user' });
+      return res.status(500).json({ error: 'Failed to create user', details: error.message, stack: error.stack });
     }
   }
 
