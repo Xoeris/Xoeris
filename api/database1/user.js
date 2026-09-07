@@ -1,4 +1,6 @@
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
+
+const sql = neon(process.env.DATABASE_URL);
 
 export default async function handler(req, res) {
   // CORS Headers
@@ -40,7 +42,7 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      const { rows } = await sql`SELECT username, email FROM Users WHERE username = ${username};`;
+      const rows = await sql`SELECT username, email FROM Users WHERE username = ${username};`;
       if (rows.length === 0) {
         return res.status(404).json({ error: 'User not found' });
       }

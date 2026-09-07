@@ -1,4 +1,6 @@
-import { sql } from '@vercel/postgres';
+import { neon } from '@neondatabase/serverless';
+
+const sql = neon(process.env.DATABASE_URL);
 
 export default async function handler(req, res) {
   // CORS Headers
@@ -34,7 +36,7 @@ export default async function handler(req, res) {
     }
 
     // Query database for user with matching username or email
-    const { rows } = await sql`
+    const rows = await sql`
       SELECT username, email, password_hash 
       FROM Users 
       WHERE username = ${identifier} OR email = ${identifier}
