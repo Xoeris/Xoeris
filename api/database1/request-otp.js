@@ -65,7 +65,7 @@ export default async function handler(req, res) {
 
       // Send the OTP via Resend
       const data = await resend.emails.send({
-        from: 'Levelist Security <security@xoeris.com>',
+        from: 'onboarding@resend.dev',
         to: email,
         subject: 'Your Levelist Account OTP',
         html: \`

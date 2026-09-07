@@ -41,6 +41,14 @@ export default async function handler(req, res) {
           PRIMARY KEY (username, device_id)
         );
       `;
+      
+      await sql`
+        CREATE TABLE IF NOT EXISTS OTPs (
+          email VARCHAR(255) PRIMARY KEY,
+          code VARCHAR(6) NOT NULL,
+          expires_at TIMESTAMP WITH TIME ZONE NOT NULL
+        );
+      `;
     } catch (e) {
       console.error('Error creating TrustedDevices:', e);
     }
@@ -118,7 +126,7 @@ export default async function handler(req, res) {
     `;
 
     await resend.emails.send({
-      from: 'Levelist Security <security@xoeris.com>',
+      from: 'onboarding@resend.dev',
       to: user.email,
       subject: 'Your Levelist Login OTP',
       html: \`
