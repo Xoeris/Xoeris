@@ -60,10 +60,25 @@ export default async function handler(req, res) {
         parsedBody = JSON.parse(req.body);
       }
       
-      const { email, password_hash } = parsedBody;
+      const { email, password_hash, otp } = parsedBody;
       
-      if (!email || !password_hash) {
-        return res.status(400).json({ error: 'Email and password are required' });
+      if (!email || !password_hash || !otp) {
+        return res.status(400).json({ error: 'Email, password, and OTP are required' });
+      }
+
+      // Verify OTP
+      const otpRows = await sql`
+        SELECT code, expires_at FROM OTPs WHERE email = ${email}
+      `;
+
+      if (otpRows.length === 0) {
+        return res.status(400).json({ error: 'Invalid or expired OTP' });
+      }
+
+      const { code, expires_at } = otpRows[0];
+      
+      if (code !== otp || new Date(expires_at) < new Date()) {
+        return res.status(400).json({ error: 'Invalid or expired OTP' });
       }
 
       await sql`
@@ -72,6 +87,9 @@ export default async function handler(req, res) {
         ON CONFLICT (username) DO UPDATE 
         SET email = EXCLUDED.email, password_hash = EXCLUDED.password_hash;
       `;
+      
+      // Delete used OTP
+      await sql`DELETE FROM OTPs WHERE email = ${email}`;
       
       return res.status(200).json({ message: 'User created or updated successfully', username, email });
     } catch (error) {
