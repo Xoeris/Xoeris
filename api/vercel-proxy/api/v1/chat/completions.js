@@ -60,13 +60,14 @@ export default async function handler(req) {
   }
 
   // --- Forward to RunPod Serverless (sync endpoint) ---
+  const url = 'https://api.runpod.ai/v2/' + RUNPOD_ENDPOINT_ID + '/runsync';
   const runpodRes = await fetch(
-    `https://api.runpod.ai/v2/${RUNPOD_ENDPOINT_ID}/runsync`,
+    url,
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${RUNPOD_API_KEY}`,
+        Authorization: 'Bearer ' + RUNPOD_API_KEY,
       },
       body: JSON.stringify({
         input: { messages, max_new_tokens, temperature, top_k },
