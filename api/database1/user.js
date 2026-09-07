@@ -8,61 +8,72 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Levelist-App-Secret');
 
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    res.status(200).end();
+    return;
   }
 
   const appSecret = req.headers['x-levelist-app-secret'];
   if (appSecret !== process.env.LEVELIST_APP_SECRET && appSecret !== 'levelist-dev-secret-123') {
-    return res.status(403).json({ error: 'Unauthorized' });
+    res.status(403).json({ error: 'Unauthorized' });
+    return;
   }
 
   const { username } = req.query || {};
   if (!username) {
-    return res.status(400).json({ error: 'Username is required' });
+    res.status(400).json({ error: 'Username required' });
+    return;
   }
 
   if (req.method === 'GET') {
     try {
-      const rows = await sql('SELECT username, email FROM Users WHERE username = $1', [username]);
+      const rows = await sql`SELECT username, email FROM Users WHERE username = ${username}`;
       if (rows.length === 0) {
-        return res.status(404).json({ error: 'User not found' });
+        res.status(404).json({ error: 'Not found' });
+        return;
       }
-      return res.status(200).json(rows[0]);
+      res.status(200).json(rows[0]);
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ error: 'Internal Server Error' });
+      res.status(500).json({ error: 'Internal Error' });
     }
-  } else if (req.method === 'POST') {
+    return;
+  }
+
+  if (req.method === 'POST') {
     try {
       let body = req.body;
       if (typeof body === 'string') {
         body = JSON.parse(body);
       }
+
       const { email, password_hash, otp } = body || {};
-      
       if (!email || !password_hash || !otp) {
-        return res.status(400).json({ error: 'Email, password, and OTP are required' });
+        res.status(400).json({ error: 'Missing data' });
+        return;
       }
 
-      const otpRows = await sql('SELECT code, expires_at FROM OTPs WHERE email = $1', [email]);
+      const otpRows = await sql`SELECT code, expires_at FROM OTPs WHERE email = ${email}`;
       if (otpRows.length === 0) {
-        return res.status(400).json({ error: 'Invalid or expired OTP' });
+        res.status(400).json({ error: 'Invalid OTP' });
+        return;
       }
 
-      const { code, expires_at } = otpRows[0];
-      if (code !== otp || new Date(expires_at) < new Date()) {
-        return res.status(400).json({ error: 'Invalid or expired OTP' });
+      const otpData = otpRows[0];
+      if (otpData.code !== otp || new Date(otpData.expires_at) < new Date()) {
+        res.status(400).json({ error: 'Invalid or expired OTP' });
+        return;
       }
 
-      await sql('INSERT INTO Users (username, email, password_hash) VALUES ($1, $2, $3) ON CONFLICT (username) DO UPDATE SET email = EXCLUDED.email, password_hash = EXCLUDED.password_hash', [username, email, password_hash]);
-      await sql('DELETE FROM OTPs WHERE email = $1', [email]);
+      await sql`INSERT INTO Users (username, email, password_hash) VALUES (${username}, ${email}, ${password_hash}) ON CONFLICT (username) DO UPDATE SET email = EXCLUDED.email, password_hash = EXCLUDED.password_hash`;
+      await sql`DELETE FROM OTPs WHERE email = ${email}`;
       
-      return res.status(200).json({ message: 'User updated successfully', username, email });
+      res.status(200).json({ message: 'Success', username, email });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ error: 'Internal Server Error', details: error.message });
+      res.status(500).json({ error: 'Internal Error' });
     }
+    return;
   }
 
-  return res.status(405).json({ error: 'Method Not Allowed' });
+  res.status(405).json({ error: 'Method Not Allowed' });
 }
