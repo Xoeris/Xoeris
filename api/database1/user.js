@@ -1,79 +1,87 @@
 import { neon } from '@neondatabase/serverless';
 
+export const config = {
+  runtime: 'edge'
+};
+
 const sql = neon(process.env.POSTGRES_URL);
 
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Levelist-App-Secret');
+function jsonResponse(data, status) {
+  return new Response(JSON.stringify(data), {
+    status: status || 200,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, X-Levelist-App-Secret'
+    }
+  });
+}
+
+export default async function handler(req) {
+  const url = new URL(req.url);
+  const username = url.pathname.split('/').pop();
 
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+    return new Response(null, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, X-Levelist-App-Secret'
+      }
+    });
   }
 
-  const appSecret = req.headers['x-levelist-app-secret'];
+  const appSecret = req.headers.get('x-levelist-app-secret');
   if (appSecret !== process.env.LEVELIST_APP_SECRET && appSecret !== 'levelist-dev-secret-123') {
-    res.status(403).json({ error: 'Unauthorized' });
-    return;
+    return jsonResponse({ error: 'Unauthorized' }, 403);
   }
 
-  const { username } = req.query || {};
   if (!username) {
-    res.status(400).json({ error: 'Username required' });
-    return;
+    return jsonResponse({ error: 'Username required' }, 400);
   }
 
   if (req.method === 'GET') {
     try {
-      const rows = await sql`SELECT username, email FROM Users WHERE username = ${username}`;
+      const rows = await sql('SELECT username, email FROM Users WHERE username = $1', [username]);
       if (rows.length === 0) {
-        res.status(404).json({ error: 'Not found' });
-        return;
+        return jsonResponse({ error: 'Not found' }, 404);
       }
-      res.status(200).json(rows[0]);
+      return jsonResponse(rows[0]);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Internal Error' });
+      return jsonResponse({ error: 'Internal Error' }, 500);
     }
-    return;
   }
 
   if (req.method === 'POST') {
     try {
-      let body = req.body;
-      if (typeof body === 'string') {
-        body = JSON.parse(body);
-      }
-
+      const body = await req.json();
       const { email, password_hash, otp } = body || {};
       if (!email || !password_hash || !otp) {
-        res.status(400).json({ error: 'Missing data' });
-        return;
+        return jsonResponse({ error: 'Missing data' }, 400);
       }
 
-      const otpRows = await sql`SELECT code, expires_at FROM OTPs WHERE email = ${email}`;
+      const otpRows = await sql('SELECT code, expires_at FROM OTPs WHERE email = $1', [email]);
       if (otpRows.length === 0) {
-        res.status(400).json({ error: 'Invalid OTP' });
-        return;
+        return jsonResponse({ error: 'Invalid OTP' }, 400);
       }
 
       const otpData = otpRows[0];
       if (otpData.code !== otp || new Date(otpData.expires_at) < new Date()) {
-        res.status(400).json({ error: 'Invalid or expired OTP' });
-        return;
+        return jsonResponse({ error: 'Invalid or expired OTP' }, 400);
       }
 
-      await sql`INSERT INTO Users (username, email, password_hash) VALUES (${username}, ${email}, ${password_hash}) ON CONFLICT (username) DO UPDATE SET email = EXCLUDED.email, password_hash = EXCLUDED.password_hash`;
-      await sql`DELETE FROM OTPs WHERE email = ${email}`;
+      await sql('INSERT INTO Users (username, email, password_hash) VALUES ($1, $2, $3) ON CONFLICT (username) DO UPDATE SET email = EXCLUDED.email, password_hash = EXCLUDED.password_hash', [username, email, password_hash]);
+      await sql('DELETE FROM OTPs WHERE email = $1', [email]);
       
-      res.status(200).json({ message: 'Success', username, email });
+      return jsonResponse({ message: 'Success', username, email });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Internal Error' });
+      return jsonResponse({ error: 'Internal Error' }, 500);
     }
-    return;
   }
 
-  res.status(405).json({ error: 'Method Not Allowed' });
+  return jsonResponse({ error: 'Method Not Allowed' }, 405);
 }
