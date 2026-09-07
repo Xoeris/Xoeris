@@ -16,6 +16,27 @@
       }
     },
     {
+      "src": "api/search.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 30
+      }
+    },
+    {
+      "src": "api/database1/user.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 30
+      }
+    },
+    {
+      "src": "api/database1/login.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 30
+      }
+    },
+    {
       "src": "package.json",
       "use": "@vercel/static-build"
     }
@@ -32,6 +53,14 @@
     {
       "source": "/api/search",
       "destination": "api/search.js"
+    },
+    {
+      "source": "/api/database1/user/:username",
+      "destination": "api/database1/user.js"
+    },
+    {
+      "source": "/api/database1/login",
+      "destination": "api/database1/login.js"
     },
     {
       "source": "/(.*)",

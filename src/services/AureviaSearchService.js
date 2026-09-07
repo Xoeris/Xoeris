@@ -27,9 +27,9 @@ export class AureviaSearchService {
 
     const startTime = Date.now();
 
-    // 1. Try serverless backend (/api/search)
+    // 1. Try Python backend (http://localhost:8080/api/search)
     try {
-      const endpoint = `/api/search?q=${encodeURIComponent(trimmed)}&category=${encodeURIComponent(
+      const endpoint = `http://localhost:8080/api/search?q=${encodeURIComponent(trimmed)}&category=${encodeURIComponent(
         category
       )}&page=${page}`;
       const res = await fetch(endpoint, {
