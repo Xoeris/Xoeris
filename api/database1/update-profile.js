@@ -1,64 +1,56 @@
 import { neon } from '@neondatabase/serverless';
 
-export const config = {
-  runtime: 'edge'
-};
+export default async function handler(req, res) {
+  // CORS Headers
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, X-Levelist-App-Secret');
 
-const sql = neon(process.env.POSTGRES_URL);
-
-function jsonResponse(data, status) {
-  return new Response(JSON.stringify(data), {
-    status: status || 200,
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, X-Levelist-App-Secret'
-    }
-  });
-}
-
-export default async function handler(req) {
   if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 200,
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, X-Levelist-App-Secret'
-      }
-    });
+    return res.status(200).end();
   }
 
-  const appSecret = req.headers.get('x-levelist-app-secret');
+  const appSecret = req.headers['x-levelist-app-secret'];
   if (appSecret !== process.env.LEVELIST_APP_SECRET && appSecret !== 'levelist-dev-secret-123') {
-    return jsonResponse({ error: 'Unauthorized' }, 401);
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   if (req.method !== 'POST') {
-    return jsonResponse({ error: 'Method Not Allowed' }, 405);
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  const postgresUrl = process.env.POSTGRES_URL;
+  if (!postgresUrl) {
+    return res.status(500).json({ error: 'Server configuration error: POSTGRES_URL is missing' });
   }
 
   try {
-    const body = await req.json();
+    const sql = neon(postgresUrl);
+
+    let body = req.body;
+    if (typeof body === 'string') {
+      body = JSON.parse(body);
+    }
     const { email, otp, newUsername, newEmail, newPassword } = body || {};
+
     if (!email || !otp) {
-      return jsonResponse({ error: 'Missing data' }, 400);
+      return res.status(400).json({ error: 'Email and OTP are required' });
     }
 
-    const otpRows = await sql('SELECT code, expires_at FROM OTPs WHERE email = $1', [email]);
+    const otpRows = await sql`SELECT code, expires_at FROM OTPs WHERE email = ${email}`;
     if (otpRows.length === 0) {
-      return jsonResponse({ error: 'Invalid OTP' }, 400);
+      return res.status(400).json({ error: 'Invalid or expired OTP' });
     }
 
-    const otpData = otpRows[0];
-    if (otpData.code !== otp || new Date(otpData.expires_at) < new Date()) {
-      return jsonResponse({ error: 'Invalid or expired OTP' }, 400);
+    const { code, expires_at } = otpRows[0];
+    if (code !== otp || new Date(expires_at) < new Date()) {
+      return res.status(400).json({ error: 'Invalid or expired OTP' });
     }
 
-    const userRows = await sql('SELECT * FROM Users WHERE email = $1', [email]);
+    const userRows = await sql`SELECT username, email, password_hash FROM Users WHERE email = ${email}`;
     if (userRows.length === 0) {
-      return jsonResponse({ error: 'User not found' }, 404);
+      return res.status(404).json({ error: 'User not found' });
     }
 
     const currentUser = userRows[0];
@@ -66,12 +58,16 @@ export default async function handler(req) {
     const finalEmail = (newEmail && newEmail.trim()) || currentUser.email;
     const finalPassword = (newPassword && newPassword.trim()) || currentUser.password_hash;
 
-    await sql('UPDATE Users SET username = $1, email = $2, password_hash = $3 WHERE email = $4', [finalUsername, finalEmail, finalPassword, email]);
-    await sql('DELETE FROM OTPs WHERE email = $1', [email]);
+    await sql`UPDATE Users SET username = ${finalUsername}, email = ${finalEmail}, password_hash = ${finalPassword} WHERE email = ${email}`;
+    await sql`DELETE FROM OTPs WHERE email = ${email}`;
 
-    return jsonResponse({ message: 'Success', username: finalUsername, email: finalEmail });
+    return res.status(200).json({
+      message: 'Profile updated successfully',
+      username: finalUsername,
+      email: finalEmail
+    });
   } catch (error) {
     console.error(error);
-    return jsonResponse({ error: 'Internal Error' }, 500);
+    return res.status(500).json({ error: 'Internal Server Error', details: error.message });
   }
 }
