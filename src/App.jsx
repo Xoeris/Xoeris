@@ -11,6 +11,7 @@ import SamudraPage from './SamudraPage';
 import TartarugaPage from './TartarugaPage';
 import SubscriptionsPage from './SubscriptionsPage';
 import AureviaPage from './AureviaPage';
+import AuthPage from './AuthPage';
 
 // SAMUDRA Pages
 import SamudraShowcasePage from './SamudraShowcasePage';
@@ -59,7 +60,8 @@ export default function App() {
     const hostname = window.location.hostname;
     const path = window.location.pathname.toLowerCase();
 
-    // Check hostnames first
+    // Check hostnames first (auth must be before generic checks)
+    if (hostname.includes('auth.xoeris.com') || hostname.startsWith('auth.')) return 'auth';
     if (hostname.includes('aurevia.xoeris.com') || hostname.includes('aurevia')) return 'aurevia';
     if (hostname.includes('api.xoeris.com')) return 'error-api';
     if (hostname.includes('dl.private.drive.xoeris.com')) return 'error-dl';
@@ -116,6 +118,10 @@ export default function App() {
       const hostname = window.location.hostname;
       const path = window.location.pathname.toLowerCase();
 
+      if (hostname.includes('auth.xoeris.com') || hostname.startsWith('auth.')) {
+        setCurrentPage('auth');
+        return;
+      }
       if (hostname.includes('aurevia.xoeris.com') || hostname.includes('aurevia')) {
         setCurrentPage('aurevia');
         return;
@@ -180,6 +186,7 @@ export default function App() {
 
   useEffect(() => {
     const titles = {
+      auth: 'Xoeris Auth',
       aurevia: 'Aurevia Search',
       acelbyte: 'Acelbyte',
       xoeris: 'Xoeris',
@@ -209,6 +216,7 @@ export default function App() {
     };
 
     const icons = {
+      auth: '/xoeris_logo_color.png',
       aurevia: '/xoeris_logo_color.png',
       acelbyte: '/acelbyte-logo.png',
       xoeris: '/xoeris_logo_color.png',
@@ -277,7 +285,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen font-sans relative z-0 overflow-x-hidden bg-black text-white">
-      {!['acelbyte', 'digital-artifacts', 'subscriptions', 'samudra-showcase', 'aurevia'].includes(currentPage) && (
+      {!['acelbyte', 'digital-artifacts', 'subscriptions', 'samudra-showcase', 'aurevia', 'auth'].includes(currentPage) && (
         <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden opacity-40">
           <div className="blob blob-1" style={{ backgroundColor: colors.yellow }}></div>
           <div className="blob blob-2" style={{ backgroundColor: colors.coral }}></div>
@@ -287,6 +295,7 @@ export default function App() {
       )}
 
       <div key={currentPage}>
+        {currentPage === 'auth' && <AuthPage />}
         {currentPage === 'aurevia' && <AureviaPage onNavigate={handleNavigate} />}
         {currentPage === 'acelbyte' && <AcelbytePage onNavigate={handleNavigate} />}
         {currentPage === 'about' && <AboutPage onNavigate={handleNavigate} />}

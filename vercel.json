@@ -37,6 +37,48 @@
       }
     },
     {
+      "src": "api/database1/google-login.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 30
+      }
+    },
+    {
+      "src": "api/database1/github-login.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 30
+      }
+    },
+    {
+      "src": "api/database1/verify-otp.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 30
+      }
+    },
+    {
+      "src": "api/auth/init.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 30
+      }
+    },
+    {
+      "src": "api/auth/verify.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 30
+      }
+    },
+    {
+      "src": "api/auth/consume.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 30
+      }
+    },
+    {
       "src": "package.json",
       "use": "@vercel/static-build"
     }
@@ -61,6 +103,30 @@
     {
       "source": "/api/database1/login",
       "destination": "api/database1/login.js"
+    },
+    {
+      "source": "/api/database1/google-login",
+      "destination": "api/database1/google-login.js"
+    },
+    {
+      "source": "/api/database1/github-login",
+      "destination": "api/database1/github-login.js"
+    },
+    {
+      "source": "/api/database1/verify-otp",
+      "destination": "api/database1/verify-otp.js"
+    },
+    {
+      "source": "/api/auth/init",
+      "destination": "api/auth/init.js"
+    },
+    {
+      "source": "/api/auth/verify",
+      "destination": "api/auth/verify.js"
+    },
+    {
+      "source": "/api/auth/consume",
+      "destination": "api/auth/consume.js"
     },
     {
       "source": "/(.*)",
