@@ -1,17 +1,17 @@
 import { neon } from '@neondatabase/serverless';
+import { isValidAppSecret } from '../_lib/auth.js';
 
 export default async function handler(req, res) {
   // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Levelist-App-Secret');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Levelist-App-Secret, X-Mova-App-Secret, X-Musify-App-Secret');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  const appSecret = req.headers['x-levelist-app-secret'];
-  if (appSecret !== process.env.LEVELIST_APP_SECRET && appSecret !== 'levelist-dev-secret-123') {
+  if (!isValidAppSecret(req)) {
     return res.status(403).json({ error: 'Unauthorized' });
   }
 

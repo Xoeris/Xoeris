@@ -25,9 +25,27 @@ export function normalizeEmail(email) {
   return email.toLowerCase().trim();
 }
 
+// Registered app secrets, one row per app:
+// [request header name (lowercase), env var holding the secret, dev fallback]
+const APP_SECRETS = [
+  ['x-levelist-app-secret', 'LEVELIST_APP_SECRET', 'levelist-dev-secret-123'],
+  ['x-mova-app-secret', 'MOVA_APP_SECRET', 'mova-dev-secret-123'],
+  ['x-musify-app-secret', 'MUSIFY_APP_SECRET', 'musify-dev-secret-123'],
+];
+
+export function isValidAppSecret(req) {
+  const headers = req.headers || {};
+  return APP_SECRETS.some(([header, envVar, fallback]) => {
+    const sent = headers[header];
+    if (!sent) return false;
+    const expected = process.env[envVar];
+    return (expected && sent === expected) || sent === fallback;
+  });
+}
+
 export function setCorsHeaders(res, methods = 'POST, OPTIONS') {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', methods);
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Levelist-App-Secret, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Levelist-App-Secret, X-Mova-App-Secret, X-Musify-App-Secret, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
 }
