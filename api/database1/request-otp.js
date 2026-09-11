@@ -1,6 +1,6 @@
 import { neon } from '@neondatabase/serverless';
 import { Resend } from 'resend';
-import { isValidAppSecret } from '../_lib/auth.js';
+import { isValidAppSecret, getAppDisplayName } from '../_lib/auth.js';
 
 export default async function handler(req, res) {
   // CORS Headers
@@ -57,8 +57,8 @@ export default async function handler(req, res) {
     const data = await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: email,
-      subject: 'Your Levelist Account OTP',
-      html: `<h1>Levelist Account Management</h1><p>You requested to change your account details. Here is your One-Time Password (OTP):</p><h2 style="letter-spacing: 4px; background: #f4f4f4; padding: 10px; display: inline-block;">${otpCode}</h2><p>This code will expire in 10 minutes. If you did not request this, please ignore this email.</p>`
+      subject: `Your ${getAppDisplayName(req)} Account OTP`,
+      html: `<h1>${getAppDisplayName(req)} Account Management</h1><p>You requested to change your account details. Here is your One-Time Password (OTP):</p><h2 style="letter-spacing: 4px; background: #f4f4f4; padding: 10px; display: inline-block;">${otpCode}</h2><p>This code will expire in 10 minutes. If you did not request this, please ignore this email.</p>`
     });
 
     if (data.error) {

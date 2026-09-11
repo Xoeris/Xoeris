@@ -1,6 +1,6 @@
 import { neon } from '@neondatabase/serverless';
 import { Resend } from 'resend';
-import { issueSessionToken, isValidAppSecret, normalizeEmail } from '../_lib/auth.js';
+import { issueSessionToken, isValidAppSecret, getAppDisplayName, normalizeEmail } from '../_lib/auth.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -182,8 +182,8 @@ export default async function handler(req, res) {
     await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: user.email,
-      subject: 'Your Levelist Login OTP',
-      html: `<h1>Levelist Sign In</h1><p>A new login was detected from an untrusted device. Here is your One-Time Password (OTP):</p><h2 style="letter-spacing: 4px; background: #f4f4f4; padding: 10px; display: inline-block;">${otpCode}</h2><p>This code will expire in 10 minutes.</p>`
+      subject: `Your ${getAppDisplayName(req)} Login OTP`,
+      html: `<h1>${getAppDisplayName(req)} Sign In</h1><p>A new login was detected from an untrusted device. Here is your One-Time Password (OTP):</p><h2 style="letter-spacing: 4px; background: #f4f4f4; padding: 10px; display: inline-block;">${otpCode}</h2><p>This code will expire in 10 minutes.</p>`
     });
 
     return res.status(200).json({ require_otp: true, email: user.email });

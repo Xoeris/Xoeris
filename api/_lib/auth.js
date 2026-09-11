@@ -43,6 +43,15 @@ export function isValidAppSecret(req) {
   });
 }
 
+// Display name of the calling app for user-facing copy (OTP emails, etc.).
+// Falls back to the legacy name when the request carries no app header.
+export function getAppDisplayName(req) {
+  const headers = (req && req.headers) || {};
+  if (headers['x-musify-app-secret']) return 'Musify';
+  if (headers['x-mova-app-secret']) return 'MOVA';
+  return 'Levelist';
+}
+
 export function setCorsHeaders(res, methods = 'POST, OPTIONS') {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', methods);

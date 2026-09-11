@@ -4,7 +4,7 @@ import crypto from 'crypto';
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Levelist-App-Secret, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Levelist-App-Secret, X-Mova-App-Secret, X-Musify-App-Secret, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
     const { client = 'unknown', redirect_uri = '' } = body || {};
 
-    const allowed = ['hide', 'levelist', 'xoeris', 'web'];
+    const allowed = ['hide', 'levelist', 'mova', 'musify', 'xoeris', 'web'];
     const clientNorm = String(client).toLowerCase();
     if (client && !allowed.includes(clientNorm)) {
       // still allow but log; no strict rejection to keep flexibility
