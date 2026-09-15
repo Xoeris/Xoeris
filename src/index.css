@@ -2,6 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ──────────────────────────────────────────────────────────
+   HIDE Design System — CSS Custom Properties
+   Generated from hide-design-tokens.json
+   These are available for inline styles and non-Tailwind usage.
+   ────────────────────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --hide-bg-canvas:   #161616;
+  --hide-bg-primary:  #1F1F1F;
+  --hide-bg-elevated: #252526;
+  --hide-bg-sunken:   #181818;
+  --hide-bg-input:    #15161A;
+  --hide-bg-hover:    #2D3139;
+
+  /* Borders */
+  --hide-border-subtle:    #2B2B2B;
+  --hide-border-default:   #333333;
+  --hide-border-input:     #2F333E;
+  --hide-border-separator: #454545;
+
+  /* Text */
+  --hide-text-primary:   #E0E0E8;
+  --hide-text-secondary: #CCCCCC;
+  --hide-text-muted:     #7E7E8C;
+  --hide-text-disabled:  #5A5A5A;
+  --hide-text-on-accent: #121212;
+  --hide-text-emphasis:  #FFFFFF;
+
+  /* Accent / brand */
+  --hide-accent:      #FFC94A;
+  --hide-accent-deep: #FFB020;
+
+  /* Action (teal-green) */
+  --hide-action:       #00C896;
+  --hide-action-hover: #00DEA6;
+  --hide-action-text:  #121212;
+
+  /* Status */
+  --hide-success: #10B981;
+  --hide-warning: #FFB020;
+  --hide-error:   #FF6B6B;
+  --hide-info:    #007ACC;
+
+  /* Surfaces */
+  --hide-ghost:           #2A2A32;
+  --hide-scrollbar-thumb: #1E1E26;
+
+  /* Radius */
+  --hide-radius-lg: 6px;
+
+  /* Motion */
+  --hide-duration-fast:   150ms;
+  --hide-duration-medium: 200ms;
+  --hide-easing-cubic:    cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  /* Elevation */
+  --hide-shadow-popup: 0 3px 12px rgba(0, 0, 0, 0.45);
+}
+
+/* ──────── Global Resets ──────── */
 @font-face {
   font-family: 'CustomFont';
   src: url('/font1.otf') format('opentype');
@@ -18,31 +78,40 @@ html {
 }
 
 body {
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  /* HIDE UI font stack: Roboto first, Segoe UI fallback */
+  font-family: 'Roboto', 'Segoe UI', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+  background-color: var(--hide-bg-canvas);
+  color: var(--hide-text-primary);
 }
 
-/* Custom Scrollbar for that sleek look */
+/* ──────── HIDE Scrollbar (6px, minimal overlay) ──────── */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #000; 
+  background: transparent;
 }
- 
+
 ::-webkit-scrollbar-thumb {
-  background: #333; 
-  border-radius: 4px;
+  background: var(--hide-scrollbar-thumb);
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #F9CB43; 
+  background: var(--hide-accent);
 }
 
-/* High-Performance Utilities */
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--hide-scrollbar-thumb) transparent;
+}
+
+/* ──────── High-Performance Utilities ──────── */
 .gpu-accel {
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -57,13 +126,14 @@ body {
   will-change: transform;
 }
 
+/* ──────── Animations ──────── */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: fadeIn 0.8s var(--hide-easing-cubic) forwards;
   will-change: transform, opacity;
 }
 

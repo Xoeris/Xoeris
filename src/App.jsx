@@ -36,23 +36,24 @@ import CoreAProductPage from './CoreAProductPage';
 import DeveloperPortal from './DeveloperPortal';
 
 const PlaceholderProduct = ({ title, onNavigate }) => (
-  <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center p-10 text-center">
-    <div className="w-20 h-20 bg-white/5 rounded-3xl mb-10 flex items-center justify-center">
-      <div className="w-2 h-2 rounded-full bg-[#705EBC] animate-ping"></div>
+  <div className="min-h-screen bg-hide-canvas text-hide-text-primary flex flex-col items-center justify-center p-10 text-center">
+    <div className="w-20 h-20 bg-hide-elevated rounded-hide-xl mb-10 flex items-center justify-center">
+      <div className="w-2 h-2 rounded-full bg-hide-accent animate-ping"></div>
     </div>
     <h1 className="text-6xl font-black mb-6 tracking-tighter uppercase">{title}</h1>
-    <p className="text-xl text-gray-400 max-w-lg mb-10">Product technical synchronization in progress. Node access pending.</p>
-    <button onClick={() => onNavigate('xoeris')} className="px-8 py-3 bg-white text-black rounded-full font-bold uppercase text-xs tracking-widest hover:scale-105 transition-transform">Return to Core</button>
+    <p className="text-xl text-hide-text-muted max-w-lg mb-10">Product technical synchronization in progress. Node access pending.</p>
+    <button onClick={() => onNavigate('xoeris')} className="px-8 py-3 bg-hide-action text-hide-action-text rounded-hide-lg font-bold uppercase text-xs tracking-widest hover:bg-hide-action-hover hover:scale-105 transition-all duration-hide-fast">Return to Core</button>
   </div>
 );
 
+/* HIDE Design System brand colors — used for background blobs */
 const colors = {
-  bg: '#000000',
-  yellow: '#F9CB43',
-  coral: '#E88C6D',
-  violet: '#705EBC',
-  text: '#ffffff',
-  textMuted: '#a1a1aa'
+  bg: '#161616',            // color.background.canvas
+  amber: '#FFC94A',         // color.accent.primary
+  amberDeep: '#FFB020',     // color.accent.primary-deep
+  teal: '#00C896',          // color.action.primary
+  text: '#E0E0E8',          // color.text.primary
+  textMuted: '#7E7E8C'      // color.text.muted
 };
 
 export default function App() {
@@ -284,13 +285,14 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen font-sans relative z-0 overflow-x-hidden bg-black text-white">
+    <div className="min-h-screen font-ui relative z-0 overflow-x-hidden bg-hide-canvas text-hide-text-primary">
       {!['acelbyte', 'digital-artifacts', 'subscriptions', 'samudra-showcase', 'aurevia', 'auth'].includes(currentPage) && (
         <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden opacity-40">
-          <div className="blob blob-1" style={{ backgroundColor: colors.yellow }}></div>
-          <div className="blob blob-2" style={{ backgroundColor: colors.coral }}></div>
-          <div className="blob blob-3" style={{ backgroundColor: colors.violet }}></div>
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-[100px]"></div>
+          {/* HIDE brand blobs: amber + deep-amber + teal */}
+          <div className="blob blob-1" style={{ backgroundColor: colors.amber }}></div>
+          <div className="blob blob-2" style={{ backgroundColor: colors.amberDeep }}></div>
+          <div className="blob blob-3" style={{ backgroundColor: colors.teal }}></div>
+          <div className="absolute inset-0 bg-hide-canvas/40 backdrop-blur-[100px]"></div>
         </div>
       )}
 

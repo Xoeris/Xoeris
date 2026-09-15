@@ -239,7 +239,7 @@ export default function AureviaPage({ onNavigate }) {
                 )}
                 <button
                   type="submit"
-                  className="p-1.5 bg-[#FFDE00] hover:bg-[#F9CB43] text-black rounded-full transition-transform active:scale-95"
+                  className="p-1.5 bg-[#FFDE00] hover:bg-[#FFC94A] text-black rounded-full transition-transform active:scale-95"
                   title="Search"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -286,7 +286,7 @@ export default function AureviaPage({ onNavigate }) {
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-black tracking-tight mb-2">
-            <span className="bg-gradient-to-r from-[#FFDE00] via-[#F9CB43] to-[#32F18A] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#FFDE00] via-[#FFC94A] to-[#32F18A] bg-clip-text text-transparent">
               AUREVIA
             </span>
           </h1>
@@ -333,7 +333,7 @@ export default function AureviaPage({ onNavigate }) {
             <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-[#FFDE00] hover:bg-[#F9CB43] text-black font-semibold text-xs tracking-wider uppercase rounded-xl transition-all hover:scale-105 active:scale-95 shadow-lg shadow-[#FFDE00]/20"
+                className="px-6 py-2.5 bg-[#FFDE00] hover:bg-[#FFC94A] text-black font-semibold text-xs tracking-wider uppercase rounded-xl transition-all hover:scale-105 active:scale-95 shadow-lg shadow-[#FFDE00]/20"
               >
                 Aurevia Search
               </button>
@@ -476,7 +476,7 @@ export default function AureviaPage({ onNavigate }) {
               </p>
               <button
                 onClick={handleResetToHome}
-                className="px-5 py-2 bg-[#FFDE00] text-black text-xs font-bold rounded-lg uppercase tracking-wider hover:bg-[#F9CB43] transition-colors"
+                className="px-5 py-2 bg-[#FFDE00] text-black text-xs font-bold rounded-lg uppercase tracking-wider hover:bg-[#FFC94A] transition-colors"
               >
                 Clear Search
               </button>

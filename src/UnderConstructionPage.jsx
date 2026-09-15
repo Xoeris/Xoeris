@@ -5,7 +5,7 @@ export default function UnderConstructionPage() {
   return (
     <div className="min-h-screen bg-black text-white flex flex-col justify-between p-6 font-sans relative overflow-hidden">
       {/* Background aura */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#705EBC]/5 rounded-full blur-[120px] pointer-events-none"></div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#FFC94A]/5 rounded-full blur-[120px] pointer-events-none"></div>
 
       {/* Header */}
       <header className="flex justify-between items-center max-w-5xl w-full mx-auto py-4">
@@ -17,8 +17,8 @@ export default function UnderConstructionPage() {
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col items-center justify-center text-center max-w-xl mx-auto">
-        <div className="w-16 h-16 rounded-[1.25rem] bg-[#705EBC]/10 border border-[#705EBC]/20 flex items-center justify-center mb-8 animate-pulse">
-          <Hammer className="text-[#705EBC]" size={32} />
+        <div className="w-16 h-16 rounded-[1.25rem] bg-[#FFC94A]/10 border border-[#FFC94A]/20 flex items-center justify-center mb-8 animate-pulse">
+          <Hammer className="text-[#FFC94A]" size={32} />
         </div>
         <h1 className="text-4xl font-black tracking-tight mb-4 uppercase">Node Construction</h1>
         <p className="text-sm text-gray-400 font-medium leading-relaxed mb-8">

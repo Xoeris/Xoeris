@@ -17,7 +17,7 @@ const artifacts = [
     type: "Design System",
     date: "2023-09-22",
     description: "A comprehensive React component library for futuristic interfaces.",
-    icon: <Layers size={24} className="text-[#F59E0B]" />
+    icon: <Layers size={24} className="text-[#FFC94A]" />
   },
   {
     id: 3,
@@ -41,7 +41,7 @@ const artifacts = [
     type: "Simulation",
     date: "2023-03-12",
     description: "Agent-based modeling of network propagation dynamics.",
-    icon: <Terminal size={24} className="text-[#F59E0B]" />
+    icon: <Terminal size={24} className="text-[#FFC94A]" />
   },
   {
     id: 6,
@@ -63,7 +63,7 @@ export default function DigitalArtifactsPage({ onNavigate }) {
       
       <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden mix-blend-screen gpu-accel">
         <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-[#FDD935] blur-[60px] opacity-[0.12] rounded-full animate-pulse will-change-filter"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-[#F59E0B] blur-[80px] opacity-[0.08] rounded-full animate-pulse delay-1000 will-change-filter"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] bg-[#FFC94A] blur-[80px] opacity-[0.08] rounded-full animate-pulse delay-1000 will-change-filter"></div>
       </div>
 
       <FadeIn className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 py-12 md:py-24">
@@ -86,7 +86,7 @@ export default function DigitalArtifactsPage({ onNavigate }) {
           <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-[#FDD935]/20 pb-12">
             <div>
               <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-4">
-                DIGITAL <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FDD935] to-[#F59E0B]">ARTIFACTS</span>
+                DIGITAL <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FDD935] to-[#FFC94A]">ARTIFACTS</span>
               </h1>
               <p className="text-xl text-gray-400 max-w-2xl">
                 A collection of experiments, source code, and digital remnants from the archives.

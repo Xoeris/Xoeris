@@ -37,7 +37,7 @@ export default function SamudraPage({ onNavigate }) {
   if (!isMobile) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white p-6 text-center">
-        <Smartphone size={64} className="mb-6 text-[#705EBC]" />
+        <Smartphone size={64} className="mb-6 text-[#FFC94A]" />
         <h1 className="text-3xl font-bold mb-4">SAMUDRA Mobile Only</h1>
         <p className="text-gray-400 max-w-md">
           Aplikasi SAMUDRA didesain khusus untuk penggunaan di perangkat mobile nelayan.
@@ -45,7 +45,7 @@ export default function SamudraPage({ onNavigate }) {
         </p>
         <button
           onClick={() => onNavigate('xoeris')}
-          className="mt-8 px-6 py-3 bg-[#705EBC] rounded-full font-bold hover:scale-105 transition-transform"
+          className="mt-8 px-6 py-3 bg-[#FFC94A] rounded-full font-bold hover:scale-105 transition-transform"
         >
           Kembali ke Xoeris
         </button>
@@ -62,11 +62,11 @@ export default function SamudraPage({ onNavigate }) {
           onClick={() => setIsCharging(!isCharging)}
         >
           <div className="absolute top-0 right-0 p-3 opacity-10">
-            <Sun size={48} className="text-[#F9CB43]" />
+            <Sun size={48} className="text-[#FFC94A]" />
           </div>
           <div className="flex items-center gap-2 mb-3">
-            <div className="p-1.5 bg-[#F9CB43]/10 rounded-lg">
-              <Zap size={16} className="text-[#F9CB43]" />
+            <div className="p-1.5 bg-[#FFC94A]/10 rounded-lg">
+              <Zap size={16} className="text-[#FFC94A]" />
             </div>
             <span className="text-xs font-medium text-gray-400">Solar Power</span>
           </div>
@@ -78,7 +78,7 @@ export default function SamudraPage({ onNavigate }) {
           </div>
           <div className="mt-2 h-1 w-full bg-white/5 rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#F9CB43] rounded-full transition-all duration-1000"
+              className="h-full bg-[#FFC94A] rounded-full transition-all duration-1000"
               style={{ width: `${solarLevel}%` }}
             ></div>
           </div>
@@ -110,7 +110,7 @@ export default function SamudraPage({ onNavigate }) {
       <section>
         <div className="flex justify-between items-end mb-4">
           <h2 className="text-xl font-bold">Penyimpanan Ikan</h2>
-          <span className="text-xs text-[#705EBC] font-bold">Box Indikator #01</span>
+          <span className="text-xs text-[#FFC94A] font-bold">Box Indikator #01</span>
         </div>
 
         <div className={`bg-gradient-to-br from-[#151518] to-[#0A0A0B] border transition-all duration-500 rounded-[2rem] p-6 shadow-2xl ${isBoxActive ? 'border-white/10' : 'border-red-500/20 opacity-60'}`}>
@@ -130,7 +130,7 @@ export default function SamudraPage({ onNavigate }) {
           <div className="grid grid-cols-2 gap-y-8 gap-x-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center border border-white/5">
-                <Weight size={20} className="text-[#705EBC]" />
+                <Weight size={20} className="text-[#FFC94A]" />
               </div>
               <div>
                 <p className="text-[10px] text-gray-500 font-bold uppercase">Berat</p>
@@ -184,7 +184,7 @@ export default function SamudraPage({ onNavigate }) {
             </div>
             <div className="h-2 w-full bg-white/5 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-[#705EBC] to-blue-500 rounded-full transition-all duration-500"
+                className="h-full bg-gradient-to-r from-[#FFC94A] to-blue-500 rounded-full transition-all duration-500"
                 style={{ width: `${(boxWeight/1000)*100}%` }}
               ></div>
             </div>
@@ -207,12 +207,12 @@ export default function SamudraPage({ onNavigate }) {
 
         <div className="bg-[#151518] p-4 rounded-3xl border border-white/5 relative overflow-hidden active:scale-95 transition-transform cursor-pointer" onClick={() => setActiveTab('map')}>
           <div className="flex justify-between items-start mb-4">
-            <div className="p-2 bg-[#705EBC]/10 rounded-xl">
-              <MapPin size={20} className="text-[#705EBC]" />
+            <div className="p-2 bg-[#FFC94A]/10 rounded-xl">
+              <MapPin size={20} className="text-[#FFC94A]" />
             </div>
             <span className="text-[10px] font-bold text-gray-500">LOKASI</span>
           </div>
-          <p className="text-sm font-bold leading-tight">Zona C-12 <br/><span className="text-[#705EBC]">Banyak Ikan</span></p>
+          <p className="text-sm font-bold leading-tight">Zona C-12 <br/><span className="text-[#FFC94A]">Banyak Ikan</span></p>
         </div>
       </section>
     </div>
@@ -224,7 +224,7 @@ export default function SamudraPage({ onNavigate }) {
       <div className="aspect-square w-full bg-[#151518] rounded-[2rem] border border-white/5 relative overflow-hidden flex items-center justify-center">
          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(112,94,188,0.1)_0%,transparent_70%)]"></div>
          {/* Radar Sweeper */}
-         <div className="absolute w-[200%] h-[200%] bg-gradient-to-tr from-[#705EBC]/20 to-transparent origin-center animate-spin-slow" style={{ animationDuration: '4s', clipPath: 'polygon(50% 50%, 100% 0, 100% 50%)' }}></div>
+         <div className="absolute w-[200%] h-[200%] bg-gradient-to-tr from-[#FFC94A]/20 to-transparent origin-center animate-spin-slow" style={{ animationDuration: '4s', clipPath: 'polygon(50% 50%, 100% 0, 100% 50%)' }}></div>
          {/* Grid Circles */}
          <div className="absolute w-[80%] h-[80%] border border-white/5 rounded-full"></div>
          <div className="absolute w-[60%] h-[60%] border border-white/5 rounded-full"></div>
@@ -237,7 +237,7 @@ export default function SamudraPage({ onNavigate }) {
       </div>
       <div className="bg-[#151518] p-4 rounded-2xl border border-white/5">
         <p className="text-xs text-gray-500 font-bold uppercase mb-2">Saran Lokasi</p>
-        <p className="text-sm font-medium">Bergerak 12 mil laut ke arah <span className="text-[#705EBC]">Barat Laut</span> untuk zona tangkapan optimal.</p>
+        <p className="text-sm font-medium">Bergerak 12 mil laut ke arah <span className="text-[#FFC94A]">Barat Laut</span> untuk zona tangkapan optimal.</p>
       </div>
     </div>
   );
@@ -275,10 +275,10 @@ export default function SamudraPage({ onNavigate }) {
       <div className="bg-[#151518] p-6 rounded-3xl border border-white/5 space-y-4">
         <p className="text-gray-400 text-sm">SAMUDRA adalah sistem informasi nelayan terintegrasi.</p>
         <ul className="space-y-3">
-          <li className="flex items-center gap-3 text-sm"><CheckCircle size={16} className="text-[#705EBC]"/> Pelacakan Lokasi Ikan</li>
-          <li className="flex items-center gap-3 text-sm"><CheckCircle size={16} className="text-[#705EBC]"/> Ramalan Cuaca Real-time</li>
-          <li className="flex items-center gap-3 text-sm"><CheckCircle size={16} className="text-[#705EBC]"/> Update Harga Pasar</li>
-          <li className="flex items-center gap-3 text-sm"><CheckCircle size={16} className="text-[#705EBC]"/> Manajemen Solar Panel</li>
+          <li className="flex items-center gap-3 text-sm"><CheckCircle size={16} className="text-[#FFC94A]"/> Pelacakan Lokasi Ikan</li>
+          <li className="flex items-center gap-3 text-sm"><CheckCircle size={16} className="text-[#FFC94A]"/> Ramalan Cuaca Real-time</li>
+          <li className="flex items-center gap-3 text-sm"><CheckCircle size={16} className="text-[#FFC94A]"/> Update Harga Pasar</li>
+          <li className="flex items-center gap-3 text-sm"><CheckCircle size={16} className="text-[#FFC94A]"/> Manajemen Solar Panel</li>
         </ul>
       </div>
     </div>
@@ -294,7 +294,7 @@ export default function SamudraPage({ onNavigate }) {
           <ArrowLeft size={24} />
         </button>
         <div className="flex flex-col items-center">
-          <h1 className="text-lg font-black tracking-widest text-[#705EBC]">SAMUDRA</h1>
+          <h1 className="text-lg font-black tracking-widest text-[#FFC94A]">SAMUDRA</h1>
           <div className="flex items-center gap-1">
             <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${isBoxActive ? 'bg-green-500' : 'bg-red-500'}`}></div>
             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-tighter">System {isBoxActive ? 'Online' : 'Offline'}</span>
@@ -302,7 +302,7 @@ export default function SamudraPage({ onNavigate }) {
         </div>
         <div className="flex gap-2">
           <button onClick={() => onNavigate('samudra-showcase')} className="p-2 text-gray-400 active:scale-90 transition-transform">
-            <Maximize2 size={20} className="text-[#705EBC]" />
+            <Maximize2 size={20} className="text-[#FFC94A]" />
           </button>
           <button className="p-2 text-gray-400 active:scale-90 transition-transform">
             <Bell size={20} />
@@ -325,7 +325,7 @@ export default function SamudraPage({ onNavigate }) {
       <nav className="fixed bottom-0 left-0 w-full bg-[#0A0A0B]/95 backdrop-blur-2xl border-t border-white/5 px-6 py-4 flex justify-between items-center z-[110] shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
         <button
           onClick={() => setActiveTab('dashboard')}
-          className={`flex flex-col items-center gap-1 transition-all duration-300 ${activeTab === 'dashboard' ? 'text-[#705EBC] scale-110' : 'text-gray-500 opacity-60'}`}
+          className={`flex flex-col items-center gap-1 transition-all duration-300 ${activeTab === 'dashboard' ? 'text-[#FFC94A] scale-110' : 'text-gray-500 opacity-60'}`}
         >
           <Activity size={24} />
           <span className="text-[10px] font-black uppercase tracking-tighter">Status</span>
@@ -333,7 +333,7 @@ export default function SamudraPage({ onNavigate }) {
 
         <button
           onClick={() => setActiveTab('map')}
-          className={`flex flex-col items-center gap-1 transition-all duration-300 ${activeTab === 'map' ? 'text-[#705EBC] scale-110' : 'text-gray-500 opacity-60'}`}
+          className={`flex flex-col items-center gap-1 transition-all duration-300 ${activeTab === 'map' ? 'text-[#FFC94A] scale-110' : 'text-gray-500 opacity-60'}`}
         >
           <MapPin size={24} />
           <span className="text-[10px] font-black uppercase tracking-tighter">Radar</span>
@@ -341,10 +341,10 @@ export default function SamudraPage({ onNavigate }) {
 
         {/* Center Floating Button */}
         <div className="relative -top-8 group">
-          <div className="absolute inset-0 bg-[#705EBC] blur-2xl opacity-20 group-active:opacity-40 transition-opacity"></div>
+          <div className="absolute inset-0 bg-[#FFC94A] blur-2xl opacity-20 group-active:opacity-40 transition-opacity"></div>
           <button
              onClick={() => setIsBoxActive(!isBoxActive)}
-             className={`p-5 rounded-[2rem] shadow-2xl relative transition-all duration-500 active:scale-90 ${isBoxActive ? 'bg-gradient-to-tr from-[#705EBC] to-blue-500' : 'bg-gray-800 grayscale'}`}
+             className={`p-5 rounded-[2rem] shadow-2xl relative transition-all duration-500 active:scale-90 ${isBoxActive ? 'bg-gradient-to-tr from-[#FFC94A] to-blue-500' : 'bg-gray-800 grayscale'}`}
           >
             <Power size={32} className="text-white" />
           </button>
@@ -352,7 +352,7 @@ export default function SamudraPage({ onNavigate }) {
 
         <button
           onClick={() => setActiveTab('market')}
-          className={`flex flex-col items-center gap-1 transition-all duration-300 ${activeTab === 'market' ? 'text-[#705EBC] scale-110' : 'text-gray-500 opacity-60'}`}
+          className={`flex flex-col items-center gap-1 transition-all duration-300 ${activeTab === 'market' ? 'text-[#FFC94A] scale-110' : 'text-gray-500 opacity-60'}`}
         >
           <TrendingUp size={24} />
           <span className="text-[10px] font-black uppercase tracking-tighter">Market</span>
@@ -360,7 +360,7 @@ export default function SamudraPage({ onNavigate }) {
 
         <button
           onClick={() => setActiveTab('info')}
-          className={`flex flex-col items-center gap-1 transition-all duration-300 ${activeTab === 'info' ? 'text-[#705EBC] scale-110' : 'text-gray-500 opacity-60'}`}
+          className={`flex flex-col items-center gap-1 transition-all duration-300 ${activeTab === 'info' ? 'text-[#FFC94A] scale-110' : 'text-gray-500 opacity-60'}`}
         >
           <Info size={24} />
           <span className="text-[10px] font-black uppercase tracking-tighter">Info</span>

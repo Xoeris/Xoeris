@@ -28,7 +28,7 @@ export default function HorizoneProductPage({ onNavigate }) {
       familyRoute="elarion"
       tagline="The Engine of Digital Reality"
       description="Professional 3D creation suite engineered for real-time fidelity. Build immersive worlds, simulate complex physics, and deploy at global scale."
-      color="#705EBC"
+      color="#FFC94A"
       pngIcon="/xoeris_voltrix_horizone_logo_icon_colored.png"
       onNavigate={onNavigate}
     >
@@ -45,10 +45,10 @@ export default function HorizoneProductPage({ onNavigate }) {
         reverse={true}
       />
 
-      <section className="py-32 px-6 md:px-12 flex flex-col items-center text-center bg-gradient-to-b from-transparent to-[#705EBC]/10">
+      <section className="py-32 px-6 md:px-12 flex flex-col items-center text-center bg-gradient-to-b from-transparent to-hide-accent/10">
          <h3 className="text-4xl md:text-6xl font-black mb-10 tracking-tighter uppercase">Get Started.</h3>
-         <p className="text-gray-400 max-w-xl mb-12 text-lg">Join the architects and developers building the Xoeris ecosystem with Horizone.</p>
-         <button className="px-12 py-6 bg-[#705EBC] text-white text-sm font-black uppercase tracking-widest rounded-2xl hover:scale-105 transition-all shadow-[0_20px_50px_rgba(112,94,188,0.4)]">Get Horizone Early Access</button>
+         <p className="text-hide-text-secondary max-w-xl mb-12 text-lg">Join the architects and developers building the Xoeris ecosystem with Horizone.</p>
+         <button className="px-12 py-6 bg-hide-action text-hide-action-text text-sm font-bold uppercase tracking-widest rounded-hide-lg hover:bg-hide-action-hover hover:scale-105 transition-all duration-hide-fast shadow-[0_20px_50px_rgba(0,200,150,0.3)]">Get Horizone Early Access</button>
       </section>
     </ProductLayout>
   );

@@ -11,7 +11,7 @@ const products = [
     image: "/minisheet1.png",
     price: "Rp 35.000",
     link: "https://www.tokopedia.com/tartarugacrispyseaweed/tartaruga-mini-sheet-crispy-seaweed-barbeque-3-2-g-x-12-pcs?extParam=src%3Dshop%26whid%3D12517962&aff_unique_id=&channel=others&chain_key=",
-    color: "#F59E0B",
+    color: "#FFC94A",
     tag: "Best Seller"
   },
   {
@@ -33,7 +33,7 @@ const products = [
     image: "/maxsheet1.png",
     price: "Rp 45.000",
     link: "https://www.tokopedia.com/tartarugacrispyseaweed",
-    color: "#F59E0B",
+    color: "#FFC94A",
     tag: "New Arrival"
   },
   {
@@ -69,19 +69,19 @@ export default function TartarugaPage({ onNavigate }) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#1D1D1D] text-white font-sans selection:bg-[#F9CB43] selection:text-black">
+    <div className="min-h-screen bg-[#1D1D1D] text-white font-sans selection:bg-[#FFC94A] selection:text-black">
       
       {/* Dynamic Background Blobs based on the new palette */}
       <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden gpu-accel">
-        <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-[#F9CB43] blur-[100px] opacity-[0.12] rounded-full animate-pulse will-change-filter"></div>
-        <div className="absolute bottom-[-10%] right-[-20%] w-[50vw] h-[50vw] bg-[#E88C6D] blur-[100px] opacity-[0.08] rounded-full animate-pulse delay-1000 will-change-filter"></div>
+        <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-[#FFC94A] blur-[100px] opacity-[0.12] rounded-full animate-pulse will-change-filter"></div>
+        <div className="absolute bottom-[-10%] right-[-20%] w-[50vw] h-[50vw] bg-[#FFB020] blur-[100px] opacity-[0.08] rounded-full animate-pulse delay-1000 will-change-filter"></div>
         <div className="absolute top-[30%] right-[10%] w-[40vw] h-[40vw] bg-[#2C2264] blur-[80px] opacity-[0.15] rounded-full animate-float will-change-transform"></div>
         {/* Subtle grid for tech aesthetic */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(249,203,67,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(249,203,67,0.02)_1px,transparent_1px)] bg-[size:40px_40px] opacity-30"></div>
       </div>
 
       {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 gpu-accel ${isScrolled ? 'py-4 backdrop-blur-xl bg-black/40 border-b border-[#F9CB43]/20 shadow-2xl' : 'py-8 bg-transparent'}`}>
+      <nav className={`fixed w-full z-50 transition-all duration-300 gpu-accel ${isScrolled ? 'py-4 backdrop-blur-xl bg-black/40 border-b border-[#FFC94A]/20 shadow-2xl' : 'py-8 bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center gap-8">
             <img src="/tartaruga-logo.png" alt="Tartaruga Logo" className="w-14 h-14 object-contain" />
@@ -90,7 +90,7 @@ export default function TartarugaPage({ onNavigate }) {
               onClick={() => onNavigate('acelbyte')}
               className="group flex items-center gap-3 text-gray-400 hover:text-white transition-all duration-300"
             >
-              <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-[#F9CB43]/50 group-hover:bg-[#F9CB43]/10 transition-all">
+              <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-[#FFC94A]/50 group-hover:bg-[#FFC94A]/10 transition-all">
                 <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
               </div>
               <span className="text-sm font-black uppercase tracking-widest hidden sm:inline">Back to Acelbyte</span>
@@ -106,12 +106,12 @@ export default function TartarugaPage({ onNavigate }) {
         {/* Hero Section */}
         <section className="text-center mb-32">
           <FadeIn>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#F9CB43]/10 border border-[#F9CB43]/20 text-[#F9CB43] text-xs font-black uppercase tracking-widest mb-8">
-              <Zap size={14} fill="#F9CB43" /> Freshly Roasted • 100% Organic
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FFC94A]/10 border border-[#FFC94A]/20 text-[#FFC94A] text-xs font-black uppercase tracking-widest mb-8">
+              <Zap size={14} fill="#FFC94A" /> Freshly Roasted • 100% Organic
             </div>
             <h1 className="text-6xl md:text-8xl font-black mb-8 leading-tight tracking-tighter">
               CRISPY <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F9CB43] via-[#E88C6D] to-[#705EBC] bg-[length:200%_auto] animate-gradient-shift">SEAWEED</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFC94A] via-[#FFB020] to-[#FFC94A] bg-[length:200%_auto] animate-gradient-shift">SEAWEED</span>
             </h1>
             <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
               Crispy seaweed snacks made with quality ingredients and a clean roasted flavor. 
@@ -124,7 +124,7 @@ export default function TartarugaPage({ onNavigate }) {
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {products.map((product, idx) => (
             <FadeIn key={product.id} delay={idx * 200}>
-              <div className="group relative bg-white/5 border border-white/10 rounded-[2.5rem] overflow-hidden hover:border-[#F9CB43]/50 hover:bg-white/[0.08] transition-all duration-500 hover:shadow-[0_0_50px_rgba(249,203,67,0.15)]">
+              <div className="group relative bg-white/5 border border-white/10 rounded-[2.5rem] overflow-hidden hover:border-[#FFC94A]/50 hover:bg-white/[0.08] transition-all duration-500 hover:shadow-[0_0_50px_rgba(249,203,67,0.15)]">
                 
                 {/* Product Image Container */}
                 <div className="aspect-[16/10] overflow-hidden relative">
@@ -147,7 +147,7 @@ export default function TartarugaPage({ onNavigate }) {
                     </h2>
                     <div className="text-right">
                       <div className="text-sm font-bold text-gray-400 mb-1">{product.specs}</div>
-                      <div className="text-2xl font-black text-[#F9CB43]">{product.price}</div>
+                      <div className="text-2xl font-black text-[#FFC94A]">{product.price}</div>
                     </div>
                   </div>
                   
@@ -160,10 +160,10 @@ export default function TartarugaPage({ onNavigate }) {
                       <Star size={16} fill={product.color} color={product.color} /> 4.9 Rating
                     </div>
                     <div className="flex items-center gap-2 text-sm font-bold text-gray-300">
-                      <Truck size={16} className="text-[#F9CB43]" /> Fast Delivery
+                      <Truck size={16} className="text-[#FFC94A]" /> Fast Delivery
                     </div>
                     <div className="flex items-center gap-2 text-sm font-bold text-gray-300">
-                      <ShieldCheck size={16} className="text-[#F9CB43]" /> Quality Guaranteed
+                      <ShieldCheck size={16} className="text-[#FFC94A]" /> Quality Guaranteed
                     </div>
                   </div>
 
@@ -171,7 +171,7 @@ export default function TartarugaPage({ onNavigate }) {
                     href={product.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-3 w-full py-5 rounded-2xl bg-[#F9CB43] text-black font-black uppercase tracking-[0.2em] transition-all duration-300 hover:bg-[#E88C6D] hover:scale-[1.02] active:scale-[0.98] shadow-[0_10px_30px_rgba(249,203,67,0.3)] hover:shadow-[0_20px_40px_rgba(249,203,67,0.4)]"
+                    className="flex items-center justify-center gap-3 w-full py-5 rounded-2xl bg-[#FFC94A] text-black font-black uppercase tracking-[0.2em] transition-all duration-300 hover:bg-[#FFB020] hover:scale-[1.02] active:scale-[0.98] shadow-[0_10px_30px_rgba(249,203,67,0.3)] hover:shadow-[0_20px_40px_rgba(249,203,67,0.4)]"
                   >
                     Buy on Tokopedia <ExternalLink size={20} />
                   </a>
@@ -184,9 +184,9 @@ export default function TartarugaPage({ onNavigate }) {
         {/* Brand values / Why Tartaruga */}
         <section className="mt-40">
           <FadeIn>
-            <div className="bg-gradient-to-br from-[#F9CB43]/10 to-[#E88C6D]/5 border border-white/10 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden">
-               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#F9CB43]/50 to-transparent"></div>
-               <h3 className="text-xs font-black text-[#F9CB43] uppercase tracking-[0.5em] mb-6">The Tartaruga Standard</h3>
+            <div className="bg-gradient-to-br from-[#FFC94A]/10 to-[#FFB020]/5 border border-white/10 rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden">
+               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#FFC94A]/50 to-transparent"></div>
+               <h3 className="text-xs font-black text-[#FFC94A] uppercase tracking-[0.5em] mb-6">The Tartaruga Standard</h3>
                <h2 className="text-4xl md:text-6xl font-black mb-8">WHY CHOOSE OUR <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">SEAWEED?</span></h2>
                <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-left mt-16">
                   <div>
@@ -208,19 +208,19 @@ export default function TartarugaPage({ onNavigate }) {
       </main>
 
       {/* Footer */}
-      <footer className="bg-black/40 backdrop-blur-3xl border-t border-[#F9CB43]/20 py-16 px-6">
+      <footer className="bg-black/40 backdrop-blur-3xl border-t border-[#FFC94A]/20 py-16 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
           <div className="flex flex-col items-center md:items-start">
              <div className="flex items-center gap-2 mb-2">
-                <span className="text-2xl font-black tracking-tighter text-[#F9CB43]">TARTARUGA</span>
+                <span className="text-2xl font-black tracking-tighter text-[#FFC94A]">TARTARUGA</span>
              </div>
              <p className="text-gray-500 font-medium">© 2024 Tartaruga Creespy Seaweed. All rights reserved.</p>
           </div>
           
           <div className="flex gap-10">
-            <a href="#" className="text-gray-400 hover:text-[#F9CB43] font-bold uppercase tracking-widest text-xs transition-colors">Instagram</a>
-            <a href="#" className="text-gray-400 hover:text-[#F9CB43] font-bold uppercase tracking-widest text-xs transition-colors">Tokopedia</a>
-            <a href="#" className="text-gray-400 hover:text-[#F9CB43] font-bold uppercase tracking-widest text-xs transition-colors">Contact</a>
+            <a href="#" className="text-gray-400 hover:text-[#FFC94A] font-bold uppercase tracking-widest text-xs transition-colors">Instagram</a>
+            <a href="#" className="text-gray-400 hover:text-[#FFC94A] font-bold uppercase tracking-widest text-xs transition-colors">Tokopedia</a>
+            <a href="#" className="text-gray-400 hover:text-[#FFC94A] font-bold uppercase tracking-widest text-xs transition-colors">Contact</a>
           </div>
         </div>
       </footer>

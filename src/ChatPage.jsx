@@ -104,8 +104,8 @@ export default function ChatPage({ onNavigate }) {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col justify-between font-sans relative overflow-hidden">
         {/* Ambient background decoration */}
-        <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-[#705EBC]/10 rounded-full blur-[120px] pointer-events-none"></div>
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-[#F59E0B]/5 rounded-full blur-[120px] pointer-events-none"></div>
+        <div className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-[#FFC94A]/10 rounded-full blur-[120px] pointer-events-none"></div>
+        <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-[#FFC94A]/5 rounded-full blur-[120px] pointer-events-none"></div>
 
         {/* Top Navbar */}
         <header className="px-6 py-6 flex justify-between items-center z-10">
@@ -122,8 +122,8 @@ export default function ChatPage({ onNavigate }) {
             
             {/* Header info */}
             <div className="text-center mb-8">
-              <div className="w-16 h-16 rounded-[1.25rem] bg-[#705EBC]/10 border border-[#705EBC]/20 flex items-center justify-center mx-auto mb-6">
-                <Cpu className="text-[#705EBC]" size={28} />
+              <div className="w-16 h-16 rounded-[1.25rem] bg-[#FFC94A]/10 border border-[#FFC94A]/20 flex items-center justify-center mx-auto mb-6">
+                <Cpu className="text-[#FFC94A]" size={28} />
               </div>
               <h1 className="text-2xl font-black uppercase tracking-tight mb-2">Developer Sign In</h1>
               <p className="text-xs text-gray-500 font-medium leading-relaxed">Sign in with your developer account to access the chat dashboard.</p>
@@ -175,7 +175,7 @@ export default function ChatPage({ onNavigate }) {
                       placeholder="dev@xoeris.com"
                       value={emailInput}
                       onChange={(e) => setEmailInput(e.target.value)}
-                      className="w-full pl-12 pr-4 py-4 bg-white/[0.02] border border-white/5 rounded-2xl text-sm font-medium outline-none focus:border-[#705EBC]/40 transition-colors"
+                      className="w-full pl-12 pr-4 py-4 bg-white/[0.02] border border-white/5 rounded-2xl text-sm font-medium outline-none focus:border-[#FFC94A]/40 transition-colors"
                     />
                   </div>
                 </div>
@@ -190,7 +190,7 @@ export default function ChatPage({ onNavigate }) {
                       placeholder="Password"
                       value={passwordInput}
                       onChange={(e) => setPasswordInput(e.target.value)}
-                      className="w-full pl-12 pr-4 py-4 bg-white/[0.02] border border-white/5 rounded-2xl text-sm font-medium outline-none focus:border-[#705EBC]/40 transition-colors"
+                      className="w-full pl-12 pr-4 py-4 bg-white/[0.02] border border-white/5 rounded-2xl text-sm font-medium outline-none focus:border-[#FFC94A]/40 transition-colors"
                     />
                   </div>
                 </div>
@@ -212,7 +212,7 @@ export default function ChatPage({ onNavigate }) {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-4 bg-[#705EBC] hover:bg-[#5b4aa6] text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-colors shadow-[0_10px_30px_rgba(112,94,188,0.2)]"
+                    className="flex-1 py-4 bg-[#FFC94A] hover:bg-[#E5B542] text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-colors shadow-[0_10px_30px_rgba(112,94,188,0.2)]"
                   >
                     Sign In
                   </button>
@@ -231,7 +231,7 @@ export default function ChatPage({ onNavigate }) {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex font-sans selection:bg-[#705EBC]/30 overflow-hidden">
+    <div className="min-h-screen bg-black text-white flex font-sans selection:bg-[#FFC94A]/30 overflow-hidden">
       
       {/* Sidebar Navigation */}
       <aside className={`fixed md:relative top-0 bottom-0 left-0 ${
@@ -250,9 +250,9 @@ export default function ChatPage({ onNavigate }) {
           <div className="p-4">
             <button 
               onClick={() => setMessages([{ role: 'assistant', content: 'Xalme execution core active. Send query to begin.' }])}
-              className="w-full py-3 px-4 bg-white/[0.03] border border-white/5 hover:border-[#705EBC]/30 hover:bg-white/[0.05] rounded-xl flex items-center gap-2.5 text-xs font-black uppercase tracking-widest transition-all"
+              className="w-full py-3 px-4 bg-white/[0.03] border border-white/5 hover:border-[#FFC94A]/30 hover:bg-white/[0.05] rounded-xl flex items-center gap-2.5 text-xs font-black uppercase tracking-widest transition-all"
             >
-              <Plus size={14} className="text-[#705EBC]" />
+              <Plus size={14} className="text-[#FFC94A]" />
               New session
             </button>
           </div>
@@ -260,7 +260,7 @@ export default function ChatPage({ onNavigate }) {
           {/* Sidebar Menu items */}
           <nav className="px-3 py-2 flex flex-col gap-1">
             <button className="w-full py-3 px-4 rounded-xl flex items-center gap-3 text-xs font-black uppercase tracking-wider bg-white/[0.02] text-white text-left">
-              <MessageSquare size={14} className="text-[#705EBC]" />
+              <MessageSquare size={14} className="text-[#FFC94A]" />
               Assistant Chat
             </button>
             <button disabled className="w-full py-3 px-4 rounded-xl flex items-center gap-3 text-xs font-bold uppercase tracking-wider text-gray-600 text-left cursor-not-allowed">
@@ -277,7 +277,7 @@ export default function ChatPage({ onNavigate }) {
         {/* User Card footer inside Sidebar */}
         <div className="p-4 border-t border-white/5 flex flex-col gap-2">
           <div className="flex items-center gap-3 p-2.5 rounded-xl bg-white/[0.01]">
-            <div className="w-8 h-8 rounded-lg bg-[#705EBC]/10 flex items-center justify-center text-[#705EBC]">
+            <div className="w-8 h-8 rounded-lg bg-[#FFC94A]/10 flex items-center justify-center text-[#FFC94A]">
               <User size={16} />
             </div>
             <div className="flex flex-col min-w-0">
@@ -321,9 +321,9 @@ export default function ChatPage({ onNavigate }) {
 
           <div className="flex items-center gap-4">
             {/* Active status */}
-            <div className="hidden sm:flex items-center gap-2 bg-[#705EBC]/10 border border-[#705EBC]/20 px-3 py-1.5 rounded-full">
-              <div className="w-2 h-2 rounded-full bg-[#705EBC] animate-pulse"></div>
-              <span className="text-[10px] font-black uppercase tracking-wider text-[#705EBC]">Connected</span>
+            <div className="hidden sm:flex items-center gap-2 bg-[#FFC94A]/10 border border-[#FFC94A]/20 px-3 py-1.5 rounded-full">
+              <div className="w-2 h-2 rounded-full bg-[#FFC94A] animate-pulse"></div>
+              <span className="text-[10px] font-black uppercase tracking-wider text-[#FFC94A]">Connected</span>
             </div>
           </div>
         </header>
@@ -344,7 +344,7 @@ export default function ChatPage({ onNavigate }) {
                 </div>
                 <div
                   className={`px-5 py-3.5 rounded-[1.5rem] leading-relaxed text-sm font-medium border ${msg.role === 'user'
-                      ? 'bg-[#705EBC]/10 border-[#705EBC]/20 text-white rounded-tr-none'
+                      ? 'bg-[#FFC94A]/10 border-[#FFC94A]/20 text-white rounded-tr-none'
                       : msg.content.startsWith('[ERROR]')
                         ? 'bg-red-500/10 border-red-500/20 text-red-400 rounded-tl-none font-mono text-xs'
                         : 'bg-white/[0.02] border-white/5 text-gray-200 rounded-tl-none'
@@ -356,7 +356,7 @@ export default function ChatPage({ onNavigate }) {
             ))}
             {loading && (
               <div className="flex items-center gap-3 text-xs text-gray-500 font-bold uppercase tracking-wider">
-                <RefreshCw size={14} className="animate-spin text-[#705EBC]" />
+                <RefreshCw size={14} className="animate-spin text-[#FFC94A]" />
                 {statusText || 'Syncing...'}
               </div>
             )}
@@ -394,7 +394,7 @@ export default function ChatPage({ onNavigate }) {
                 <button
                   type="submit"
                   disabled={loading || !input.trim()}
-                  className="bg-[#705EBC] hover:scale-105 active:scale-95 disabled:scale-100 disabled:opacity-50 text-white p-3.5 rounded-xl flex items-center justify-center transition-all shadow-[0_10px_30px_rgba(112,94,188,0.2)]"
+                  className="bg-[#FFC94A] hover:scale-105 active:scale-95 disabled:scale-100 disabled:opacity-50 text-white p-3.5 rounded-xl flex items-center justify-center transition-all shadow-[0_10px_30px_rgba(112,94,188,0.2)]"
                 >
                   <Send size={16} />
                 </button>

@@ -93,7 +93,7 @@ export default function SamudraShowcasePage({ onNavigate }) {
           {isMobile ? 'Back to App' : 'Back to Voltrix'}
         </button>
         <div className="flex flex-col items-end text-right">
-           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#705EBC]">Xoeris Voltrix</span>
+           <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#FFC94A]">Xoeris Voltrix</span>
            <span className="text-xl font-black tracking-tighter uppercase text-white">SAMUDRA Showcase</span>
         </div>
       </header>
@@ -120,21 +120,21 @@ export default function SamudraShowcasePage({ onNavigate }) {
           {/* Loading Spinner */}
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/40 z-20">
-              <div className="w-12 h-12 border-4 border-[#705EBC]/30 border-t-[#705EBC] rounded-full animate-spin"></div>
+              <div className="w-12 h-12 border-4 border-[#FFC94A]/30 border-t-[#FFC94A] rounded-full animate-spin"></div>
             </div>
           )}
 
           {/* Error Message */}
           {error && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 z-30 p-6 text-center">
-              <div className="text-[#705EBC] mb-4">
+              <div className="text-[#FFC94A] mb-4">
                 <VolumeX size={48} />
               </div>
               <p className="text-white font-bold text-lg mb-2">{error}</p>
               <p className="text-gray-400 text-sm mb-6">Please check your connection or file path.</p>
               <button
                 onClick={() => window.location.reload()}
-                className="px-6 py-2 bg-[#705EBC] text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-[#826fd1] transition-all"
+                className="px-6 py-2 bg-[#FFC94A] text-white rounded-full text-xs font-black uppercase tracking-widest hover:bg-[#FFD76B] transition-all"
               >
                 Reload Page
               </button>
@@ -156,15 +156,15 @@ export default function SamudraShowcasePage({ onNavigate }) {
           {/* Overlay Controls */}
           <div className="absolute bottom-0 left-0 w-full p-6 md:p-10 bg-gradient-to-t from-black/80 to-transparent flex justify-between items-center opacity-0 hover:opacity-100 transition-opacity duration-300">
              <div className="flex gap-6 items-center">
-                <button onClick={togglePlay} className="text-white hover:text-[#705EBC] transition-colors bg-transparent border-none outline-none cursor-pointer">
+                <button onClick={togglePlay} className="text-white hover:text-[#FFC94A] transition-colors bg-transparent border-none outline-none cursor-pointer">
                   {isPlaying ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" />}
                 </button>
-                <button onClick={toggleMute} className="text-white hover:text-[#705EBC] transition-colors bg-transparent border-none outline-none cursor-pointer">
+                <button onClick={toggleMute} className="text-white hover:text-[#FFC94A] transition-colors bg-transparent border-none outline-none cursor-pointer">
                   {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
                 </button>
              </div>
              <div className="flex items-center gap-4">
-                <button onClick={handleFullscreen} className="text-white hover:text-[#705EBC] transition-colors bg-transparent border-none outline-none cursor-pointer">
+                <button onClick={handleFullscreen} className="text-white hover:text-[#FFC94A] transition-colors bg-transparent border-none outline-none cursor-pointer">
                   <Maximize size={24} />
                 </button>
              </div>
@@ -176,7 +176,7 @@ export default function SamudraShowcasePage({ onNavigate }) {
       <footer className="absolute bottom-0 left-0 w-full p-8 flex justify-center z-50">
          <div className="flex items-center gap-4 text-gray-500 font-medium text-[10px] uppercase tracking-[0.3em]">
             <span>System Terminal</span>
-            <div className="w-1 h-1 rounded-full bg-[#705EBC] animate-pulse"></div>
+            <div className="w-1 h-1 rounded-full bg-[#FFC94A] animate-pulse"></div>
             <span>Visual Node SYNC: 100%</span>
          </div>
       </footer>

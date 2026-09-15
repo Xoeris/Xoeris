@@ -6,7 +6,7 @@ import FadeIn from './components/FadeIn';
 const colors = {
   bg: '#050505',
   primary: '#FDD935', // Neon Cyber Yellow
-  secondary: '#F59E0B', // Amber
+  secondary: '#FFC94A', // Amber
   accent: '#FEF08A', // Light Yellow Glow
   text: '#ffffff',
   textMuted: '#a1a1aa',
@@ -104,7 +104,7 @@ export default function AcelbytePage({ onNavigate }) {
     {
       id: 'holdon',
       label: 'Hold On',
-      color: '#F59E0B',
+      color: '#FFC94A',
       width: 'w-72',
       animation: 'group-hover:scale-105',
       shadowColor: '245,158,11',
@@ -186,7 +186,7 @@ export default function AcelbytePage({ onNavigate }) {
       category: "Development",
       description: "An immersive WebGL experience built with React Three Fiber. Features real-time physics, shader effects, and audio-reactive visuals running smoothly in the browser.",
       image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2670&auto=format&fit=crop",
-      color: "#F59E0B",
+      color: "#FFC94A",
       stack: ["React", "Three.js", "GLSL"]
     },
     {
@@ -214,7 +214,7 @@ export default function AcelbytePage({ onNavigate }) {
       description: "Official VFX and motion design work for UMN Maxima 2024. Featuring stylized color grading and experimental editing techniques to convey a powerful event narrative.",
       image: "/maxima-2024-after-movie-vfx-scenes-thumbnail.png",
       video: "/maxima-2024-after-movie-vfx-scenes.mp4",
-      color: "#F59E0B",
+      color: "#FFC94A",
       stack: ["DaVinci Resolve", "Premiere Pro", "Arri Alexa"]
     },
     {
@@ -317,7 +317,7 @@ export default function AcelbytePage({ onNavigate }) {
               </div>
               <h1 className="text-6xl md:text-8xl font-black leading-[1.05] mb-6 tracking-tighter drop-shadow-2xl">
                 Acelbyte <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FDD935] to-[#F59E0B] drop-shadow-[0_0_20px_rgba(253,217,53,0.5)]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FDD935] to-[#FFC94A] drop-shadow-[0_0_20px_rgba(253,217,53,0.5)]">
                   Official Website
                 </span>
               </h1>
@@ -393,7 +393,7 @@ export default function AcelbytePage({ onNavigate }) {
                 <div className="absolute -top-12 -right-12 w-32 h-32 border border-[#FDD935]/30 rounded-full animate-spin-slow opacity-60 flex items-center justify-center shadow-[inset_0_0_20px_rgba(253,217,53,0.2)]" style={{ animationDuration: '20s' }}>
                   <div className="w-24 h-24 border border-dashed border-[#FDD935]/40 rounded-full animate-spin-reverse-slow"></div>
                 </div>
-                <div className="absolute -bottom-16 -left-16 w-40 h-40 border border-[#F59E0B]/20 backdrop-blur-md rounded-2xl animate-pulse delay-150 opacity-40 transform rotate-45 shadow-[0_0_30px_rgba(245,158,11,0.2)]"></div>
+                <div className="absolute -bottom-16 -left-16 w-40 h-40 border border-[#FFC94A]/20 backdrop-blur-md rounded-2xl animate-pulse delay-150 opacity-40 transform rotate-45 shadow-[0_0_30px_rgba(245,158,11,0.2)]"></div>
               </div>
             </div>
           </div>
@@ -425,16 +425,16 @@ export default function AcelbytePage({ onNavigate }) {
               </div>
 
               {/* Feature 2 */}
-              <div className="group bg-[#FDD935]/[0.02] backdrop-blur-2xl p-10 border border-[#FDD935]/10 hover:bg-[#FDD935]/[0.05] hover:border-[#F59E0B]/40 hover:shadow-[0_0_40px_rgba(245,158,11,0.15)] transition-all duration-[400ms] ease-hyper hover:-translate-y-2 relative overflow-hidden rounded-3xl md:-translate-y-8">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#F59E0B] to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000 delay-100"></div>
-                <div className="w-16 h-16 rounded-2xl bg-[#F59E0B]/10 border border-[#F59E0B]/30 flex items-center justify-center mb-8 shadow-[inset_0_0_15px_rgba(245,158,11,0.2)]">
-                  <Cpu size={32} className="text-[#F59E0B] drop-shadow-[0_0_10px_rgba(245,158,11,0.8)]" />
+              <div className="group bg-[#FDD935]/[0.02] backdrop-blur-2xl p-10 border border-[#FDD935]/10 hover:bg-[#FDD935]/[0.05] hover:border-[#FFC94A]/40 hover:shadow-[0_0_40px_rgba(245,158,11,0.15)] transition-all duration-[400ms] ease-hyper hover:-translate-y-2 relative overflow-hidden rounded-3xl md:-translate-y-8">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#FFC94A] to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000 delay-100"></div>
+                <div className="w-16 h-16 rounded-2xl bg-[#FFC94A]/10 border border-[#FFC94A]/30 flex items-center justify-center mb-8 shadow-[inset_0_0_15px_rgba(245,158,11,0.2)]">
+                  <Cpu size={32} className="text-[#FFC94A] drop-shadow-[0_0_10px_rgba(245,158,11,0.8)]" />
                 </div>
                 <h3 className="text-2xl font-black mb-4 tracking-tight">Visual Engineering</h3>
                 <p className="text-gray-400 mb-8 leading-relaxed font-medium">
                   Specializing in VFX and coding, Acelbyte excels at developing visually compelling effects that bring stories to life. His technical expertise is complemented by his keen eye for photography and cinematography.
                 </p>
-                <div className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-widest text-[#F59E0B]">
+                <div className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-widest text-[#FFC94A]">
                   VFX & Code <ArrowRight size={16} />
                 </div>
               </div>
@@ -551,7 +551,7 @@ export default function AcelbytePage({ onNavigate }) {
                     </div>
                   </div>
 
-                  <a href="#" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#FDD935] text-black font-black uppercase tracking-widest rounded-xl hover:bg-[#F59E0B] hover:scale-105 active:scale-95 transition-all duration-500 ease-hyper w-fit">
+                  <a href="#" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#FDD935] text-black font-black uppercase tracking-widest rounded-xl hover:bg-[#FFC94A] hover:scale-105 active:scale-95 transition-all duration-500 ease-hyper w-fit">
                     View Project <ArrowRight size={20} />
                   </a>
                 </div>

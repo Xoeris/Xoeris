@@ -14,11 +14,11 @@ export default function ElarionPage({ onNavigate }) {
       title="Elarion"
       tagline="Creative Suites & Engines"
       description="Developing the tools that bridge the gap between imagination and digital reality. From high-performance 3D engines to optical sensory hardware."
-      color="#705EBC"
+      color="#FFC94A"
       pngIcon="/xoeris_elarion_logo_colored.png"
       onNavigate={onNavigate}
     >
-      <ProductGrid products={products} onNavigate={onNavigate} color="#705EBC" />
+      <ProductGrid products={products} onNavigate={onNavigate} color="#FFC94A" />
     </FamilyLayout>
   );
 }

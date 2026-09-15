@@ -29,7 +29,7 @@ export default function ACTONProductPage({ onNavigate }) {
       familyRoute="elarion"
       tagline="Advanced Camera Technology Optical Neurolens"
       description="The definitive hardware interface for spatial capturing. ACTON bridges the physical and digital worlds with unparalleled optical precision and neural integration."
-      color="#705EBC"
+      color="#FFC94A"
       icon={Eye}
       onNavigate={onNavigate}
     >
@@ -46,10 +46,10 @@ export default function ACTONProductPage({ onNavigate }) {
         reverse={true}
       />
 
-      <section className="py-32 px-6 md:px-12 flex flex-col items-center text-center bg-gradient-to-b from-transparent to-[#705EBC]/10">
+      <section className="py-32 px-6 md:px-12 flex flex-col items-center text-center bg-gradient-to-b from-transparent to-[#FFC94A]/10">
          <h3 className="text-4xl md:text-6xl font-black mb-10 tracking-tighter uppercase">See the Invisible.</h3>
          <p className="text-gray-400 max-w-xl mb-12 text-lg">Experience the next generation of spatial capturing with ACTON. Available for authorized R&D partners.</p>
-         <button className="px-12 py-6 bg-[#705EBC] text-white text-sm font-black uppercase tracking-widest rounded-2xl hover:scale-105 transition-all shadow-[0_20px_50px_rgba(112,94,188,0.4)]">Request Technical Specs</button>
+         <button className="px-12 py-6 bg-[#FFC94A] text-white text-sm font-black uppercase tracking-widest rounded-2xl hover:scale-105 transition-all shadow-[0_20px_50px_rgba(112,94,188,0.4)]">Request Technical Specs</button>
       </section>
     </ProductLayout>
   );

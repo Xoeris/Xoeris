@@ -14,10 +14,10 @@ export default function IllucinePage({ onNavigate }) {
       title="Illucine"
       tagline="Cinematic Frameworks"
       description="Developing rendering engines, motion capture utilities, and video protocols for high-fidelity animation pipelines."
-      color="#F59E0B"
+      color="#FFC94A"
       onNavigate={onNavigate}
     >
-      <ProductGrid products={products} onNavigate={onNavigate} color="#F59E0B" />
+      <ProductGrid products={products} onNavigate={onNavigate} color="#FFC94A" />
     </FamilyLayout>
   );
 }

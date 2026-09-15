@@ -239,39 +239,39 @@ export default function AuthPage() {
 
   if (guard.loading) {
     return (
-      <div className="min-h-screen bg-[#141517] flex items-center justify-center px-4">
-        <p className="text-gray-400 animate-pulse text-sm">Verifying login request…</p>
+      <div className="min-h-screen bg-hide-canvas flex items-center justify-center px-4">
+        <p className="text-hide-text-muted animate-pulse text-sm">Verifying login request…</p>
       </div>
     );
   }
 
   if (!guard.valid) {
     return (
-      <div className="min-h-screen bg-[#141517] flex flex-col items-center justify-center px-4">
+      <div className="min-h-screen bg-hide-canvas flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-[600px] text-center">
-          <h1 className="text-2xl font-bold text-gray-200 mb-3">Authentication required</h1>
-          <p className="text-gray-400 text-sm mb-2">{guard.error}</p>
-          <p className="text-gray-500 text-xs mb-6">auth.xoeris.com can only be opened via a login request from an app (HIDE, Levelist, or xoeris.com). Direct navigation is blocked.</p>
-          <a href="https://xoeris.com" className="inline-block bg-gray-200 text-black rounded-md px-6 py-3 text-sm font-semibold">Go to Xoeris</a>
+          <h1 className="text-2xl font-bold text-hide-text-primary mb-3">Authentication required</h1>
+          <p className="text-hide-text-secondary text-sm mb-2">{guard.error}</p>
+          <p className="text-hide-text-muted text-xs mb-6">auth.xoeris.com can only be opened via a login request from an app (HIDE, Levelist, or xoeris.com). Direct navigation is blocked.</p>
+          <a href="https://xoeris.com" className="inline-block bg-hide-action text-hide-action-text rounded-hide-lg px-6 py-3 text-sm font-semibold hover:bg-hide-action-hover transition-colors duration-hide-fast">Go to Xoeris</a>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#141517] flex flex-col items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-hide-canvas flex flex-col items-center justify-center px-4 py-8">
       <div className="w-full max-w-[600px]">
         <div className="mb-10">
-          <span className="text-white font-black tracking-tight text-xl">Xoeris</span>
-          <span className="text-gray-500 text-xl"> / </span>
-          <span className="text-gray-400 text-xl">Acelbyte</span>
+          <span className="text-hide-text-primary font-black tracking-tight text-xl">Xoeris</span>
+          <span className="text-hide-text-muted text-xl"> / </span>
+          <span className="text-hide-text-secondary text-xl">Acelbyte</span>
         </div>
-        <h1 className="text-4xl font-bold text-gray-200 text-center mb-8">Log in</h1>
+        <h1 className="text-4xl font-bold text-hide-text-primary text-center mb-8">Log in</h1>
 
         <button
           onClick={handleGitHubLogin}
           disabled={busy}
-          className="w-full bg-gray-200 text-black rounded-md py-4 flex items-center justify-center gap-3 mb-3 font-medium hover:bg-white transition disabled:opacity-60"
+          className="w-full bg-hide-elevated text-hide-text-primary rounded-hide-lg py-4 flex items-center justify-center gap-3 mb-3 font-medium border border-hide-border-subtle hover:bg-hide-hover hover:border-hide-border-default transition-all duration-hide-fast disabled:opacity-60"
         >
           <GitHubIcon />
           Continue with GitHub
@@ -280,13 +280,13 @@ export default function AuthPage() {
         <button
           onClick={handleGoogleLogin}
           disabled={busy}
-          className="w-full bg-gray-200 text-black rounded-md py-4 flex items-center justify-center gap-3 mb-3 font-medium hover:bg-white transition disabled:opacity-60"
+          className="w-full bg-hide-elevated text-hide-text-primary rounded-hide-lg py-4 flex items-center justify-center gap-3 mb-3 font-medium border border-hide-border-subtle hover:bg-hide-hover hover:border-hide-border-default transition-all duration-hide-fast disabled:opacity-60"
         >
           <GoogleIcon />
           Continue with Google
         </button>
 
-        <div className="border-t border-gray-700 my-6" />
+        <div className="border-t border-hide-border-default my-6" />
 
         {!otpPending ? (
           <>
@@ -295,7 +295,7 @@ export default function AuthPage() {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-[#1e1e21] text-gray-200 rounded-md p-4 mb-3 outline-none border border-transparent focus:border-[#3ddc84] placeholder:text-gray-500"
+              className="w-full bg-hide-input text-hide-text-primary rounded-hide-md p-4 mb-3 outline-none border border-hide-border-input focus:border-hide-action placeholder:text-hide-text-muted transition-colors duration-hide-fast"
             />
             <div className="relative mb-3">
               <input
@@ -303,54 +303,54 @@ export default function AuthPage() {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-[#1e1e21] text-gray-200 rounded-md p-4 pr-12 outline-none border border-transparent focus:border-[#3ddc84] placeholder:text-gray-500"
+                className="w-full bg-hide-input text-hide-text-primary rounded-hide-md p-4 pr-12 outline-none border border-hide-border-input focus:border-hide-action placeholder:text-hide-text-muted transition-colors duration-hide-fast"
               />
-              <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300">
+              <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-hide-text-muted hover:text-hide-text-secondary">
                 {showPw ? '🙈' : '👁️'}
               </button>
             </div>
-            <a href="https://xoeris.com/forgot-password" className="text-gray-400 text-sm hover:text-gray-200">Forget password?</a>
+            <a href="https://xoeris.com/forgot-password" className="text-hide-text-secondary text-sm hover:text-hide-text-primary transition-colors duration-hide-fast">Forget password?</a>
 
             <button
               onClick={handlePasswordLoginStep}
               disabled={busy}
-              className="w-full bg-[#3ddc84] text-black font-semibold rounded-md py-4 mt-4 hover:bg-[#35c476] transition disabled:opacity-60"
+              className="w-full bg-hide-action text-hide-action-text font-semibold rounded-hide-lg py-4 mt-4 hover:bg-hide-action-hover transition-all duration-hide-fast disabled:opacity-60"
             >
               {busy ? 'Please wait…' : 'Log in'}
             </button>
           </>
         ) : (
-          <div className="bg-[#1e1e21] border border-[#2a2a2e] rounded-xl p-5">
-            <h3 className="text-gray-200 font-semibold text-center mb-2">Enter OTP</h3>
-            <p className="text-gray-400 text-xs text-center mb-4">6-digit code sent to {pendingEmail} (10 min expiry)</p>
+          <div className="bg-hide-primary border border-hide-border-subtle rounded-hide-xl p-5">
+            <h3 className="text-hide-text-primary font-semibold text-center mb-2">Enter OTP</h3>
+            <p className="text-hide-text-secondary text-xs text-center mb-4">6-digit code sent to {pendingEmail} (10 min expiry)</p>
             <input
               type="text"
               placeholder="123456"
               value={otp}
               onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0,6))}
               maxLength={6}
-              className="w-full bg-black text-white tracking-[0.5em] text-center text-xl rounded-md p-4 mb-3 outline-none border border-transparent focus:border-[#3ddc84]"
+              className="w-full bg-hide-canvas text-hide-text-primary tracking-[0.5em] text-center text-xl rounded-hide-md p-4 mb-3 outline-none border border-hide-border-input focus:border-hide-action transition-colors duration-hide-fast"
             />
             <div className="flex gap-3">
-              <button onClick={handleVerifyOtp} disabled={busy} className="flex-1 bg-[#3ddc84] text-black font-semibold rounded-md py-3 hover:bg-[#35c476] disabled:opacity-60">Verify &amp; Continue</button>
-              <button onClick={() => { setOtpPending(false); setOtp(''); setMsg({ text: '', isError: false }); }} className="px-6 bg-gray-700 text-white rounded-md hover:bg-gray-600">Back</button>
+              <button onClick={handleVerifyOtp} disabled={busy} className="flex-1 bg-hide-action text-hide-action-text font-semibold rounded-hide-lg py-3 hover:bg-hide-action-hover transition-all duration-hide-fast disabled:opacity-60">Verify &amp; Continue</button>
+              <button onClick={() => { setOtpPending(false); setOtp(''); setMsg({ text: '', isError: false }); }} className="px-6 bg-hide-ghost text-hide-text-primary rounded-hide-lg hover:bg-hide-hover transition-colors duration-hide-fast">Back</button>
             </div>
           </div>
         )}
 
         {msg.text && (
-          <p className={`text-sm mt-4 text-center ${msg.isError ? 'text-red-400' : 'text-emerald-400'}`}>{msg.text}</p>
+          <p className={`text-sm mt-4 text-center ${msg.isError ? 'text-hide-error' : 'text-hide-success'}`}>{msg.text}</p>
         )}
 
-        <p className="text-gray-400 text-sm mt-6 text-center">
-          Don't have an account? <a href={`https://auth.xoeris.com?state=${encodeURIComponent(state)}&mode=signup`} className="text-gray-200 underline hover:text-white">Sign up</a>
+        <p className="text-hide-text-secondary text-sm mt-6 text-center">
+          Don't have an account? <a href={`https://auth.xoeris.com?state=${encodeURIComponent(state)}&mode=signup`} className="text-hide-text-primary underline hover:text-hide-text-emphasis transition-colors duration-hide-fast">Sign up</a>
         </p>
 
-        <div className="border-t border-gray-700 my-6" />
+        <div className="border-t border-hide-border-default my-6" />
 
-        <p className="text-gray-500 text-xs text-center leading-relaxed">
-          By continuing, you are agreeing to Xoeris's <a href="https://xoeris.com/terms" className="underline hover:text-gray-300">Terms of Service</a> and{' '}
-          <a href="https://xoeris.com/privacy" className="underline hover:text-gray-300">Privacy Policy</a>.
+        <p className="text-hide-text-muted text-xs text-center leading-relaxed">
+          By continuing, you are agreeing to Xoeris's <a href="https://xoeris.com/terms" className="underline hover:text-hide-text-secondary transition-colors duration-hide-fast">Terms of Service</a> and{' '}
+          <a href="https://xoeris.com/privacy" className="underline hover:text-hide-text-secondary transition-colors duration-hide-fast">Privacy Policy</a>.
         </p>
       </div>
     </div>

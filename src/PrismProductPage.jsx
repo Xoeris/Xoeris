@@ -29,7 +29,7 @@ export default function PrismProductPage({ onNavigate }) {
       familyRoute="illucine"
       tagline="Cinematic Rendering Engine"
       description="Prism is the core rendering pipeline for the next generation of digital storytelling. High-fidelity, real-time, and fully integrated with the Xoeris ecosystem."
-      color="#F59E0B"
+      color="#FFC94A"
       icon={Camera}
       onNavigate={onNavigate}
     >
@@ -46,10 +46,10 @@ export default function PrismProductPage({ onNavigate }) {
         reverse={true}
       />
 
-      <section className="py-32 px-6 md:px-12 flex flex-col items-center text-center bg-gradient-to-b from-transparent to-[#F59E0B]/10">
+      <section className="py-32 px-6 md:px-12 flex flex-col items-center text-center bg-gradient-to-b from-transparent to-hide-accent/10">
          <h3 className="text-4xl md:text-6xl font-black mb-10 tracking-tighter uppercase">Direct the Future.</h3>
-         <p className="text-gray-400 max-w-xl mb-12 text-lg">Prism is currently powering the world's most advanced virtual production stages.</p>
-         <button className="px-12 py-6 bg-[#F59E0B] text-white text-sm font-black uppercase tracking-widest rounded-2xl hover:scale-105 transition-all shadow-[0_20px_50px_rgba(245,158,11,0.3)]">Request Studio Demo</button>
+         <p className="text-hide-text-secondary max-w-xl mb-12 text-lg">Prism is currently powering the world's most advanced virtual production stages.</p>
+         <button className="px-12 py-6 bg-hide-action text-hide-action-text text-sm font-bold uppercase tracking-widest rounded-hide-lg hover:bg-hide-action-hover hover:scale-105 transition-all duration-hide-fast shadow-[0_20px_50px_rgba(0,200,150,0.3)]">Request Studio Demo</button>
       </section>
     </ProductLayout>
   );
