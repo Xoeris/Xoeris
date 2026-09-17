@@ -7,17 +7,6 @@ function GitHubIcon() {
     </svg>
   );
 }
-function GoogleIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
-      <path fill="#4285F4" d="M21.8 12.2c0-.67-.06-1.32-.17-1.95H12v3.7h5.5a4.76 4.76 0 0 1-2.07 3.12v2.59h3.35c1.96-1.81 3.02-4.48 3.02-7.46Z"/>
-      <path fill="#34A853" d="M12 22c2.7 0 4.97-.9 6.62-2.44l-3.35-2.59c-.93.62-2.12.99-3.27.99-2.52 0-4.65-1.7-5.41-3.99H2.13v2.65A9.98 9.98 0 0 0 12 22Z"/>
-      <path fill="#FBBC05" d="M6.59 13.97A5.99 5.99 0 0 1 6.28 12c0-.69.12-1.36.31-1.97V7.38H2.13A10 10 0 0 0 1 12c0 1.62.39 3.15 1.13 4.62l3.46-2.65Z"/>
-      <path fill="#EA4335" d="M12 6.5c1.47 0 2.79.51 3.83 1.5l2.87-2.87C17.03 3.6 14.76 2.6 12 2.6 7.7 2.6 4.06 5.15 2.13 9.02l3.46 2.68C6.35 8.25 8.88 6.5 12 6.5Z"/>
-    </svg>
-  );
-}
-
 export default function AuthPage() {
   // Guard: require valid state param (login request)
   const [guard, setGuard] = useState({ loading: true, valid: false, error: '', client: '', redirectUri: '' });
@@ -54,29 +43,50 @@ export default function AuthPage() {
       }
     };
     verify();
-    // GIS init for Google
-    const tryInit = () => {
-      if (window.google?.accounts?.id && import.meta.env.VITE_GOOGLE_CLIENT_ID) {
+    // GIS script loading
+    const loadGis = () => {
+      if (!document.querySelector('script[src="https://accounts.google.com/gsi/client"]')) {
+        const s = document.createElement('script');
+        s.src = 'https://accounts.google.com/gsi/client';
+        s.async = true;
+        s.defer = true;
+        s.onload = () => window.dispatchEvent(new Event('gsi_loaded'));
+        document.head.appendChild(s);
+      } else {
+        window.dispatchEvent(new Event('gsi_loaded'));
+      }
+    };
+    loadGis();
+  }, []);
+
+  useEffect(() => {
+    const initAndRender = () => {
+      if (guard.valid && window.google?.accounts?.id && import.meta.env.VITE_GOOGLE_CLIENT_ID) {
         try {
           window.google.accounts.id.initialize({
             client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
             callback: handleGoogleResponse,
             ux_mode: 'popup',
           });
+          const btnContainer = document.getElementById('google-signin-button');
+          if (btnContainer) {
+            window.google.accounts.id.renderButton(btnContainer, {
+              theme: 'filled_black',
+              size: 'large',
+              text: 'continue_with',
+              shape: 'rectangular',
+              logo_alignment: 'center',
+              width: Math.min(btnContainer.offsetWidth || 400, 400)
+            });
+          }
         } catch {}
       }
     };
-    if (document.querySelector('script[src="https://accounts.google.com/gsi/client"]')) {
-      tryInit();
-    } else {
-      const s = document.createElement('script');
-      s.src = 'https://accounts.google.com/gsi/client';
-      s.async = true;
-      s.defer = true;
-      s.onload = tryInit;
-      document.head.appendChild(s);
-    }
-  }, []);
+
+    initAndRender();
+    window.addEventListener('gsi_loaded', initAndRender);
+    return () => window.removeEventListener('gsi_loaded', initAndRender);
+  }, [guard.valid, guard.redirectUri]);
 
   const consumeAndRedirect = async (token, user) => {
     try { await fetch('/api/auth/consume', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ state }) }); } catch {}
@@ -112,22 +122,6 @@ export default function AuthPage() {
     } catch (e) {
       setMsg({ text: e.message, isError: true });
     } finally { setBusy(false); }
-  }
-
-  function handleGoogleLogin() {
-    if (window.google?.accounts?.id?.prompt) {
-      window.google.accounts.id.prompt((notification) => {
-        if (notification.isNotDisplayed && notification.isNotDisplayed()) {
-          // fallback to One Tap popup
-          const client = window.google.accounts.oauth2?.initTokenClient;
-          if (client) {
-            // use token client as fallback
-          }
-        }
-      });
-    }
-    // Also trigger One Tap
-    try { window.google.accounts.id.prompt(); } catch {}
   }
 
   function handleGitHubLogin() {
@@ -277,14 +271,9 @@ export default function AuthPage() {
           Continue with GitHub
         </button>
 
-        <button
-          onClick={handleGoogleLogin}
-          disabled={busy}
-          className="w-full bg-hide-elevated text-hide-text-primary rounded-hide-lg py-4 flex items-center justify-center gap-3 mb-3 font-medium border border-hide-border-subtle hover:bg-hide-hover hover:border-hide-border-default transition-all duration-hide-fast disabled:opacity-60"
-        >
-          <GoogleIcon />
-          Continue with Google
-        </button>
+        <div className="w-full mb-3 flex justify-center">
+          <div id="google-signin-button" className="w-full flex justify-center min-h-[44px]"></div>
+        </div>
 
         <div className="border-t border-hide-border-default my-6" />
 
