@@ -10,7 +10,7 @@ export default function XESCProductPage({ onNavigate }) {
 
   const integrationFeatures = [
     { name: "Zero-Latency API", desc: "Direct hardware-level access to XESC inference engines for third-party developers." },
-    { name: "Multimodal Perception", desc: "Process audio (Ariasphere) and visual (Illucine) data streams in a single unified model." },
+    { name: "Multimodal Perception", desc: "Process audio (Ariasphere) and visual data streams in a single unified model." },
     { name: "Privacy First", desc: "Decentralized intelligence processing ensuring data stays within the secure Xoeris perimeter." }
   ];
 

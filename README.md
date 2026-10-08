@@ -4,7 +4,7 @@ The official portal for Xoeris, a multi-layered technology ecosystem converging 
 
 ## Overview
 
-This repository hosts the front-end codebase for the official Xoeris portal. It highlights the ecosystem's design principles, core families (Illucine and Elarion), and Xoeris Interactive Modular Ecosystem (XIME) specifications.
+This repository hosts the front-end codebase for the official Xoeris portal. It highlights the ecosystem's design principles, modular technologies, and Xoeris Interactive Modular Ecosystem (XIME) specifications.
 
 ### Technology Stack
 - **Framework**: React (Vite-powered SPA)

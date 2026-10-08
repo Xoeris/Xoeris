@@ -24,8 +24,8 @@ export default function HorizoneProductPage({ onNavigate }) {
   return (
     <ProductLayout
       name="Horizone"
-      family="Elarion"
-      familyRoute="elarion"
+      family="Voltrix"
+      familyRoute="xoeris"
       tagline="The Engine of Digital Reality"
       description="Professional 3D creation suite engineered for real-time fidelity. Build immersive worlds, simulate complex physics, and deploy at global scale."
       color="#FFC94A"

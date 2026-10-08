@@ -26,11 +26,7 @@ export default function AboutPage({ onNavigate }) {
             </div>
           </button>
 
-          {/* Nav Links */}
-          <div className="hidden lg:flex items-center gap-10">
-            <button onClick={() => onNavigate('illucine')} className="text-hide-base font-bold uppercase tracking-[0.15em] text-hide-text-muted hover:text-hide-text-primary transition-all duration-hide-fast hover:translate-y-[-2px]">Illucine</button>
-            <button onClick={() => onNavigate('elarion')} className="text-hide-base font-bold uppercase tracking-[0.15em] text-hide-text-muted hover:text-hide-text-primary transition-all duration-hide-fast hover:translate-y-[-2px]">Elarion</button>
-          </div>
+
 
           <div className="hidden lg:flex items-center gap-6">
             <button onClick={() => onNavigate('subscriptions')} className="text-xs font-bold uppercase tracking-widest text-hide-text-muted hover:text-hide-text-primary transition-colors duration-hide-fast">Pricing</button>
@@ -50,8 +46,8 @@ export default function AboutPage({ onNavigate }) {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="lg:hidden absolute top-full left-0 w-full bg-hide-canvas/95 backdrop-blur-3xl border-t border-hide-border-subtle py-10 px-6 flex flex-col gap-8">
-            <button onClick={() => { onNavigate('illucine'); setMobileMenuOpen(false); }} className="text-2xl font-black uppercase tracking-widest text-left text-hide-accent">Illucine</button>
-            <button onClick={() => { onNavigate('elarion'); setMobileMenuOpen(false); }} className="text-2xl font-black uppercase tracking-widest text-left text-hide-accent">Elarion</button>
+            <button onClick={() => { onNavigate('subscriptions'); setMobileMenuOpen(false); }} className="text-2xl font-black uppercase tracking-widest text-left text-hide-accent">Pricing</button>
+            <button onClick={() => { onNavigate('acelbyte'); setMobileMenuOpen(false); }} className="text-2xl font-black uppercase tracking-widest text-left text-hide-accent">Enterprise</button>
             <div className="h-px w-full bg-hide-border-subtle"></div>
             <button onClick={() => onNavigate('acelbyte')} className="text-lg font-bold text-hide-text-muted">Back to Acelbyte</button>
           </div>
@@ -133,14 +129,7 @@ export default function AboutPage({ onNavigate }) {
                 Pioneering professional software ecosystems and interactive modular environments.
               </p>
             </div>
-            <div>
-              <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-hide-text-primary mb-8">Families</h4>
-              <ul className="space-y-4">
-                {["Illucine", "Elarion"].map(l => (
-                  <li key={l}><button onClick={() => onNavigate(l.toLowerCase())} className="text-hide-text-muted hover:text-hide-text-primary transition-colors duration-hide-fast text-sm font-medium bg-transparent border-none p-0">{l}</button></li>
-                ))}
-              </ul>
-            </div>
+
             <div>
               <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-hide-text-primary mb-8">Company</h4>
               <ul className="space-y-4">
