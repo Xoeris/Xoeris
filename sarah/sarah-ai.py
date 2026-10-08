@@ -460,16 +460,23 @@ def webhook():
 @app.route('/set_webhook', methods=['GET'])
 def set_webhook():
     """Visit this URL once to tell Telegram where to send messages."""
-    # Dynamically grab your Vercel URL
-    webhook_url = f"{request.url_root}webhook" 
+    if not TOKEN:
+        return "Error: TELEGRAM_TOKEN environment variable is not configured in Vercel.", 500
     
-    bot.remove_webhook()
-    success = bot.set_webhook(url=webhook_url)
+    # Telegram strictly requires HTTPS for webhooks
+    webhook_url = f"{request.url_root.rstrip('/')}/webhook"
+    if webhook_url.startswith("http://"):
+        webhook_url = "https://" + webhook_url[7:]
     
-    if success:
-        return f"Success! Webhook set to: {webhook_url}", 200
-    else:
-        return "Failed to set webhook.", 500
+    try:
+        bot.remove_webhook()
+        success = bot.set_webhook(url=webhook_url)
+        if success:
+            return f"Success! Webhook set to: {webhook_url}", 200
+        else:
+            return f"Failed to set webhook to: {webhook_url}", 500
+    except Exception as e:
+        return f"Error registering webhook: {e}", 500
 
 # -------------------------------------------------------------------
 # 4. AUTOMATIC SCHEDULED MESSAGES (Vercel Cron Job)
