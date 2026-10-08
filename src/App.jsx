@@ -13,16 +13,9 @@ import SubscriptionsPage from './SubscriptionsPage';
 import AureviaPage from './AureviaPage';
 import AuthPage from './AuthPage';
 
-// SAMUDRA Pages
-import SamudraShowcasePage from './SamudraShowcasePage';
-
 // Product Deep-Dive Pages
-import HorizoneProductPage from './HorizoneProductPage';
-import XESCProductPage from './XESCProductPage';
-import DrivonProductPage from './DrivonProductPage';
-import AetherOSProductPage from './AetherOSProductPage';
 import VocalisProductPage from './VocalisProductPage';
-import NodeSProductPage from './NodeSProductPage';
+import CoreAProductPage from './CoreAProductPage';
 import CoreAProductPage from './CoreAProductPage';
 
 // Support Hubs
@@ -75,18 +68,7 @@ export default function App() {
     if (path === '/subscription' || path === '/payment') return 'subscriptions';
     if (path === '/developers') return 'developers';
 
-    if (path.startsWith('/netwave/nodes')) return 'netwave-nodes';
     if (path.startsWith('/ariasphere/vocalis')) return 'ariasphere-vocalis';
-    if (path === '/horizone' || path === '/voltrix/horizone') return 'horizone';
-    if (path.startsWith('/aetheris')) {
-      if (path.includes('/xesc')) return 'aetheris-xesc';
-      if (path.includes('/drivon')) return 'aetheris-drivon';
-      if (path.includes('/aetheros')) return 'aetheris-aetheros';
-    }
-    if (path.startsWith('/voltrix')) {
-      if (path.includes('/samudra/showcase')) return 'samudra-showcase';
-      if (path.includes('/samudra')) return 'samudra';
-    }
     if (path.startsWith('/zenith/corea')) return 'zenith-corea';
 
     return 'xoeris';
@@ -133,18 +115,7 @@ export default function App() {
       }
 
       if (path === '/developers') setCurrentPage('developers');
-      else if (path.includes('/netwave/nodes')) setCurrentPage('netwave-nodes');
       else if (path.includes('/ariasphere/vocalis')) setCurrentPage('ariasphere-vocalis');
-      else if (path === '/horizone' || path === '/voltrix/horizone') setCurrentPage('horizone');
-      else if (path.startsWith('/aetheris')) {
-        if (path.includes('/xesc')) setCurrentPage('aetheris-xesc');
-        else if (path.includes('/drivon')) setCurrentPage('aetheris-drivon');
-        else if (path.includes('/aetheros')) setCurrentPage('aetheris-aetheros');
-      }
-      else if (path.startsWith('/voltrix')) {
-        if (path.includes('/samudra/showcase')) setCurrentPage('samudra-showcase');
-        else if (path.includes('/samudra')) setCurrentPage('samudra');
-      }
       else if (path.includes('/zenith/corea')) setCurrentPage('zenith-corea');
       else if (path === '/xoeris') setCurrentPage('xoeris');
       else if (path === '/about') setCurrentPage('about');
@@ -173,14 +144,7 @@ export default function App() {
       'error-api': 'Restricted Endpoint | Xoeris',
       'error-dl': 'Restricted Storage | Xoeris',
       developers: 'Developer Portal | Xoeris',
-      'netwave-nodes': 'Xoeris Node-S',
       'ariasphere-vocalis': 'Xoeris Vocalis',
-      horizone: 'Xoeris Horizone',
-      'aetheris-xesc': 'XESC',
-      'aetheris-drivon': 'Xoeris Drivon',
-      'aetheris-aetheros': 'Aether OS',
-      samudra: 'SAMUDRA | Xoeris',
-      'samudra-showcase': 'SAMUDRA Showcase',
       'zenith-corea': 'Xoeris Core-A',
       subscriptions: 'Subscription | Xoeris',
       'digital-artifacts': 'Digital Artifacts | Acelbyte'
@@ -192,14 +156,7 @@ export default function App() {
       acelbyte: '/acelbyte-logo.png',
       xoeris: '/xoeris_logo_color.png',
       developers: '/xoeris_logo_color.png',
-      'netwave-nodes': '/xoeris_logo_color.png',
       'ariasphere-vocalis': '/xoeris_logo_color.png',
-      horizone: '/xoeris_voltrix_horizone_logo_icon_colored.png',
-      'aetheris-xesc': '/xesc_icon.png',
-      'aetheris-drivon': '/xoeris_aetherislogo.png',
-      'aetheris-aetheros': '/xoeris_aetherislogo.png',
-      samudra: '/xoeris_voltrix_logo_icon_2026.png',
-      'samudra-showcase': '/xoeris_voltrix_logo_icon_2026.png',
       'zenith-corea': '/xoeris_logo_color.png',
       subscriptions: '/xoeris_logo_color.png',
       'digital-artifacts': '/acelbyte-logo.png',
@@ -223,14 +180,7 @@ export default function App() {
       acelbyte: '/about/acelbyte',
       xoeris: '/',
       developers: '/developers',
-      'netwave-nodes': '/netwave/nodes',
       'ariasphere-vocalis': '/ariasphere/vocalis',
-      horizone: '/horizone',
-      'aetheris-xesc': '/aetheris/xesc',
-      'aetheris-drivon': '/aetheris/drivon',
-      'aetheris-aetheros': '/aetheris/aetheros',
-      samudra: '/voltrix/samudra/app',
-      'samudra-showcase': '/voltrix/samudra/showcase',
       'zenith-corea': '/zenith/corea',
       subscriptions: '/subscription',
       'digital-artifacts': '/digital-artifacts'
@@ -267,19 +217,12 @@ export default function App() {
         {currentPage === 'error-api' && <ErrorPage title="Restricted API Endpoint" />}
         {currentPage === 'error-dl' && <ErrorPage title="Restricted Private Storage" />}
         {currentPage === 'xoeris' && <XoerisPage onNavigate={handleNavigate} />}
-        {currentPage === 'samudra' && <SamudraPage onNavigate={handleNavigate} />}
-        {currentPage === 'samudra-showcase' && <SamudraShowcasePage onNavigate={handleNavigate} />}
         {currentPage === 'tartaruga' && <TartarugaPage onNavigate={handleNavigate} />}
         {currentPage === 'subscriptions' && <SubscriptionsPage onNavigate={handleNavigate} />}
         {currentPage === 'digital-artifacts' && <DigitalArtifactsPage onNavigate={handleNavigate} />}
 
         {/* Product Details */}
-        {currentPage === 'horizone' && <HorizoneProductPage onNavigate={handleNavigate} />}
-        {currentPage === 'aetheris-xesc' && <XESCProductPage onNavigate={handleNavigate} />}
-        {currentPage === 'aetheris-drivon' && <DrivonProductPage onNavigate={handleNavigate} />}
-        {currentPage === 'aetheris-aetheros' && <AetherOSProductPage onNavigate={handleNavigate} />}
         {currentPage === 'ariasphere-vocalis' && <VocalisProductPage onNavigate={handleNavigate} />}
-        {currentPage === 'netwave-nodes' && <NodeSProductPage onNavigate={handleNavigate} />}
         {currentPage === 'zenith-corea' && <CoreAProductPage onNavigate={handleNavigate} />}
 
         {/* Support Hubs */}
