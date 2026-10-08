@@ -3,9 +3,10 @@ from pyrogram import Client, filters
 from pyrogram.handlers import MessageHandler
 
 # 1. SETUP YOUR ACCOUNT CREDENTIALS
-# Get these from https://my.telegram.org
-API_ID = int(os.environ.get("API_ID", 31499571))  # Replace with your API ID
-API_HASH = os.environ.get("API_HASH", "b993ce0fbc34e254ddbfa5da47296c5f")
+# Configure TELEGRAM_API_ID and TELEGRAM_API_HASH in your environment variables
+raw_api_id = os.environ.get("TELEGRAM_API_ID") or os.environ.get("API_ID")
+API_ID = int(raw_api_id) if raw_api_id else None
+API_HASH = os.environ.get("TELEGRAM_API_HASH") or os.environ.get("API_HASH")
 
 # Initialize the Userbot Client (logs into your personal account)
 app = Client("my_personal_account", api_id=API_ID, api_hash=API_HASH)

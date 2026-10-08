@@ -5,13 +5,15 @@ import io
 from flask import Flask, request
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ChatPermissions
 
-# Load the Telegram Token from Vercel Environment Variables
+# Load Telegram configuration from Vercel Environment Variables
 TOKEN = os.environ.get('TELEGRAM_TOKEN')
-OWNER_ID = '7823382572'
+OWNER_ID = os.environ.get('TELEGRAM_OWNER_ID') or os.environ.get('OWNER_ID')
 
 STATUS_FILE = "/tmp/owner_status.txt"
 
 def get_owner_status():
+    if not OWNER_ID:
+        return False
     # Try reading from Telegram pinned message (persistent across Vercel cold starts)
     try:
         chat = bot.get_chat(OWNER_ID)
@@ -30,6 +32,8 @@ def get_owner_status():
     return False
 
 def set_owner_status(is_off):
+    if not OWNER_ID:
+        return
     # Store in Telegram pinned message
     try:
         status_text = "status: off" if is_off else "status: on"
