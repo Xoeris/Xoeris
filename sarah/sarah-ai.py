@@ -2,6 +2,7 @@ import os
 import telebot
 import requests
 import io
+import time
 from flask import Flask, request
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton, ChatPermissions
 
@@ -121,17 +122,15 @@ def auto_reply_offline(message):
 
 # Handler for hijack simulation command
 @bot.message_handler(func=lambda message: message.text and (
-    message.text.strip() == './xesc hijack' or
-    message.text.strip() == './xesc \\./python hijack.py'
+    message.text.strip() in ['xesc hijack', 'xesc python hijack.py', './xesc hijack', './xesc ./python hijack.py']
 ))
 @bot.channel_post_handler(func=lambda message: message.text and (
-    message.text.strip() == './xesc hijack' or
-    message.text.strip() == './xesc \\./python hijack.py'
+    message.text.strip() in ['xesc hijack', 'xesc python hijack.py', './xesc hijack', './xesc ./python hijack.py']
 ))
 def handle_xoeris_hijack(message):
     lines = [
-        "$ ./xesc hijack",
-        "[Xoeris Framework v9.6.1]",
+        "xesc hijack",
+        "[Xoeris Hyperion]",
         "Initializing Remote Session...",
         "Bypassing Security Layer........ OK",
         "Injecting Payload............... OK",
@@ -155,20 +154,25 @@ def handle_xoeris_hijack(message):
         "No data was stolen.",
         "But your curiosity level has been permanently logged."
     ]
+    msg = None
+    current_text = ""
     for line in lines:
+        current_text += line + "\n"
         try:
-            bot.send_message(message.chat.id, line)
-        except Exception as e:
-            print(f"Failed to send line: {e}")
+            if not msg:
+                msg = bot.send_message(message.chat.id, f"```\n{current_text}```", parse_mode="Markdown")
+            else:
+                bot.edit_message_text(f"```\n{current_text}```", chat_id=message.chat.id, message_id=msg.message_id, parse_mode="Markdown")
+            time.sleep(0.2)
+        except Exception:
+            pass
 
 # Handler for mute specific user command
 @bot.message_handler(func=lambda message: message.text and (
-    message.text.strip() == './xesc mute user' or
-    message.text.strip() == './xesc \./python mute user.py'
+    message.text.strip() in ['xesc mute user', 'xesc python mute user.py', './xesc mute user', './xesc ./python mute user.py']
 ))
 @bot.channel_post_handler(func=lambda message: message.text and (
-    message.text.strip() == './xesc mute user' or
-    message.text.strip() == './xesc \./python mute user.py'
+    message.text.strip() in ['xesc mute user', 'xesc python mute user.py', './xesc mute user', './xesc ./python mute user.py']
 ))
 def handle_mute_user(message):
     # Verify owner authority before proceeding
@@ -184,7 +188,7 @@ def handle_mute_user(message):
 
     # Terminal-style output simulation
     lines = [
-        "$ ./xesc mute user",
+        "$ xesc mute user",
         "[Xoeris Admin Module v1.2]",
         f"Target Acquired: {target_user.first_name} (ID: {target_user.id})",
         "Applying gag order protocol......... OK",
@@ -192,11 +196,18 @@ def handle_mute_user(message):
         "Operation Complete. Target is now muted."
     ]
     
+    msg = None
+    current_text = ""
     for line in lines:
+        current_text += line + "\n"
         try:
-            bot.send_message(message.chat.id, line)
-        except Exception as e:
-            print(f"Failed to send terminal line: {e}")
+            if not msg:
+                msg = bot.send_message(message.chat.id, f"```\n{current_text}```", parse_mode="Markdown")
+            else:
+                bot.edit_message_text(f"```\n{current_text}```", chat_id=message.chat.id, message_id=msg.message_id, parse_mode="Markdown")
+            time.sleep(0.2)
+        except Exception:
+            pass
 
     # Execute the actual Telegram restriction
     try:
@@ -220,7 +231,7 @@ def handle_mute_user(message):
         bot.send_message(message.chat.id, f"System Failure: Unable to apply restrictions. Ensure I possess administrator privileges. Details: {e}")
 
 
-@bot.message_handler(func=lambda message: message.text and message.text.split()[0].split('@')[0] == '/xesc' and len(message.text.split()) > 1 and message.text.split()[1] == 'notes')
+@bot.message_handler(func=lambda message: message.text and message.text.split()[0].split('@')[0].lstrip('./') == 'xesc' and len(message.text.split()) > 1 and message.text.split()[1] == 'notes')
 def send_notes(message):
     notes_content = (
         "*Available Files:*\n\n"
