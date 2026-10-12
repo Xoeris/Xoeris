@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import AcelbytePage from './AcelbytePage';
 import AboutPage from './AboutPage';
 import ChatPage from './ChatPage';
 import ErrorPage from './ErrorPage';
@@ -59,7 +58,10 @@ export default function App() {
     if (hostname.includes('tartaruga') || path.startsWith('/tartaruga')) return 'tartaruga';
     if (path.startsWith('/aurevia') || path.startsWith('/search')) return 'aurevia';
     if (path === '/digital-artifacts') return 'digital-artifacts';
-    if (path === '/about/acelbyte' || path === '/acelbyte') return 'acelbyte';
+    if (path === '/about/acelbyte' || path === '/acelbyte') {
+      window.history.replaceState({}, '', '/');
+      return 'xoeris';
+    }
     if (path === '/about') return 'about';
     if (path === '/chat') return 'chat';
 
@@ -73,9 +75,9 @@ export default function App() {
   });
 
   useEffect(() => {
-    // Auto-redirect /xoeris to /
+    // Auto-redirect /xoeris and old /about/acelbyte to /
     const path = window.location.pathname.toLowerCase();
-    if (path === '/xoeris') {
+    if (path === '/xoeris' || path === '/about/acelbyte' || path === '/acelbyte') {
       window.history.replaceState({}, '', '/');
     }
 
@@ -118,7 +120,10 @@ export default function App() {
       else if (path === '/xoeris') setCurrentPage('xoeris');
       else if (path === '/about') setCurrentPage('about');
       else if (path === '/chat') setCurrentPage('chat');
-      else if (path === '/about/acelbyte' || path === '/acelbyte') setCurrentPage('acelbyte');
+      else if (path === '/about/acelbyte' || path === '/acelbyte') {
+        window.history.replaceState({}, '', '/');
+        setCurrentPage('xoeris');
+      }
       else if (path === '/tartaruga') setCurrentPage('tartaruga');
       else if (path === '/digital-artifacts') setCurrentPage('digital-artifacts');
       else if (path === '/subscription') setCurrentPage('subscriptions');
@@ -133,7 +138,6 @@ export default function App() {
     const titles = {
       auth: 'Xoeris Auth',
       aurevia: 'Aurevia Search',
-      acelbyte: 'Acelbyte',
       xoeris: 'Xoeris',
       about: 'About | Xoeris',
       chat: 'Xalme Chat | Xoeris',
@@ -151,7 +155,6 @@ export default function App() {
     const icons = {
       auth: '/xoeris_logo_color.png',
       aurevia: '/xoeris_logo_color.png',
-      acelbyte: '/acelbyte-logo.png',
       xoeris: '/xoeris_logo_color.png',
       developers: '/xoeris_logo_color.png',
       'ariasphere-vocalis': '/xoeris_logo_color.png',
@@ -175,7 +178,7 @@ export default function App() {
       aurevia: '/aurevia',
       about: '/about',
       chat: '/chat',
-      acelbyte: '/about/acelbyte',
+      acelbyte: '/',
       xoeris: '/',
       developers: '/developers',
       'ariasphere-vocalis': '/ariasphere/vocalis',
@@ -188,13 +191,13 @@ export default function App() {
     const finalPath = (newPath === '/xoeris') ? '/' : newPath;
 
     window.history.pushState({}, '', finalPath);
-    setCurrentPage(page);
+    setCurrentPage(page === 'acelbyte' ? 'xoeris' : page);
     window.scrollTo(0, 0);
   };
 
   return (
     <div className="min-h-screen font-ui relative z-0 overflow-x-hidden bg-hide-canvas text-hide-text-primary">
-      {!['acelbyte', 'digital-artifacts', 'subscriptions', 'samudra-showcase', 'aurevia', 'auth'].includes(currentPage) && (
+      {!['xoeris', 'digital-artifacts', 'subscriptions', 'samudra-showcase', 'aurevia', 'auth'].includes(currentPage) && (
         <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden opacity-40">
           {/* HIDE brand blobs: amber + deep-amber + teal */}
           <div className="blob blob-1" style={{ backgroundColor: colors.amber }}></div>
@@ -207,7 +210,6 @@ export default function App() {
       <div key={currentPage}>
         {currentPage === 'auth' && <AuthPage />}
         {currentPage === 'aurevia' && <AureviaPage onNavigate={handleNavigate} />}
-        {currentPage === 'acelbyte' && <AcelbytePage onNavigate={handleNavigate} />}
         {currentPage === 'about' && <AboutPage onNavigate={handleNavigate} />}
         {currentPage === 'chat' && <ChatPage onNavigate={handleNavigate} />}
         {currentPage === 'xalme-main' && <XalmeMainPage onNavigate={handleNavigate} />}

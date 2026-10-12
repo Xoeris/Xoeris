@@ -75,7 +75,7 @@ export default function DigitalArtifactsPage({ onNavigate }) {
             </div>
             
             <button 
-              onClick={() => onNavigate('acelbyte')}
+              onClick={() => onNavigate('xoeris')}
               className="group flex items-center gap-2 text-gray-400 hover:text-[#FDD935] transition-colors duration-300 ease-hyper active:scale-95"
             >
               <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform duration-300 ease-hyper-bounce" />

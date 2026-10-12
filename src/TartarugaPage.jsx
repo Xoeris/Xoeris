@@ -87,13 +87,13 @@ export default function TartarugaPage({ onNavigate }) {
             <img src="/tartaruga-logo.png" alt="Tartaruga Logo" className="w-14 h-14 object-contain" />
             
             <button 
-              onClick={() => onNavigate('acelbyte')}
+              onClick={() => onNavigate('xoeris')}
               className="group flex items-center gap-3 text-gray-400 hover:text-white transition-all duration-300"
             >
               <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-[#FFC94A]/50 group-hover:bg-[#FFC94A]/10 transition-all">
                 <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
               </div>
-              <span className="text-sm font-black uppercase tracking-widest hidden sm:inline">Back to Acelbyte</span>
+              <span className="text-sm font-black uppercase tracking-widest hidden sm:inline">Back to Xoeris</span>
             </button>
           </div>
 
