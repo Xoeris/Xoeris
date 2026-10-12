@@ -295,12 +295,11 @@ export default function XoerisPage({ onNavigate }) {
             <div className="z-10 relative text-white">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FDD935]/10 border border-[#FDD935]/30 text-xs font-bold uppercase tracking-widest mb-8 text-[#FDD935] shadow-[0_0_20px_rgba(253,217,53,0.15)] backdrop-blur-md">
                 <span className="w-2 h-2 rounded-full bg-[#FDD935] animate-pulse"></span>
-                XIME Kernel v2.6 Online
+                Powered by XESC
               </div>
               <h1 className="text-6xl md:text-8xl font-black leading-[1.05] mb-6 tracking-tighter drop-shadow-2xl">
-                XOERIS <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FDD935] to-[#FFC94A] drop-shadow-[0_0_20px_rgba(253,217,53,0.5)]">
-                  MODULAR OS
+                  XOERIS
                 </span>
               </h1>
               <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-lg leading-relaxed font-medium">
