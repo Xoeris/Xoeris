@@ -627,8 +627,8 @@ export default function XoerisPage({ onNavigate }) {
         <footer className="bg-black/80 backdrop-blur-3xl pt-20 pb-10 border-t border-[#FDD935]/20 mt-10 relative overflow-hidden text-white">
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-32 bg-[#FDD935] opacity-5 blur-[100px] pointer-events-none"></div>
 
-          <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-4 gap-16 mb-16 relative z-10">
-            <div className="md:col-span-3">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-12 gap-12 mb-16 relative z-10">
+            <div className="md:col-span-5">
               <button onClick={() => { window.location.href = 'https://xoeris.com'; }} className="flex items-center gap-3 mb-6 group inline-flex bg-transparent border-none p-0 cursor-pointer">
                 <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="h-10 w-40 object-contain object-left transition-transform duration-300 group-hover:scale-105" />
               </button>
@@ -637,10 +637,41 @@ export default function XoerisPage({ onNavigate }) {
               </p>
             </div>
 
-            <div>
-              <h4 className="text-xs font-black text-[#FDD935] uppercase tracking-[0.2em] mb-6 drop-shadow-[0_0_5px_rgba(253,217,53,0.5)]">Ecosystem</h4>
-              <ul className="space-y-4 text-gray-400 font-medium">
-                <li><button onClick={() => onNavigate('pricing')} className="hover:text-[#FDD935] transition-colors duration-300 bg-transparent border-none p-0 cursor-pointer text-left">Pricing</button></li>
+            <div className="md:col-span-3">
+              <h4 className="text-xs font-black text-[#FDD935] uppercase tracking-[0.2em] mb-6 drop-shadow-[0_0_5px_rgba(253,217,53,0.5)]">Products</h4>
+              <ul className="space-y-3 text-gray-400 font-medium text-sm">
+                {['APEX', 'Horizone Engine', 'Horizone IDE', 'MOVA', 'Musify', 'Xalme', 'Xalme Code'].map((item) => (
+                  <li key={item}>
+                    <button onClick={() => onNavigate('chat')} className="hover:text-white transition-colors duration-200 bg-transparent border-none p-0 cursor-pointer text-left">
+                      {item}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="md:col-span-2">
+              <h4 className="text-xs font-black text-[#FDD935] uppercase tracking-[0.2em] mb-6 drop-shadow-[0_0_5px_rgba(253,217,53,0.5)]">Models</h4>
+              <ul className="space-y-3 text-gray-400 font-medium text-sm">
+                {['Elarion', 'Nebula', 'Forge', 'Atlas'].map((model) => (
+                  <li key={model}>
+                    <button onClick={() => onNavigate('chat')} className="hover:text-white transition-colors duration-200 bg-transparent border-none p-0 cursor-pointer text-left flex items-center justify-between group w-full">
+                      <span>{model}</span>
+                      <ArrowUpRight size={12} className="text-gray-500 group-hover:text-[#FDD935] transition-colors" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="md:col-span-2">
+              <h4 className="text-xs font-black text-[#FDD935] uppercase tracking-[0.2em] mb-6 drop-shadow-[0_0_5px_rgba(253,217,53,0.5)]">Pricing</h4>
+              <ul className="space-y-3 text-gray-400 font-medium text-sm">
+                <li>
+                  <button onClick={() => onNavigate('pricing')} className="hover:text-[#FDD935] transition-colors duration-200 bg-transparent border-none p-0 cursor-pointer text-left">
+                    Plans & Billing
+                  </button>
+                </li>
               </ul>
             </div>
           </div>
