@@ -22,7 +22,7 @@ git commit -m "%COMMIT_MSG%"
 
 echo.
 echo Pushing to GitHub (xoeris main)...
-git push xoeris main
+git push xoeris-website main
 
 if %ERRORLEVEL% EQU 0 (
     echo.
