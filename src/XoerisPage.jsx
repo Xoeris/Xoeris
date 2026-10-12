@@ -4,6 +4,7 @@ import {
   ChevronDown, ChevronUp, Download, ArrowUpRight
 } from 'lucide-react';
 import FadeIn from './components/FadeIn';
+import { getStoredUser, getStoredToken, clearSession, syncUserFromDatabase } from './services/authService';
 
 // CyberGlassMorphism Yellow Tech Palette matching /about/acelbyte
 const colors = {
@@ -22,8 +23,26 @@ export default function XoerisPage({ onNavigate }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeTelemetryNode, setActiveTelemetryNode] = useState('xime');
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => getStoredUser());
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const navRef = useRef(null);
   const hoverTimeoutRef = useRef(null);
+
+  useEffect(() => {
+    const handleAuthChange = () => {
+      setCurrentUser(getStoredUser());
+    };
+    window.addEventListener('xoeris_auth_change', handleAuthChange);
+
+    // Sync user data from database if session token is available
+    if (getStoredToken()) {
+      syncUserFromDatabase().then((synced) => {
+        if (synced) setCurrentUser(synced);
+      });
+    }
+
+    return () => window.removeEventListener('xoeris_auth_change', handleAuthChange);
+  }, []);
 
   const handleMouseEnter = (dropdownKey) => {
     if (hoverTimeoutRef.current) {
@@ -242,10 +261,16 @@ export default function XoerisPage({ onNavigate }) {
                             <span>Download apps</span>
                             <Download size={13} />
                           </button>
-                          <button onClick={() => { setActiveDropdown(null); onNavigate('auth'); }} className="px-3.5 py-1.5 rounded-lg border border-white/20 hover:border-white/40 text-white font-medium flex items-center gap-1.5 transition-colors bg-white/10 hover:bg-white/15 backdrop-blur-md cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
-                            <span>Login</span>
-                            <ArrowUpRight size={13} />
-                          </button>
+                          {currentUser ? (
+                            <button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="px-3.5 py-1.5 rounded-lg border border-white/20 hover:border-white/40 text-white font-medium flex items-center gap-1.5 transition-colors bg-white/10 hover:bg-white/15 backdrop-blur-md cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
+                              <span>{currentUser.name || currentUser.username}</span>
+                            </button>
+                          ) : (
+                            <button onClick={() => { setActiveDropdown(null); onNavigate('auth'); }} className="px-3.5 py-1.5 rounded-lg border border-white/20 hover:border-white/40 text-white font-medium flex items-center gap-1.5 transition-colors bg-white/10 hover:bg-white/15 backdrop-blur-md cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
+                              <span>Login</span>
+                              <ArrowUpRight size={13} />
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -269,12 +294,70 @@ export default function XoerisPage({ onNavigate }) {
 
             {/* Right Action Buttons */}
             <div className="hidden lg:flex items-center gap-4" onMouseEnter={() => handleMouseEnter(null)}>
-              <button
-                onClick={() => onNavigate('auth')}
-                className="text-sm font-semibold text-gray-300 hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer"
-              >
-                Login
-              </button>
+              {currentUser ? (
+                <div className="relative">
+                  <button
+                    onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                    className="flex items-center gap-2.5 p-1 rounded-full border border-white/20 hover:border-[#FDD935]/80 transition-all bg-white/5 hover:bg-white/10 cursor-pointer group shadow-[0_0_15px_rgba(253,217,53,0.15)]"
+                    title={currentUser.name || currentUser.username || currentUser.email}
+                  >
+                    {currentUser.avatar_url ? (
+                      <img
+                        src={currentUser.avatar_url}
+                        alt={currentUser.name || currentUser.username || 'User avatar'}
+                        className="w-8 h-8 rounded-full object-cover ring-1 ring-[#FDD935]/40"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#FDD935] to-[#FFC94A] text-black font-black text-xs flex items-center justify-center ring-1 ring-white/30 uppercase">
+                        {(currentUser.name || currentUser.username || currentUser.email || 'U')[0]}
+                      </div>
+                    )}
+                  </button>
+
+                  {/* User Dropdown Menu */}
+                  {userDropdownOpen && (
+                    <div
+                      className="absolute right-0 top-full mt-2 w-56 rounded-2xl p-3 liquid-glass-panel border border-white/20 ring-1 ring-white/10 shadow-2xl z-50 animate-fade-in text-left"
+                      style={{ backdropFilter: 'blur(32px) saturate(190%)', WebkitBackdropFilter: 'blur(32px) saturate(190%)' }}
+                    >
+                      <div className="px-3 py-2 border-b border-white/10 mb-2">
+                        <p className="text-xs font-bold text-white truncate">{currentUser.name || currentUser.username || 'Xoeris Member'}</p>
+                        <p className="text-[11px] text-gray-400 truncate">{currentUser.email}</p>
+                      </div>
+                      <button
+                        onClick={() => { setUserDropdownOpen(false); onNavigate('chat'); }}
+                        className="w-full px-3 py-2 text-xs font-semibold text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 cursor-pointer bg-transparent border-none text-left"
+                      >
+                        <span>Xalme Chat</span>
+                      </button>
+                      <button
+                        onClick={() => { setUserDropdownOpen(false); onNavigate('subscriptions'); }}
+                        className="w-full px-3 py-2 text-xs font-semibold text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 cursor-pointer bg-transparent border-none text-left"
+                      >
+                        <span>Subscriptions</span>
+                      </button>
+                      <div className="h-px bg-white/10 my-1"></div>
+                      <button
+                        onClick={() => {
+                          clearSession();
+                          setUserDropdownOpen(false);
+                          setCurrentUser(null);
+                        }}
+                        className="w-full px-3 py-2 text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors flex items-center gap-2 cursor-pointer bg-transparent border-none text-left"
+                      >
+                        <span>Log out</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button
+                  onClick={() => onNavigate('auth')}
+                  className="text-sm font-semibold text-gray-300 hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer"
+                >
+                  Login
+                </button>
+              )}
               <button
                 onClick={() => onNavigate('chat')}
                 className="px-4 py-2 text-sm font-semibold text-black bg-white rounded-lg hover:bg-gray-100 transition-all cursor-pointer shadow-sm"
@@ -301,7 +384,31 @@ export default function XoerisPage({ onNavigate }) {
               <button onClick={() => { onNavigate('about'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Resources</button>
               <button onClick={() => { onNavigate('subscriptions'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Pricing</button>
               <div className="w-full h-px bg-white/10 my-1"></div>
-              <button onClick={() => { onNavigate('auth'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Login</button>
+              {currentUser ? (
+                <div className="flex items-center justify-between py-2 border-y border-white/10 my-1">
+                  <div className="flex items-center gap-3">
+                    {currentUser.avatar_url ? (
+                      <img src={currentUser.avatar_url} alt="Avatar" className="w-8 h-8 rounded-full object-cover ring-1 ring-[#FDD935]" />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-[#FDD935] text-black font-bold text-xs flex items-center justify-center">
+                        {(currentUser.name || currentUser.username || currentUser.email || 'U')[0].toUpperCase()}
+                      </div>
+                    )}
+                    <div className="text-left">
+                      <p className="text-xs font-bold text-white truncate max-w-[150px]">{currentUser.name || currentUser.username}</p>
+                      <p className="text-[10px] text-gray-400 truncate max-w-[150px]">{currentUser.email}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => { clearSession(); setMobileMenuOpen(false); setCurrentUser(null); }}
+                    className="text-xs text-red-400 underline bg-transparent border-none p-0 cursor-pointer"
+                  >
+                    Log out
+                  </button>
+                </div>
+              ) : (
+                <button onClick={() => { onNavigate('auth'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Login</button>
+              )}
               <button onClick={() => { onNavigate('subscriptions'); setMobileMenuOpen(false); }} className="w-full py-3 text-sm font-semibold rounded-lg border border-white/20 text-white text-center">Contact sales</button>
               <button onClick={() => { onNavigate('chat'); setMobileMenuOpen(false); }} className="w-full py-3 text-sm font-semibold rounded-lg bg-white text-black text-center">Try Xalme</button>
             </div>

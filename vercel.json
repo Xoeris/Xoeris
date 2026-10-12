@@ -51,6 +51,13 @@
       }
     },
     {
+      "src": "api/database1/sync.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 15
+      }
+    },
+    {
       "src": "api/database1/github-login.js",
       "use": "@vercel/node",
       "config": {
@@ -118,6 +125,10 @@
     {
       "source": "/api/database1/google-config",
       "destination": "api/database1/google-config.js"
+    },
+    {
+      "source": "/api/database1/sync",
+      "destination": "api/database1/sync.js"
     },
     {
       "source": "/api/database1/github-login",

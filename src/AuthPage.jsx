@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { setSession, syncUserFromDatabase } from './services/authService';
 
 function GitHubIcon() {
   return (
@@ -122,11 +123,8 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
 
   const consumeAndRedirect = async (token, user) => {
     if (token) {
-      try {
-        localStorage.setItem('xoeris_token', token);
-        localStorage.setItem('xoeris_chat_auth', 'true');
-        if (user) localStorage.setItem('xoeris_user', JSON.stringify(user));
-      } catch {}
+      setSession(token, user);
+      await syncUserFromDatabase().catch(() => null);
     }
     if (state) {
       try { await fetch('/api/auth/consume', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ state }) }); } catch {}
