@@ -25,7 +25,7 @@ export const FamilyLayout = ({ title, tagline, description, color, children, onN
             ))}
           </div>
         </div>
-        <button onClick={() => onNavigate('subscriptions')} className="px-5 py-2 bg-hide-action text-hide-action-text text-[10px] font-bold uppercase tracking-widest rounded-hide-lg hover:bg-hide-action-hover hover:scale-105 transition-all duration-hide-fast">Pricing</button>
+        <button onClick={() => onNavigate('pricing')} className="px-5 py-2 bg-hide-action text-hide-action-text text-[10px] font-bold uppercase tracking-widest rounded-hide-lg hover:bg-hide-action-hover hover:scale-105 transition-all duration-hide-fast">Pricing</button>
       </div>
     </nav>
 
