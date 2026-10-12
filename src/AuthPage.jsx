@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { setSession, syncUserFromDatabase } from './services/authService';
 
 function GitHubIcon() {
@@ -48,6 +48,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
   const clientParam = params.get('client');
   const redirectParam = params.get('redirect_uri');
   const [isSignUp, setIsSignUp] = useState(params.get('mode') === 'signup');
+  const githubProcessedRef = useRef(false);
 
   useEffect(() => {
     // Direct navigation is always permitted for web users on any domain
@@ -282,15 +283,30 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
     }
   }
 
-  function handleGitHubLogin() {
-    const cid = import.meta.env.VITE_GITHUB_CLIENT_ID;
+  async function handleGitHubLogin() {
+    let cid = import.meta.env.VITE_GITHUB_CLIENT_ID;
     if (!cid) {
-      setMsg({ text: 'GitHub OAuth not configured (VITE_GITHUB_CLIENT_ID)', isError: true });
+      try {
+        const apiUrl = window.location.hostname.includes('xoeris.com')
+          ? 'https://api.xoeris.com/api/database1/github-config'
+          : '/api/database1/github-config';
+        const res = await fetch(apiUrl).catch(() => null);
+        if (res && res.ok) {
+          const cfg = await res.json().catch(() => ({}));
+          if (cfg.clientId) cid = cfg.clientId;
+        }
+      } catch {}
+    }
+    if (!cid) {
+      setMsg({ text: 'GitHub OAuth not configured (VITE_GITHUB_CLIENT_ID missing)', isError: true });
       return;
     }
+    const redirectUri = window.location.hostname.includes('xoeris.com')
+      ? 'https://auth.xoeris.com/github/callback'
+      : `${window.location.origin}/github/callback`;
     const params = new URLSearchParams({
       client_id: cid,
-      redirect_uri: 'https://auth.xoeris.com/github/callback',
+      redirect_uri: redirectUri,
       scope: 'read:user user:email',
       state: state || '',
     });
@@ -403,33 +419,56 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
   // GitHub callback handling
   useEffect(() => {
     const p = new URLSearchParams(window.location.search);
-    if (window.location.pathname === '/github/callback' && p.get('code')) {
-      const code = p.get('code');
+    const code = p.get('code');
+    if (window.location.pathname === '/github/callback' && code) {
+      if (githubProcessedRef.current) return;
+      githubProcessedRef.current = true;
       const st = p.get('state') || state;
+      window.history.replaceState({}, '', window.location.pathname);
       (async () => {
         setBusy(true);
+        setMsg({ text: 'Verifying GitHub credentials…', isError: false });
         try {
-          const res = await fetch('https://api.xoeris.com/api/database1/github-login', {
+          const redirectUri = window.location.hostname.includes('xoeris.com')
+            ? 'https://auth.xoeris.com/github/callback'
+            : `${window.location.origin}/github/callback`;
+          const apiUrl = window.location.hostname.includes('xoeris.com')
+            ? 'https://api.xoeris.com/api/database1/github-login'
+            : '/api/database1/github-login';
+          let res = await fetch(apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ code }),
-          });
-          const data = await res.json();
-          if (res.ok) {
-            // consume state if present
-            if (st) { try { await fetch('/api/auth/consume', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ state: st }) }); } catch {} }
-            const token = data.token;
-            const target = guard.redirectUri || redirectParam;
-            if (target) window.location.href = `${target}${target.includes('?')?'&':'?'}token=${encodeURIComponent(token)}&state=${encodeURIComponent(st||'')}`;
-            else window.location.href = 'https://xoeris.com?auth=success';
-          } else {
-            setMsg({ text: data.error || 'GitHub login failed', isError: true });
+            body: JSON.stringify({ code, redirect_uri: redirectUri }),
+          }).catch(() => null);
+
+          if (!res || !res.ok) {
+            if (apiUrl !== 'https://api.xoeris.com/api/database1/github-login') {
+              res = await fetch('https://api.xoeris.com/api/database1/github-login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code, redirect_uri: redirectUri }),
+              }).catch(() => null);
+            }
           }
-        } catch (e) { setMsg({ text: e.message, isError: true }); }
-        finally { setBusy(false); }
+
+          if (res && res.ok) {
+            const data = await res.json();
+            if (data.token) {
+              await consumeAndRedirect(data.token, data.user);
+              return;
+            }
+          }
+          const data = res ? await res.json().catch(() => ({})) : {};
+          const errText = data.error || data.error_description || (data.details ? (typeof data.details === 'string' ? data.details : JSON.stringify(data.details)) : 'GitHub login failed');
+          setMsg({ text: errText, isError: true });
+        } catch (e) {
+          setMsg({ text: e.message || 'GitHub login failed', isError: true });
+        } finally {
+          setBusy(false);
+        }
       })();
     }
-  }, [guard]);
+  }, []);
 
   // Google OAuth hash callback handling (when direct OAuth redirect flow is used)
   useEffect(() => {

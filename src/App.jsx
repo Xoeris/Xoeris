@@ -169,6 +169,10 @@ export default function App() {
   }, [currentPage]);
 
   const handleNavigate = (page) => {
+    if (page === 'chat' && window.location.hostname.includes('xoeris.com') && !window.location.hostname.includes('xalme.xoeris.com')) {
+      window.location.href = 'https://xalme.xoeris.com/chat';
+      return;
+    }
     const pathMap = {
       aurevia: '/aurevia',
       about: '/about',

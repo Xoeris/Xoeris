@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     if (typeof body === 'string') {
       try { body = JSON.parse(body); } catch { body = {}; }
     }
-    const { code } = body || {};
+    const { code, redirect_uri } = body || {};
     if (!code) {
       return res.status(400).json({ error: 'Missing code' });
     }
@@ -32,22 +32,39 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'GitHub OAuth not configured' });
     }
 
+    const tokenPayload = {
+      client_id: process.env.GITHUB_CLIENT_ID,
+      client_secret: process.env.GITHUB_CLIENT_SECRET,
+      code,
+    };
+    if (redirect_uri) {
+      tokenPayload.redirect_uri = redirect_uri;
+    } else {
+      tokenPayload.redirect_uri = 'https://auth.xoeris.com/github/callback';
+    }
+
     const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        client_id: process.env.GITHUB_CLIENT_ID,
-        client_secret: process.env.GITHUB_CLIENT_SECRET,
-        code,
-      }),
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'User-Agent': 'Xoeris-App',
+      },
+      body: JSON.stringify(tokenPayload),
     });
     const tokenData = await tokenRes.json();
     if (!tokenData.access_token) {
-      return res.status(400).json({ error: 'GitHub token exchange failed', details: JSON.stringify(tokenData) });
+      const errorMsg = tokenData.error_description || tokenData.error || 'GitHub token exchange failed';
+      console.error('GitHub token exchange error response:', tokenData);
+      return res.status(400).json({ error: errorMsg, details: JSON.stringify(tokenData) });
     }
 
     const profileRes = await fetch('https://api.github.com/user', {
-      headers: { Authorization: `Bearer ${tokenData.access_token}`, Accept: 'application/vnd.github.v3+json' },
+      headers: {
+        Authorization: `Bearer ${tokenData.access_token}`,
+        Accept: 'application/vnd.github.v3+json',
+        'User-Agent': 'Xoeris-App',
+      },
     });
     const profile = await profileRes.json();
     if (!profile.id) {
@@ -55,18 +72,22 @@ export default async function handler(req, res) {
     }
 
     const emailsRes = await fetch('https://api.github.com/user/emails', {
-      headers: { Authorization: `Bearer ${tokenData.access_token}`, Accept: 'application/vnd.github.v3+json' },
+      headers: {
+        Authorization: `Bearer ${tokenData.access_token}`,
+        Accept: 'application/vnd.github.v3+json',
+        'User-Agent': 'Xoeris-App',
+      },
     });
     const emails = await emailsRes.json();
-    if (!Array.isArray(emails)) {
-      return res.status(400).json({ error: 'GitHub emails fetch failed' });
-    }
-    const primaryEmail = emails.find((e) => e.primary && e.verified);
-    if (!primaryEmail) {
-      return res.status(400).json({ error: 'No verified primary email on GitHub account' });
+    const primaryEmail = Array.isArray(emails)
+      ? (emails.find((e) => e.primary && e.verified) || emails.find((e) => e.verified) || emails[0])
+      : null;
+    const resolvedEmail = primaryEmail?.email || profile.email;
+    if (!resolvedEmail) {
+      return res.status(400).json({ error: 'No email found on GitHub account' });
     }
 
-    const email = normalizeEmail(primaryEmail.email);
+    const email = normalizeEmail(resolvedEmail);
     if (!email) return res.status(400).json({ error: 'Invalid email from GitHub' });
     const githubId = String(profile.id);
 
