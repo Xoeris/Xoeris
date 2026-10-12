@@ -22,7 +22,8 @@ git commit -m "%COMMIT_MSG%"
 
 echo.
 echo Pushing to GitHub (xoeris main)...
-git push xoeris-website main
+git remote add xoeris-website https://github.com/Xoeris/Xoeris-Website.git
+git push -u xoeris-website main
 
 if %ERRORLEVEL% EQU 0 (
     echo.
