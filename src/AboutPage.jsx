@@ -43,9 +43,9 @@ export default function AboutPage({ onNavigate }) {
           </button>
 
           <div className="hidden lg:flex items-center gap-6">
-            <button onClick={() => onNavigate('subscriptions')} className="text-sm font-semibold text-gray-300 hover:text-white transition-colors bg-transparent border-none cursor-pointer">Pricing</button>
+            <button onClick={() => onNavigate('pricing')} className="text-sm font-semibold text-gray-300 hover:text-white transition-colors bg-transparent border-none cursor-pointer">Pricing</button>
             <button
-              onClick={() => onNavigate('subscriptions')}
+              onClick={() => onNavigate('pricing')}
               className="px-5 py-2.5 bg-[#FDD935] text-black text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-[#FFE066] transition-all cursor-pointer border-none shadow-[0_0_20px_rgba(253,217,53,0.3)]"
             >
               Get Started
@@ -60,7 +60,7 @@ export default function AboutPage({ onNavigate }) {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-3xl border-t border-white/10 py-8 px-6 flex flex-col gap-6">
-            <button onClick={() => { onNavigate('subscriptions'); setMobileMenuOpen(false); }} className="text-xl font-bold uppercase tracking-wider text-left text-[#FDD935] bg-transparent border-none">Pricing</button>
+            <button onClick={() => { onNavigate('pricing'); setMobileMenuOpen(false); }} className="text-xl font-bold uppercase tracking-wider text-left text-[#FDD935] bg-transparent border-none">Pricing</button>
             <div className="h-px w-full bg-white/10"></div>
             <button onClick={() => { onNavigate('xoeris'); setMobileMenuOpen(false); }} className="text-base font-semibold text-gray-400 bg-transparent border-none text-left">Back to Home</button>
           </div>

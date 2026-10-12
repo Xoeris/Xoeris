@@ -25,7 +25,10 @@ export default async function handler(req, res) {
     const sub = String(payload.sub || '');
 
     const rows = await sql`
-      SELECT id, username, email, name, avatar_url, auth_provider, email_verified, created_at
+      SELECT id, username, email, name, avatar_url, auth_provider, email_verified, created_at,
+             COALESCE(subscription_tier, 'free') as subscription_tier,
+             COALESCE(subscription_status, 'active') as subscription_status,
+             subscription_cycle, subscription_expires_at
       FROM users
       WHERE email = ${email} OR username = ${sub} OR id::text = ${sub}
       LIMIT 1

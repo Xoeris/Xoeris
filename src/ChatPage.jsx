@@ -297,7 +297,7 @@ export default function ChatPage({ onNavigate }) {
                   <p className="text-[10px] text-[#8C877C] truncate">{currentUser?.email || 'user@xoeris.com'}</p>
                 </div>
                 <button
-                  onClick={() => { setUserDropdownOpen(false); if (onNavigate) onNavigate('subscriptions'); }}
+                  onClick={() => { setUserDropdownOpen(false); if (onNavigate) onNavigate('pricing'); }}
                   className="w-full px-3 py-2 text-xs text-[#C5BFAF] hover:text-white hover:bg-white/5 rounded-lg flex items-center justify-between cursor-pointer bg-transparent border-none text-left"
                 >
                   <span>Upgrade Plan</span>
@@ -346,7 +346,7 @@ export default function ChatPage({ onNavigate }) {
             <span>Free plan</span>
             <span>·</span>
             <button
-              onClick={() => onNavigate ? onNavigate('subscriptions') : window.location.href = '/subscription'}
+              onClick={() => onNavigate ? onNavigate('pricing') : window.location.href = '/pricing'}
               className="text-[#ECE7DE] hover:underline font-medium bg-transparent border-none p-0 cursor-pointer"
             >
               Upgrade

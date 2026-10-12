@@ -65,6 +65,13 @@
       }
     },
     {
+      "src": "api/database1/subscribe.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 25
+      }
+    },
+    {
       "src": "api/database1/github-login.js",
       "use": "@vercel/node",
       "config": {
@@ -140,6 +147,10 @@
     {
       "source": "/api/database1/sync",
       "destination": "api/database1/sync.js"
+    },
+    {
+      "source": "/api/database1/subscribe",
+      "destination": "api/database1/subscribe.js"
     },
     {
       "source": "/api/database1/github-login",

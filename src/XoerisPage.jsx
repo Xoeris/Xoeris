@@ -253,11 +253,11 @@ export default function XoerisPage({ onNavigate }) {
 
                       {/* Bottom Bar */}
                       <div className="border-t border-white/10 mt-8 pt-5 flex justify-between items-center text-xs relative z-10">
-                        <button onClick={() => { setActiveDropdown(null); onNavigate('subscriptions'); }} className="font-semibold text-white underline hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer">
+                        <button onClick={() => { setActiveDropdown(null); onNavigate('pricing'); }} className="font-semibold text-white underline hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer">
                           Import to Xoeris
                         </button>
                         <div className="flex items-center gap-3">
-                          <button onClick={() => { setActiveDropdown(null); onNavigate('subscriptions'); }} className="px-3.5 py-1.5 rounded-lg border border-white/20 hover:border-white/40 text-white font-medium flex items-center gap-1.5 transition-colors bg-white/10 hover:bg-white/15 backdrop-blur-md cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
+                          <button onClick={() => { setActiveDropdown(null); onNavigate('pricing'); }} className="px-3.5 py-1.5 rounded-lg border border-white/20 hover:border-white/40 text-white font-medium flex items-center gap-1.5 transition-colors bg-white/10 hover:bg-white/15 backdrop-blur-md cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
                             <span>Download apps</span>
                             <Download size={13} />
                           </button>
@@ -284,7 +284,7 @@ export default function XoerisPage({ onNavigate }) {
                 onMouseEnter={() => handleMouseEnter(null)}
               >
                 <button
-                  onClick={() => { setActiveDropdown(null); onNavigate('subscriptions'); }}
+                  onClick={() => { setActiveDropdown(null); onNavigate('pricing'); }}
                   className="flex items-center text-sm font-semibold text-gray-300 hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer"
                 >
                   <span>Pricing</span>
@@ -331,10 +331,10 @@ export default function XoerisPage({ onNavigate }) {
                         <span>Xalme Chat</span>
                       </button>
                       <button
-                        onClick={() => { setUserDropdownOpen(false); onNavigate('subscriptions'); }}
+                        onClick={() => { setUserDropdownOpen(false); onNavigate('pricing'); }}
                         className="w-full px-3 py-2 text-xs font-semibold text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 cursor-pointer bg-transparent border-none text-left"
                       >
-                        <span>Subscriptions</span>
+                        <span>Pricing & Plans</span>
                       </button>
                       <div className="h-px bg-white/10 my-1"></div>
                       <button
@@ -380,9 +380,9 @@ export default function XoerisPage({ onNavigate }) {
             <div className="lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-2xl border-t border-white/10 shadow-2xl py-6 px-6 flex flex-col gap-5 text-white max-h-[80vh] overflow-y-auto">
               <button onClick={() => { onNavigate('chat'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-white">Claude & Products</button>
               <button onClick={() => { onNavigate('digital-artifacts'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Artifacts & Capabilities</button>
-              <button onClick={() => { onNavigate('subscriptions'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Enterprise</button>
+              <button onClick={() => { onNavigate('pricing'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Enterprise</button>
               <button onClick={() => { onNavigate('about'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Resources</button>
-              <button onClick={() => { onNavigate('subscriptions'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Pricing</button>
+              <button onClick={() => { onNavigate('pricing'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Pricing</button>
               <div className="w-full h-px bg-white/10 my-1"></div>
               {currentUser ? (
                 <div className="flex items-center justify-between py-2 border-y border-white/10 my-1">
@@ -430,7 +430,7 @@ export default function XoerisPage({ onNavigate }) {
               </p>
               <div className="flex flex-col sm:flex-row gap-5">
                 <button
-                  onClick={() => onNavigate('subscriptions')}
+                  onClick={() => onNavigate('pricing')}
                   className="flex items-center justify-center gap-3 px-8 py-4 text-sm uppercase tracking-widest font-black transition-all duration-500 ease-hyper hover:-translate-y-1 active:scale-95 rounded-lg shadow-[0_0_20px_rgba(253,217,53,0.4)] hover:shadow-[0_0_40px_rgba(253,217,53,0.7)] cursor-pointer"
                   style={{ backgroundColor: colors.primary, color: '#000' }}
                 >
@@ -589,7 +589,7 @@ export default function XoerisPage({ onNavigate }) {
             <div>
               <h4 className="text-xs font-black text-[#FDD935] uppercase tracking-[0.2em] mb-6 drop-shadow-[0_0_5px_rgba(253,217,53,0.5)]">Ecosystem</h4>
               <ul className="space-y-4 text-gray-400 font-medium">
-                <li><button onClick={() => onNavigate('subscriptions')} className="hover:text-[#FDD935] transition-colors duration-300 bg-transparent border-none p-0 cursor-pointer text-left">Subscriptions</button></li>
+                <li><button onClick={() => onNavigate('pricing')} className="hover:text-[#FDD935] transition-colors duration-300 bg-transparent border-none p-0 cursor-pointer text-left">Pricing</button></li>
               </ul>
             </div>
           </div>

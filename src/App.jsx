@@ -65,7 +65,7 @@ export default function App() {
     if (path === '/chat') return 'chat';
     if (path === '/login' || path === '/auth') return 'auth';
 
-    if (path === '/subscription' || path === '/payment') return 'subscriptions';
+    if (path === '/pricing' || path === '/subscription' || path === '/subscriptions' || path === '/payment') return 'pricing';
 
     if (path.startsWith('/ariasphere/vocalis')) return 'ariasphere-vocalis';
     if (path.startsWith('/zenith/corea')) return 'zenith-corea';
@@ -124,7 +124,7 @@ export default function App() {
       else if (path === '/chat') setCurrentPage('chat');
       else if (path === '/login' || path === '/auth') setCurrentPage('auth');
       else if (path === '/digital-artifacts') setCurrentPage('digital-artifacts');
-      else if (path === '/subscription') setCurrentPage('subscriptions');
+      else if (path === '/pricing' || path === '/subscription' || path === '/subscriptions' || path === '/payment') setCurrentPage('pricing');
       else if (path.startsWith('/aurevia') || path.startsWith('/search')) setCurrentPage('aurevia');
       else setCurrentPage('xoeris');
     };
@@ -145,7 +145,8 @@ export default function App() {
       'error-dl': 'Restricted Storage | Xoeris',
       'ariasphere-vocalis': 'Xoeris Vocalis',
       'zenith-corea': 'Xoeris Core-A',
-      subscriptions: 'Subscription | Xoeris',
+      pricing: 'Pricing | Xoeris',
+      subscriptions: 'Pricing | Xoeris',
       'digital-artifacts': 'Digital Artifacts | Xoeris'
     };
 
@@ -155,6 +156,7 @@ export default function App() {
       xoeris: '/xoeris_logo_color.png',
       'ariasphere-vocalis': '/xoeris_logo_color.png',
       'zenith-corea': '/xoeris_logo_color.png',
+      pricing: '/xoeris_logo_color.png',
       subscriptions: '/xoeris_logo_color.png',
       'digital-artifacts': '/xoeris_logo_color.png'
     };
@@ -185,7 +187,9 @@ export default function App() {
       tartaruga: '/',
       'ariasphere-vocalis': '/ariasphere/vocalis',
       'zenith-corea': '/zenith/corea',
-      subscriptions: '/subscription',
+      pricing: '/pricing',
+      subscriptions: '/pricing',
+      payment: '/payment',
       'digital-artifacts': '/digital-artifacts'
     };
 
@@ -219,7 +223,7 @@ export default function App() {
         {currentPage === 'error-api' && <ErrorPage title="Restricted API Endpoint" />}
         {currentPage === 'error-dl' && <ErrorPage title="Restricted Private Storage" />}
         {currentPage === 'xoeris' && <XoerisPage onNavigate={handleNavigate} />}
-        {currentPage === 'subscriptions' && <SubscriptionsPage onNavigate={handleNavigate} />}
+        {(currentPage === 'pricing' || currentPage === 'subscriptions') && <SubscriptionsPage onNavigate={handleNavigate} />}
         {currentPage === 'digital-artifacts' && <DigitalArtifactsPage onNavigate={handleNavigate} />}
 
         {/* Product Details */}
