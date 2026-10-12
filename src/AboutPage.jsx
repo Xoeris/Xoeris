@@ -31,10 +31,10 @@ export default function AboutPage({ onNavigate }) {
           <div className="hidden lg:flex items-center gap-6">
             <button onClick={() => onNavigate('subscriptions')} className="text-xs font-bold uppercase tracking-widest text-hide-text-muted hover:text-hide-text-primary transition-colors duration-hide-fast">Pricing</button>
             <button
-              onClick={() => onNavigate('developers')}
+              onClick={() => onNavigate('subscriptions')}
               className="px-6 py-3 bg-hide-action text-hide-action-text text-[11px] font-bold uppercase tracking-widest rounded-hide-lg hover:bg-hide-action-hover hover:scale-105 transition-all duration-hide-fast"
             >
-              Developers
+              Get Started
             </button>
           </div>
 
@@ -47,7 +47,6 @@ export default function AboutPage({ onNavigate }) {
         {mobileMenuOpen && (
           <div className="lg:hidden absolute top-full left-0 w-full bg-hide-canvas/95 backdrop-blur-3xl border-t border-hide-border-subtle py-10 px-6 flex flex-col gap-8">
             <button onClick={() => { onNavigate('subscriptions'); setMobileMenuOpen(false); }} className="text-2xl font-black uppercase tracking-widest text-left text-hide-accent">Pricing</button>
-            <button onClick={() => { onNavigate('developers'); setMobileMenuOpen(false); }} className="text-2xl font-black uppercase tracking-widest text-left text-hide-accent">Developers</button>
             <div className="h-px w-full bg-hide-border-subtle"></div>
             <button onClick={() => onNavigate('xoeris')} className="text-lg font-bold text-hide-text-muted">Back to Home</button>
           </div>

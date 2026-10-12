@@ -6,7 +6,6 @@ import UnderConstructionPage from './UnderConstructionPage';
 import XalmeMainPage from './XalmeMainPage';
 import DigitalArtifactsPage from './DigitalArtifactsPage';
 import XoerisPage from './XoerisPage';
-import TartarugaPage from './TartarugaPage';
 import SubscriptionsPage from './SubscriptionsPage';
 import AureviaPage from './AureviaPage';
 import AuthPage from './AuthPage';
@@ -14,9 +13,6 @@ import AuthPage from './AuthPage';
 // Product Deep-Dive Pages
 import VocalisProductPage from './VocalisProductPage';
 import CoreAProductPage from './CoreAProductPage';
-
-// Support Hubs
-import DeveloperPortal from './DeveloperPortal';
 
 const PlaceholderProduct = ({ title, onNavigate }) => (
   <div className="min-h-screen bg-hide-canvas text-hide-text-primary flex flex-col items-center justify-center p-10 text-center">
@@ -55,7 +51,10 @@ export default function App() {
       return 'xalme-main';
     }
 
-    if (hostname.includes('tartaruga') || path.startsWith('/tartaruga')) return 'tartaruga';
+    if (hostname.includes('tartaruga') || path.startsWith('/tartaruga') || path === '/developers') {
+      window.history.replaceState({}, '', '/');
+      return 'xoeris';
+    }
     if (path.startsWith('/aurevia') || path.startsWith('/search')) return 'aurevia';
     if (path === '/digital-artifacts') return 'digital-artifacts';
     if (path === '/about/acelbyte' || path === '/acelbyte') {
@@ -66,7 +65,6 @@ export default function App() {
     if (path === '/chat') return 'chat';
 
     if (path === '/subscription' || path === '/payment') return 'subscriptions';
-    if (path === '/developers') return 'developers';
 
     if (path.startsWith('/ariasphere/vocalis')) return 'ariasphere-vocalis';
     if (path.startsWith('/zenith/corea')) return 'zenith-corea';
@@ -75,9 +73,9 @@ export default function App() {
   });
 
   useEffect(() => {
-    // Auto-redirect /xoeris and old /about/acelbyte to /
+    // Auto-redirect removed routes to /
     const path = window.location.pathname.toLowerCase();
-    if (path === '/xoeris' || path === '/about/acelbyte' || path === '/acelbyte') {
+    if (path === '/xoeris' || path === '/about/acelbyte' || path === '/acelbyte' || path === '/developers' || path === '/tartaruga') {
       window.history.replaceState({}, '', '/');
     }
 
@@ -114,17 +112,15 @@ export default function App() {
         return;
       }
 
-      if (path === '/developers') setCurrentPage('developers');
+      if (path === '/developers' || path === '/tartaruga' || path === '/about/acelbyte' || path === '/acelbyte') {
+        window.history.replaceState({}, '', '/');
+        setCurrentPage('xoeris');
+      }
       else if (path.includes('/ariasphere/vocalis')) setCurrentPage('ariasphere-vocalis');
       else if (path.includes('/zenith/corea')) setCurrentPage('zenith-corea');
       else if (path === '/xoeris') setCurrentPage('xoeris');
       else if (path === '/about') setCurrentPage('about');
       else if (path === '/chat') setCurrentPage('chat');
-      else if (path === '/about/acelbyte' || path === '/acelbyte') {
-        window.history.replaceState({}, '', '/');
-        setCurrentPage('xoeris');
-      }
-      else if (path === '/tartaruga') setCurrentPage('tartaruga');
       else if (path === '/digital-artifacts') setCurrentPage('digital-artifacts');
       else if (path === '/subscription') setCurrentPage('subscriptions');
       else if (path.startsWith('/aurevia') || path.startsWith('/search')) setCurrentPage('aurevia');
@@ -145,7 +141,6 @@ export default function App() {
       'under-construction': 'Under Construction | Xoeris',
       'error-api': 'Restricted Endpoint | Xoeris',
       'error-dl': 'Restricted Storage | Xoeris',
-      developers: 'Developer Portal | Xoeris',
       'ariasphere-vocalis': 'Xoeris Vocalis',
       'zenith-corea': 'Xoeris Core-A',
       subscriptions: 'Subscription | Xoeris',
@@ -156,12 +151,10 @@ export default function App() {
       auth: '/xoeris_logo_color.png',
       aurevia: '/xoeris_logo_color.png',
       xoeris: '/xoeris_logo_color.png',
-      developers: '/xoeris_logo_color.png',
       'ariasphere-vocalis': '/xoeris_logo_color.png',
       'zenith-corea': '/xoeris_logo_color.png',
       subscriptions: '/xoeris_logo_color.png',
-      'digital-artifacts': '/acelbyte-logo.png',
-      tartaruga: '/tartaruga-logo.png'
+      'digital-artifacts': '/acelbyte-logo.png'
     };
 
     document.title = titles[currentPage] || 'Xoeris';
@@ -180,7 +173,8 @@ export default function App() {
       chat: '/chat',
       acelbyte: '/',
       xoeris: '/',
-      developers: '/developers',
+      developers: '/',
+      tartaruga: '/',
       'ariasphere-vocalis': '/ariasphere/vocalis',
       'zenith-corea': '/zenith/corea',
       subscriptions: '/subscription',
@@ -191,7 +185,7 @@ export default function App() {
     const finalPath = (newPath === '/xoeris') ? '/' : newPath;
 
     window.history.pushState({}, '', finalPath);
-    setCurrentPage(page === 'acelbyte' ? 'xoeris' : page);
+    setCurrentPage((page === 'acelbyte' || page === 'developers' || page === 'tartaruga') ? 'xoeris' : page);
     window.scrollTo(0, 0);
   };
 
@@ -217,16 +211,12 @@ export default function App() {
         {currentPage === 'error-api' && <ErrorPage title="Restricted API Endpoint" />}
         {currentPage === 'error-dl' && <ErrorPage title="Restricted Private Storage" />}
         {currentPage === 'xoeris' && <XoerisPage onNavigate={handleNavigate} />}
-        {currentPage === 'tartaruga' && <TartarugaPage onNavigate={handleNavigate} />}
         {currentPage === 'subscriptions' && <SubscriptionsPage onNavigate={handleNavigate} />}
         {currentPage === 'digital-artifacts' && <DigitalArtifactsPage onNavigate={handleNavigate} />}
 
         {/* Product Details */}
         {currentPage === 'ariasphere-vocalis' && <VocalisProductPage onNavigate={handleNavigate} />}
         {currentPage === 'zenith-corea' && <CoreAProductPage onNavigate={handleNavigate} />}
-
-        {/* Support Hubs */}
-        {currentPage === 'developers' && <DeveloperPortal onNavigate={handleNavigate} />}
       </div>
 
       <style dangerouslySetInnerHTML={{__html: `

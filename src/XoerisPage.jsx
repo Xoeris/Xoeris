@@ -175,17 +175,17 @@ export default function XoerisPage({ onNavigate }) {
     },
     {
       id: 6,
-      nodeId: 'NODE.DEV-06',
-      title: 'Developer Portal & Gateway',
-      category: 'Developer Platform',
-      description: 'Centralized developer hub delivering REST, gRPC, and WebSocket API access, command-line interfaces, security credentials, and integration SDKs.',
+      nodeId: 'NODE.APEX-06',
+      title: 'Apex Pro Workstation Suite',
+      category: 'Professional Tools',
+      description: 'High-performance creative engineering utilities, specialized CLI toolsets, and modular pipeline plugins built for demanding media production workflows.',
       image: '/xoeris_apex_logo_colored.png',
       imageContain: true,
       color: '#FEF08A',
-      icon: Terminal,
-      stack: ['REST API', 'gRPC', 'WebSockets', 'CLI Suite', 'SDKs'],
-      targetRoute: 'developers',
-      highlights: 'Instant API credential generation, interactive documentation, and testing sandboxes.'
+      icon: Sliders,
+      stack: ['Native C++', 'Real-Time Pipeline', 'CLI Tools', 'Workspace Sync'],
+      targetRoute: 'subscriptions',
+      highlights: 'Direct kernel-accelerated workstation tools for studio media engineering.'
     }
   ];
 
@@ -247,16 +247,16 @@ export default function XoerisPage({ onNavigate }) {
               <a href="#architecture" className="text-sm font-bold text-gray-300 hover:text-[#FDD935] hover:drop-shadow-[0_0_8px_rgba(253,217,53,0.8)] transition-all duration-300 ease-hyper uppercase tracking-wider active:scale-95">Architecture</a>
               <a href="#telemetry" className="text-sm font-bold text-gray-300 hover:text-[#FDD935] hover:drop-shadow-[0_0_8px_rgba(253,217,53,0.8)] transition-all duration-300 ease-hyper uppercase tracking-wider active:scale-95">Telemetry</a>
               <button onClick={() => onNavigate('subscriptions')} className="text-sm font-bold text-gray-300 hover:text-[#FDD935] hover:drop-shadow-[0_0_8px_rgba(253,217,53,0.8)] transition-all duration-300 ease-hyper uppercase tracking-wider bg-transparent border-none p-0 cursor-pointer">Pricing</button>
-              <button onClick={() => onNavigate('developers')} className="text-sm font-bold text-gray-300 hover:text-[#FDD935] hover:drop-shadow-[0_0_8px_rgba(253,217,53,0.8)] transition-all duration-300 ease-hyper uppercase tracking-wider bg-transparent border-none p-0 cursor-pointer">Developers</button>
+              <button onClick={() => onNavigate('about')} className="text-sm font-bold text-gray-300 hover:text-[#FDD935] hover:drop-shadow-[0_0_8px_rgba(253,217,53,0.8)] transition-all duration-300 ease-hyper uppercase tracking-wider bg-transparent border-none p-0 cursor-pointer">About</button>
 
               <div className="w-px h-6 bg-[#FDD935]/20"></div>
 
               <button
-                onClick={() => onNavigate('developers')}
+                onClick={() => onNavigate('subscriptions')}
                 className="px-6 py-2.5 text-sm font-black uppercase tracking-wider rounded-lg transition-all duration-500 ease-hyper hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(253,217,53,0.4)] hover:shadow-[0_0_30px_rgba(253,217,53,0.7)] cursor-pointer"
                 style={{ backgroundColor: colors.primary, color: '#000' }}
               >
-                Launch Console
+                Get Started
               </button>
             </div>
 
@@ -276,15 +276,14 @@ export default function XoerisPage({ onNavigate }) {
               <a href="#architecture" className="text-lg font-bold text-gray-300 hover:text-[#FDD935] uppercase tracking-widest" onClick={() => setMobileMenuOpen(false)}>Architecture</a>
               <a href="#telemetry" className="text-lg font-bold text-gray-300 hover:text-[#FDD935] uppercase tracking-widest" onClick={() => setMobileMenuOpen(false)}>Telemetry</a>
               <button onClick={() => { onNavigate('subscriptions'); setMobileMenuOpen(false); }} className="text-lg font-bold text-gray-300 hover:text-[#FDD935] uppercase tracking-widest bg-transparent border-none">Pricing</button>
-              <button onClick={() => { onNavigate('developers'); setMobileMenuOpen(false); }} className="text-lg font-bold text-gray-300 hover:text-[#FDD935] uppercase tracking-widest bg-transparent border-none">Developers</button>
               <button onClick={() => { onNavigate('about'); setMobileMenuOpen(false); }} className="text-lg font-bold text-gray-300 hover:text-[#FDD935] uppercase tracking-widest bg-transparent border-none">About</button>
               <div className="w-1/2 h-px bg-[#FDD935]/20 my-2"></div>
               <button
-                onClick={() => { onNavigate('developers'); setMobileMenuOpen(false); }}
+                onClick={() => { onNavigate('subscriptions'); setMobileMenuOpen(false); }}
                 className="px-8 py-3 text-sm font-black uppercase tracking-wider rounded-lg shadow-[0_0_20px_rgba(253,217,53,0.4)]"
                 style={{ backgroundColor: colors.primary, color: '#000' }}
               >
-                Launch Console
+                Get Started
               </button>
             </div>
           )}
@@ -315,12 +314,12 @@ export default function XoerisPage({ onNavigate }) {
                 >
                   Explore Platforms <Zap size={18} />
                 </a>
-                <button
-                  onClick={() => onNavigate('developers')}
+                <a
+                  href="#architecture"
                   className="flex items-center justify-center gap-3 px-8 py-4 text-sm uppercase tracking-widest font-bold border border-[#FDD935]/30 transition-all duration-500 ease-hyper hover:bg-[#FDD935]/10 hover:border-[#FDD935] active:scale-95 rounded-lg bg-[#FDD935]/5 backdrop-blur-md text-[#FDD935] cursor-pointer"
                 >
-                  <Terminal size={18} /> Developer Portal
-                </button>
+                  <Cpu size={18} /> System Architecture
+                </a>
               </div>
             </div>
 
@@ -465,12 +464,12 @@ export default function XoerisPage({ onNavigate }) {
                 <h2 className="text-sm font-black text-[#FDD935] uppercase tracking-[0.3em] mb-4 drop-shadow-[0_0_8px_rgba(253,217,53,0.8)]">Core Portfolio</h2>
                 <h3 className="text-4xl md:text-6xl font-black tracking-tight">ECOSYSTEM <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500">PLATFORMS.</span></h3>
               </div>
-              <button
-                onClick={() => onNavigate('developers')}
-                className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-gray-400 hover:text-[#FDD935] transition-colors duration-300 ease-hyper bg-transparent border-none p-0 cursor-pointer"
+              <a
+                href="#architecture"
+                className="flex items-center gap-2 text-sm font-black uppercase tracking-widest text-gray-400 hover:text-[#FDD935] transition-colors duration-300 ease-hyper"
               >
-                View Documentation & APIs <ArrowRight size={16} />
-              </button>
+                View Architecture Nodes <ArrowRight size={16} />
+              </a>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -524,12 +523,12 @@ export default function XoerisPage({ onNavigate }) {
                   <strong className="text-white">Active Node Selected:</strong> {activeBladeData.label} — {activeBladeData.desc}
                 </div>
                 <div className="flex gap-4">
-                  <button
-                    onClick={() => onNavigate('developers')}
-                    className="px-5 py-2.5 bg-[#FDD935] text-black font-black uppercase text-xs tracking-wider rounded-lg hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                  <a
+                    href="#platforms"
+                    className="px-5 py-2.5 bg-[#FDD935] text-black font-black uppercase text-xs tracking-wider rounded-lg hover:scale-105 active:scale-95 transition-all cursor-pointer inline-flex items-center"
                   >
-                    Open Developer Portal
-                  </button>
+                    Explore Platforms
+                  </a>
                   <button
                     onClick={() => onNavigate('subscriptions')}
                     className="px-5 py-2.5 bg-white/5 border border-white/10 text-white font-bold uppercase text-xs tracking-wider rounded-lg hover:border-[#FDD935]/50 transition-all cursor-pointer"
@@ -647,10 +646,9 @@ export default function XoerisPage({ onNavigate }) {
               <h4 className="text-xs font-black text-[#FDD935] uppercase tracking-[0.2em] mb-6 drop-shadow-[0_0_5px_rgba(253,217,53,0.5)]">Ecosystem</h4>
               <ul className="space-y-4 text-gray-400 font-medium">
                 <li><a href="#platforms" className="hover:text-[#FDD935] transition-colors duration-300">XIME Modular OS</a></li>
+                <li><a href="#architecture" className="hover:text-[#FDD935] transition-colors duration-300">Architecture Nodes</a></li>
                 <li><button onClick={() => onNavigate('aurevia')} className="hover:text-[#FDD935] transition-colors duration-300 bg-transparent border-none p-0 cursor-pointer text-left">Aurevia Search</button></li>
-                <li><button onClick={() => onNavigate('developers')} className="hover:text-[#FDD935] transition-colors duration-300 bg-transparent border-none p-0 cursor-pointer text-left">Developer Portal</button></li>
                 <li><button onClick={() => onNavigate('subscriptions')} className="hover:text-[#FDD935] transition-colors duration-300 bg-transparent border-none p-0 cursor-pointer text-left">Subscriptions</button></li>
-                <li><button onClick={() => onNavigate('tartaruga')} className="hover:text-[#FDD935] transition-colors duration-300 bg-transparent border-none p-0 cursor-pointer text-left">Tartaruga</button></li>
               </ul>
             </div>
 

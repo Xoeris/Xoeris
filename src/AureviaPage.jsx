@@ -189,12 +189,12 @@ export default function AureviaPage({ onNavigate }) {
           <span className="hidden sm:inline bg-[#14141E] border border-[#222230] px-2.5 py-1 rounded-full text-[11px] text-gray-300">
             Zero Tracking • No Ads
           </span>
-          <a
-            href="https://xoeris.com/developers"
-            className="hover:text-white transition-colors"
+          <button
+            onClick={() => onNavigate('about')}
+            className="hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer"
           >
-            Documentation
-          </a>
+            About
+          </button>
         </div>
       </header>
 
