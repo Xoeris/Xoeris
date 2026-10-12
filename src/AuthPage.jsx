@@ -7,7 +7,30 @@ function GitHubIcon() {
     </svg>
   );
 }
-export default function AuthPage({ onNavigate }) {
+
+function GoogleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        fill="#4285F4"
+        d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24Z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15Z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98Z"
+      />
+    </svg>
+  );
+}
+export default function AuthPage({ onNavigate, onSuccess, subheading }) {
   // Guard: allow direct login if accessed on xoeris.com / local web or if valid state param exists
   const [guard, setGuard] = useState({ loading: true, valid: false, error: '', client: '', redirectUri: '' });
   const [mode, setMode] = useState('login'); // login | otp
@@ -27,11 +50,12 @@ export default function AuthPage({ onNavigate }) {
   useEffect(() => {
     const isDirectWebLogin = !window.location.hostname.includes('auth.xoeris.com') ||
       clientParam === 'xoeris' ||
-      clientParam === 'web';
+      clientParam === 'web' ||
+      clientParam === 'xalme';
 
     if (!state) {
       if (isDirectWebLogin) {
-        setGuard({ loading: false, valid: true, error: '', client: 'xoeris', redirectUri: '/' });
+        setGuard({ loading: false, valid: true, error: '', client: clientParam || 'xoeris', redirectUri: redirectParam || '/' });
       } else {
         setGuard({ loading: false, valid: false, error: 'Missing login request. Open via app.', client: '', redirectUri: '' });
       }
@@ -106,14 +130,26 @@ export default function AuthPage({ onNavigate }) {
     if (token) {
       try {
         localStorage.setItem('xoeris_token', token);
+        localStorage.setItem('xoeris_chat_auth', 'true');
         if (user) localStorage.setItem('xoeris_user', JSON.stringify(user));
       } catch {}
     }
     if (state) {
       try { await fetch('/api/auth/consume', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ state }) }); } catch {}
     }
+    if (onSuccess) {
+      onSuccess(token, user);
+      return;
+    }
     const target = guard.redirectUri || redirectParam;
-    if (target && target !== '/') {
+    if (target && target.startsWith('/')) {
+      const pageKey = target.replace(/^\//, '') || 'xoeris';
+      if (onNavigate) {
+        onNavigate(pageKey);
+      } else {
+        window.location.href = target;
+      }
+    } else if (target && target !== '/') {
       const sep = target.includes('?') ? '&' : '?';
       const payload = encodeURIComponent(token || '');
       window.location.href = `${target}${sep}token=${payload}&state=${encodeURIComponent(state || '')}`;
@@ -134,23 +170,83 @@ export default function AuthPage({ onNavigate }) {
   };
 
   async function handleGoogleResponse(response) {
+    if (!response || !response.credential) {
+      setBusy(false);
+      setMsg({ text: 'No credential received from Google', isError: true });
+      return;
+    }
     try {
       setBusy(true);
-      setMsg({ text: '', isError: false });
-      const res = await fetch('https://api.xoeris.com/api/database1/google-login', {
+      setMsg({ text: 'Signing in with Google…', isError: false });
+      const apiUrl = window.location.hostname.includes('xoeris.com')
+        ? 'https://api.xoeris.com/api/database1/google-login'
+        : '/api/database1/google-login';
+
+      let res = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ credential: response.credential }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        await consumeAndRedirect(data.token, data.user);
-      } else {
-        setMsg({ text: data.error || 'Google authentication failed', isError: true });
+      }).catch(() => null);
+
+      if (!res || !res.ok) {
+        if (apiUrl !== 'https://api.xoeris.com/api/database1/google-login') {
+          res = await fetch('https://api.xoeris.com/api/database1/google-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ credential: response.credential }),
+          }).catch(() => null);
+        }
       }
+
+      if (res && res.ok) {
+        const data = await res.json();
+        if (data.token) {
+          await consumeAndRedirect(data.token, data.user);
+          return;
+        }
+      }
+      const data = res ? await res.json().catch(() => ({})) : {};
+      setMsg({ text: data.error || 'Google authentication failed', isError: true });
     } catch (e) {
-      setMsg({ text: e.message, isError: true });
-    } finally { setBusy(false); }
+      setMsg({ text: e.message || 'Google authentication failed', isError: true });
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  function handleGoogleLoginClick() {
+    const cid = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    if (!cid) {
+      setMsg({ text: 'Google OAuth not configured (VITE_GOOGLE_CLIENT_ID)', isError: true });
+      return;
+    }
+
+    if (window.google?.accounts?.id) {
+      setBusy(true);
+      setMsg({ text: 'Opening Google Sign-In…', isError: false });
+      try {
+        window.google.accounts.id.initialize({
+          client_id: cid,
+          callback: handleGoogleResponse,
+          ux_mode: 'popup',
+        });
+        window.google.accounts.id.prompt((notification) => {
+          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            setBusy(false);
+            const btn = document.querySelector('#google-signin-button [role="button"]') ||
+                        document.querySelector('#google-signin-button iframe');
+            if (btn) {
+              btn.click();
+            }
+          }
+        });
+      } catch (err) {
+        setBusy(false);
+        setMsg({ text: err.message || 'Failed to initialize Google login', isError: true });
+      }
+    } else {
+      setMsg({ text: 'Google Identity Services is loading. Please try again.', isError: true });
+    }
   }
 
   function handleGitHubLogin() {
@@ -335,10 +431,11 @@ export default function AuthPage({ onNavigate }) {
 
           <div className="mb-6 text-center">
             <h1 className="text-3xl font-extrabold tracking-tight text-white mb-2">Log in</h1>
-            <p className="text-xs text-gray-400">Access your Xoeris account and services</p>
+            <p className="text-xs text-gray-400">{subheading || 'Access your Xoeris account and services'}</p>
           </div>
 
           <button
+            type="button"
             onClick={handleGitHubLogin}
             disabled={busy}
             className="w-full bg-white/[0.06] hover:bg-white/[0.12] text-white rounded-xl py-3.5 flex items-center justify-center gap-3 mb-3 font-semibold text-sm border border-white/15 transition-all duration-200 cursor-pointer disabled:opacity-60 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
@@ -347,9 +444,18 @@ export default function AuthPage({ onNavigate }) {
             Continue with GitHub
           </button>
 
-          <div className="w-full mb-3 flex justify-center">
-            <div id="google-signin-button" className="w-full flex justify-center min-h-[44px]"></div>
-          </div>
+          <button
+            type="button"
+            onClick={handleGoogleLoginClick}
+            disabled={busy}
+            className="w-full bg-white/[0.06] hover:bg-white/[0.12] text-white rounded-xl py-3.5 flex items-center justify-center gap-3 mb-3 font-semibold text-sm border border-white/15 transition-all duration-200 cursor-pointer disabled:opacity-60 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
+          >
+            <GoogleIcon />
+            Continue with Google
+          </button>
+
+          {/* Hidden container for GIS button rendering / fallback */}
+          <div id="google-signin-button" className="hidden"></div>
 
           <div className="relative my-6 flex items-center justify-center">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>

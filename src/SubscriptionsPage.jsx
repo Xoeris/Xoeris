@@ -24,38 +24,51 @@ export default function SubscriptionsPage({ onNavigate }) {
   };
 
   const PricingCard = ({ title, description, price, features, buttonText, highlighted, icon: Icon }) => (
-    <div className={`flex flex-col p-8 rounded-hide-xl border transition-all duration-hide-medium ${highlighted ? 'bg-hide-primary border-hide-border-default shadow-hide-popup ring-1 ring-hide-border-subtle' : 'bg-hide-canvas border-hide-border-subtle hover:border-hide-border-default'}`}>
-      <div className="mb-6">
-        <div className="w-12 h-12 rounded-hide-lg bg-hide-elevated border border-hide-border-subtle flex items-center justify-center mb-4">
-          <Icon className="text-hide-text-primary" size={24} />
+    <div className={`relative flex flex-col p-8 rounded-3xl border transition-all duration-300 overflow-hidden ${
+      highlighted
+        ? 'liquid-glass-panel border-white/25 ring-1 ring-[#FDD935]/40 shadow-[0_0_35px_rgba(253,217,53,0.15)] bg-white/[0.04]'
+        : 'liquid-glass-panel border-white/10 hover:border-white/20 bg-white/[0.02]'
+    }`} style={{ backdropFilter: 'blur(28px) saturate(180%)', WebkitBackdropFilter: 'blur(28px) saturate(180%)' }}>
+      {highlighted && (
+        <div className="absolute -top-10 left-1/4 w-40 h-20 bg-[#FDD935]/10 rounded-full blur-2xl pointer-events-none"></div>
+      )}
+      <div className="mb-6 relative z-10">
+        <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center mb-4 ${
+          highlighted ? 'bg-[#FDD935]/15 border-[#FDD935]/30 text-[#FDD935]' : 'bg-white/5 border-white/10 text-white'
+        }`}>
+          <Icon size={24} />
         </div>
-        <h3 className="text-2xl font-bold text-hide-text-primary mb-2">{title}</h3>
-        <p className="text-hide-text-muted text-sm">{description}</p>
+        <h3 className="text-2xl font-bold text-white mb-2">{title}</h3>
+        <p className="text-gray-400 text-sm">{description}</p>
       </div>
-      <div className="mb-8">
+      <div className="mb-8 relative z-10">
         <div className="flex items-baseline gap-1">
-          <span className="text-4xl font-black text-hide-text-primary">{price === '0' ? '$0' : `$${price}`}</span>
-          {price !== '0' && <span className="text-hide-text-muted text-sm font-medium">USD / month</span>}
+          <span className="text-4xl font-black text-white">{price === '0' ? '$0' : `$${price}`}</span>
+          {price !== '0' && <span className="text-gray-400 text-sm font-medium">USD / month</span>}
         </div>
         <div className="h-5">
           {price !== '0' && (billingCycle === 'yearly' || title === 'Ultra') && (
-            <div className="text-hide-text-muted text-xs mt-1">billed annually</div>
+            <div className="text-gray-400 text-xs mt-1">billed annually</div>
           )}
         </div>
       </div>
       <button 
         onClick={() => title === 'Pro' ? handleSwitchView('payment') : null}
-        className={`w-full py-3.5 rounded-hide-lg font-bold text-sm transition-all duration-hide-fast mb-8 ${highlighted ? 'bg-hide-action text-hide-action-text hover:bg-hide-action-hover' : 'bg-transparent border border-hide-border-default text-hide-text-primary hover:bg-hide-hover'}`}
+        className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all duration-200 mb-8 cursor-pointer relative z-10 ${
+          highlighted
+            ? 'bg-[#FDD935] text-black hover:bg-[#FFE066] shadow-[0_0_20px_rgba(253,217,53,0.3)] border-none'
+            : 'bg-white/5 border border-white/15 text-white hover:bg-white/10'
+        }`}
       >
         {buttonText}
       </button>
-      <div className="space-y-4">
-        <div className="text-xs font-bold text-hide-text-muted uppercase tracking-widest mb-4">
+      <div className="space-y-4 relative z-10">
+        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
           {title === 'Free' ? 'Features' : `Everything in ${title === 'Pro' ? 'Free' : 'Pro'} and:`}
         </div>
         {features.map((feature, idx) => (
-          <div key={idx} className="flex gap-3 text-sm text-hide-text-secondary">
-            <Check size={18} className="text-hide-action shrink-0" />
+          <div key={idx} className="flex gap-3 text-sm text-gray-300">
+            <Check size={18} className="text-[#FDD935] shrink-0" />
             <span>{feature}</span>
           </div>
         ))}
@@ -66,7 +79,7 @@ export default function SubscriptionsPage({ onNavigate }) {
   const PricingView = () => {
     return (
       <div className="max-w-7xl mx-auto px-6 py-12 md:py-20">
-        <div className="mb-6">
+        <div className="mb-6 flex items-center justify-between">
           <button 
             onClick={() => {
               if (window.history.length > 1) {
@@ -75,30 +88,40 @@ export default function SubscriptionsPage({ onNavigate }) {
                 onNavigate('xoeris');
               }
             }}
-            className="inline-flex items-center gap-2.5 text-hide-text-muted hover:text-hide-text-primary transition-colors duration-hide-fast group cursor-pointer bg-transparent border-none p-0"
+            className="inline-flex items-center gap-2.5 text-gray-400 hover:text-white transition-colors group cursor-pointer bg-transparent border-none p-0"
             title="Navigate to previous page"
           >
-            <div className="w-10 h-10 rounded-hide-lg bg-hide-elevated border border-hide-border-subtle flex items-center justify-center group-hover:border-hide-border-default transition-all duration-hide-fast group-hover:-translate-x-1">
-              <ArrowLeft size={18} className="text-hide-text-primary" />
+            <div className="w-10 h-10 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-[#FDD935]/40 transition-all group-hover:-translate-x-1">
+              <ArrowLeft size={18} className="text-white" />
             </div>
-            <span className="text-xs font-bold uppercase tracking-widest text-hide-text-muted group-hover:text-hide-text-primary transition-colors">Back</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-gray-400 group-hover:text-white transition-colors">Back</span>
+          </button>
+
+          <button 
+            onClick={() => onNavigate && onNavigate('xoeris')}
+            className="h-8 w-32 transition-transform duration-300 hover:scale-105 bg-transparent border-none p-0 cursor-pointer"
+          >
+            <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="w-full h-full object-contain object-right" />
           </button>
         </div>
 
         <header className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-black text-hide-text-primary mb-10 tracking-tight">Plans that grow with you</h1>
+          <h1 className="text-5xl md:text-6xl font-black text-white mb-6 tracking-tight">
+            Plans that grow with <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FDD935] to-[#FFC94A]">Xoeris</span>
+          </h1>
 
           {/* Billing Toggle */}
           <div className="flex items-center justify-center gap-4">
-            <span className={`text-sm font-bold transition-colors ${billingCycle === 'monthly' ? 'text-hide-text-primary' : 'text-hide-text-muted'}`}>Monthly</span>
+            <span className={`text-sm font-bold transition-colors ${billingCycle === 'monthly' ? 'text-white' : 'text-gray-400'}`}>Monthly</span>
             <button 
               onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
-              className={`relative w-12 h-6 rounded-full p-1 transition-colors duration-hide-fast ${billingCycle === 'yearly' ? 'bg-hide-action' : 'bg-hide-toggle-track'}`}
+              className={`relative w-12 h-6 rounded-full p-1 transition-colors ${billingCycle === 'yearly' ? 'bg-[#FDD935]' : 'bg-white/20'}`}
             >
-              <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-hide-medium ${billingCycle === 'yearly' ? 'translate-x-6' : 'translate-x-0'}`} />
+              <div className={`w-4 h-4 rounded-full transition-transform duration-300 ${billingCycle === 'yearly' ? 'translate-x-6 bg-black' : 'translate-x-0 bg-white'}`} />
             </button>
             <div className="flex items-center gap-2">
-              <span className={`text-sm font-bold transition-colors ${billingCycle === 'yearly' ? 'text-hide-text-primary' : 'text-hide-text-muted'}`}>Yearly</span>
+              <span className={`text-sm font-bold transition-colors ${billingCycle === 'yearly' ? 'text-white' : 'text-gray-400'}`}>Yearly</span>
+              <span className="text-[11px] font-semibold bg-[#FDD935]/15 text-[#FDD935] border border-[#FDD935]/30 px-2 py-0.5 rounded-full">Save 30%</span>
             </div>
           </div>
         </header>
@@ -267,11 +290,16 @@ export default function SubscriptionsPage({ onNavigate }) {
   );
 
   return (
-    <div className="bg-hide-canvas min-h-screen relative overflow-hidden flex flex-col items-center">
-      {/* Background blobs for depth — HIDE brand palette */}
-      <div className="fixed inset-0 pointer-events-none opacity-20">
-        <div className="absolute top-0 right-0 w-[50vw] h-[50vw] bg-hide-accent blur-[150px] rounded-full translate-x-1/2 -translate-y-1/2" />
-        <div className="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-hide-action blur-[120px] rounded-full -translate-x-1/2 translate-y-1/2 opacity-30" />
+    <div className="bg-[#050505] text-white min-h-screen relative overflow-hidden flex flex-col items-center selection:bg-[#FDD935] selection:text-black">
+      {/* Cyber Grid Background */}
+      <div className="fixed inset-0 z-0 bg-[linear-gradient(rgba(253,217,53,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-50"></div>
+
+      {/* Background blobs for depth — Xoeris cyber yellow palette */}
+      <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden mix-blend-screen gpu-accel">
+        <div className="blob blob-1 will-change-transform" style={{ backgroundColor: '#FDD935' }}></div>
+        <div className="blob blob-2 will-change-transform" style={{ backgroundColor: '#FFC94A' }}></div>
+        <div className="blob blob-3 will-change-transform" style={{ backgroundColor: '#FEF08A' }}></div>
+        <div className="absolute inset-0 bg-black/65 backdrop-blur-[60px]"></div>
       </div>
 
       <FadeIn className="relative z-10 w-full">

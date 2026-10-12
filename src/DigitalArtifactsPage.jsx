@@ -70,13 +70,16 @@ export default function DigitalArtifactsPage({ onNavigate }) {
         {/* Header */}
         <header className="mb-20">
           <div className="flex items-center gap-6 mb-8">
-            <div className="w-14 h-14 rounded-xl flex items-center justify-center transition-all duration-300 hover:scale-110 overflow-hidden border border-[#FDD935]/20 shadow-[0_0_20px_rgba(253,217,53,0.1)]">
-              <img src="/acelbyte-logo.png" alt="Acelbyte Logo" className="w-full h-full object-cover" />
-            </div>
+            <button 
+              onClick={() => onNavigate('xoeris')}
+              className="h-10 w-40 transition-transform duration-300 hover:scale-105 bg-transparent border-none p-0 cursor-pointer"
+            >
+              <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="w-full h-full object-contain object-left" />
+            </button>
             
             <button 
               onClick={() => onNavigate('xoeris')}
-              className="group flex items-center gap-2 text-gray-400 hover:text-[#FDD935] transition-colors duration-300 ease-hyper active:scale-95"
+              className="group flex items-center gap-2 text-gray-400 hover:text-[#FDD935] transition-colors duration-300 ease-hyper active:scale-95 bg-transparent border-none p-0 cursor-pointer ml-auto"
             >
               <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform duration-300 ease-hyper-bounce" />
               <span className="text-sm font-bold uppercase tracking-widest">Return to Base</span>

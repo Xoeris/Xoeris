@@ -25,14 +25,14 @@ const PlaceholderProduct = ({ title, onNavigate }) => (
   </div>
 );
 
-/* HIDE Design System brand colors — used for background blobs */
+/* Xoeris Cyber Design System brand colors — used for background blobs */
 const colors = {
-  bg: '#161616',            // color.background.canvas
-  amber: '#FFC94A',         // color.accent.primary
-  amberDeep: '#FFB020',     // color.accent.primary-deep
-  teal: '#00C896',          // color.action.primary
-  text: '#E0E0E8',          // color.text.primary
-  textMuted: '#7E7E8C'      // color.text.muted
+  bg: '#050505',
+  amber: '#FDD935',         // Cyber Yellow
+  amberDeep: '#FFC94A',     // Amber Yellow
+  teal: '#FEF08A',          // Pale Yellow Glow
+  text: '#ffffff',
+  textMuted: '#a1a1aa'
 };
 
 export default function App() {
@@ -146,7 +146,7 @@ export default function App() {
       'ariasphere-vocalis': 'Xoeris Vocalis',
       'zenith-corea': 'Xoeris Core-A',
       subscriptions: 'Subscription | Xoeris',
-      'digital-artifacts': 'Digital Artifacts | Acelbyte'
+      'digital-artifacts': 'Digital Artifacts | Xoeris'
     };
 
     const icons = {
@@ -156,7 +156,7 @@ export default function App() {
       'ariasphere-vocalis': '/xoeris_logo_color.png',
       'zenith-corea': '/xoeris_logo_color.png',
       subscriptions: '/xoeris_logo_color.png',
-      'digital-artifacts': '/acelbyte-logo.png'
+      'digital-artifacts': '/xoeris_logo_color.png'
     };
 
     document.title = titles[currentPage] || 'Xoeris';
@@ -194,14 +194,14 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen font-ui relative z-0 overflow-x-hidden bg-hide-canvas text-hide-text-primary">
+    <div className="min-h-screen font-ui relative z-0 overflow-x-hidden bg-[#050505] text-white selection:bg-[#FDD935] selection:text-black">
       {!['xoeris', 'digital-artifacts', 'subscriptions', 'samudra-showcase', 'aurevia', 'auth'].includes(currentPage) && (
-        <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden opacity-40">
-          {/* HIDE brand blobs: amber + deep-amber + teal */}
-          <div className="blob blob-1" style={{ backgroundColor: colors.amber }}></div>
-          <div className="blob blob-2" style={{ backgroundColor: colors.amberDeep }}></div>
-          <div className="blob blob-3" style={{ backgroundColor: colors.teal }}></div>
-          <div className="absolute inset-0 bg-hide-canvas/40 backdrop-blur-[100px]"></div>
+        <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden opacity-30 mix-blend-screen">
+          {/* Xoeris Cyber ambient blobs */}
+          <div className="blob blob-1 will-change-transform" style={{ backgroundColor: colors.amber }}></div>
+          <div className="blob blob-2 will-change-transform" style={{ backgroundColor: colors.amberDeep }}></div>
+          <div className="blob blob-3 will-change-transform" style={{ backgroundColor: colors.teal }}></div>
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[100px]"></div>
         </div>
       )}
 
