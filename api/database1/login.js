@@ -43,9 +43,10 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Request body is required' });
     }
 
-    const { identifier, password, device_id, otp, remember_device } = body;
+    const { identifier, password, device_id, otp, remember_device, mode, email: rawEmail, username: rawUsername } = body;
+    const inputId = identifier || rawEmail;
 
-    if (!identifier || !password) {
+    if (!inputId || !password) {
       return res.status(400).json({ error: 'Identifier and password are required' });
     }
 
@@ -68,9 +69,48 @@ export default async function handler(req, res) {
       console.error('Table init/migration error:', e);
     }
 
+    // Handle Registration / Sign Up
+    if (mode === 'signup') {
+      const email = normalizeEmail(rawEmail || inputId);
+      if (!email || !email.includes('@')) {
+        return res.status(400).json({ error: 'Valid email is required for registration' });
+      }
+      if (!password || password.length < 6) {
+        return res.status(400).json({ error: 'Password must be at least 6 characters' });
+      }
+
+      let username = (rawUsername || '').trim().toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 30);
+      if (!username) {
+        username = email.split('@')[0].toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 30);
+      }
+
+      const existing = await sql`SELECT 1 FROM users WHERE email = ${email} OR username = ${username} LIMIT 1`;
+      if (existing.length > 0) {
+        return res.status(400).json({ error: 'An account with this email or username already exists' });
+      }
+
+      const inserted = await sql`
+        INSERT INTO users (username, email, password_hash, auth_provider, email_verified)
+        VALUES (${username}, ${email}, ${password}, 'email', true)
+        RETURNING *
+      `;
+
+      const newUser = inserted[0];
+      if (remember_device && device_id) {
+        await sql`INSERT INTO TrustedDevices (username, device_id) VALUES (${newUser.username}, ${device_id}) ON CONFLICT DO NOTHING`;
+      }
+
+      if (!process.env.JWT_SECRET) {
+        return res.status(500).json({ error: 'Server misconfigured: JWT_SECRET' });
+      }
+      const token = issueSessionToken(newUser);
+      res.setHeader('Set-Cookie', `xoeris_token=${token}; Path=/; Domain=.xoeris.com; Max-Age=${30*24*60*60}; HttpOnly; Secure; SameSite=Lax`);
+      return res.status(200).json({ token, user: newUser, message: 'Account created successfully', username: newUser.username, email: newUser.email });
+    }
+
     // Lookup user by identifier (username or email) — handle case-insensitive email
-    const normalizedIdentifier = identifier.includes('@') ? normalizeEmail(identifier) : identifier;
-    const rows = await sql`SELECT * FROM Users WHERE username = ${identifier} OR email = ${identifier} OR email = ${normalizedIdentifier} LIMIT 1`;
+    const normalizedIdentifier = inputId.includes('@') ? normalizeEmail(inputId) : inputId;
+    const rows = await sql`SELECT * FROM Users WHERE username = ${inputId} OR email = ${inputId} OR email = ${normalizedIdentifier} LIMIT 1`;
 
     if (rows.length === 0) {
       return res.status(401).json({ error: 'User not found' });

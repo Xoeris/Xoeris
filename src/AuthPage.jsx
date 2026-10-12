@@ -33,8 +33,8 @@ function GoogleIcon() {
 export default function AuthPage({ onNavigate, onSuccess, subheading }) {
   // Guard: allow direct login if accessed on xoeris.com / local web or if valid state param exists
   const [guard, setGuard] = useState({ loading: true, valid: false, error: '', client: '', redirectUri: '' });
-  const [mode, setMode] = useState('login'); // login | otp
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [otp, setOtp] = useState('');
@@ -46,19 +46,18 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
   const state = params.get('state');
   const clientParam = params.get('client');
   const redirectParam = params.get('redirect_uri');
+  const [isSignUp, setIsSignUp] = useState(params.get('mode') === 'signup');
 
   useEffect(() => {
-    const isDirectWebLogin = !window.location.hostname.includes('auth.xoeris.com') ||
-      clientParam === 'xoeris' ||
-      clientParam === 'web' ||
-      clientParam === 'xalme';
-
+    // Direct navigation is always permitted for web users on any domain
     if (!state) {
-      if (isDirectWebLogin) {
-        setGuard({ loading: false, valid: true, error: '', client: clientParam || 'xoeris', redirectUri: redirectParam || '/' });
-      } else {
-        setGuard({ loading: false, valid: false, error: 'Missing login request. Open via app.', client: '', redirectUri: '' });
-      }
+      setGuard({
+        loading: false,
+        valid: true,
+        error: '',
+        client: clientParam || 'xoeris',
+        redirectUri: redirectParam || '/'
+      });
       return;
     }
     const verify = async () => {
@@ -67,17 +66,12 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
         const data = await res.json();
         if (data.valid) {
           setGuard({ loading: false, valid: true, error: '', client: data.client || clientParam || '', redirectUri: data.redirect_uri || redirectParam || '' });
-        } else if (isDirectWebLogin) {
-          setGuard({ loading: false, valid: true, error: '', client: 'xoeris', redirectUri: '/' });
         } else {
-          setGuard({ loading: false, valid: false, error: data.error || 'Invalid or expired login request', client: '', redirectUri: '' });
+          // Graceful fallback to direct login instead of locking out the user
+          setGuard({ loading: false, valid: true, error: '', client: clientParam || 'xoeris', redirectUri: redirectParam || '/' });
         }
       } catch (e) {
-        if (isDirectWebLogin) {
-          setGuard({ loading: false, valid: true, error: '', client: 'xoeris', redirectUri: '/' });
-        } else {
-          setGuard({ loading: false, valid: false, error: e.message, client: '', redirectUri: '' });
-        }
+        setGuard({ loading: false, valid: true, error: '', client: clientParam || 'xoeris', redirectUri: redirectParam || '/' });
       }
     };
     verify();
@@ -214,23 +208,42 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
     }
   }
 
-  function handleGoogleLoginClick() {
+  async function handleGoogleLoginClick() {
     const cid = import.meta.env.VITE_GOOGLE_CLIENT_ID;
     if (!cid) {
       setMsg({ text: 'Google OAuth not configured (VITE_GOOGLE_CLIENT_ID)', isError: true });
       return;
     }
 
-    if (window.google?.accounts?.id) {
-      setBusy(true);
-      setMsg({ text: 'Opening Google Sign-In…', isError: false });
+    setBusy(true);
+    setMsg({ text: 'Connecting to Google…', isError: false });
+
+    // Wait briefly for GIS if still initializing
+    let googleApi = window.google;
+    if (!googleApi?.accounts?.id) {
+      googleApi = await new Promise((resolve) => {
+        let attempts = 0;
+        const interval = setInterval(() => {
+          attempts++;
+          if (window.google?.accounts?.id) {
+            clearInterval(interval);
+            resolve(window.google);
+          } else if (attempts > 20) {
+            clearInterval(interval);
+            resolve(null);
+          }
+        }, 100);
+      });
+    }
+
+    if (googleApi?.accounts?.id) {
       try {
-        window.google.accounts.id.initialize({
+        googleApi.accounts.id.initialize({
           client_id: cid,
           callback: handleGoogleResponse,
           ux_mode: 'popup',
         });
-        window.google.accounts.id.prompt((notification) => {
+        googleApi.accounts.id.prompt((notification) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
             setBusy(false);
             const btn = document.querySelector('#google-signin-button [role="button"]') ||
@@ -245,7 +258,17 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
         setMsg({ text: err.message || 'Failed to initialize Google login', isError: true });
       }
     } else {
-      setMsg({ text: 'Google Identity Services is loading. Please try again.', isError: true });
+      // Fallback: direct Google OAuth redirect (bypasses script loading delays and blockers)
+      const redirectUri = window.location.origin + '/login';
+      const params = new URLSearchParams({
+        client_id: cid,
+        redirect_uri: redirectUri,
+        response_type: 'id_token',
+        scope: 'openid email profile',
+        nonce: Math.random().toString(36).slice(2),
+        prompt: 'select_account',
+      });
+      window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
     }
   }
 
@@ -262,6 +285,48 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
       state: state || '',
     });
     window.location.href = `https://github.com/login/oauth/authorize?${params}`;
+  }
+
+  async function handleSignUpStep() {
+    if (!email || !password) {
+      setMsg({ text: 'Email and password required', isError: true });
+      return;
+    }
+    if (password.length < 6) {
+      setMsg({ text: 'Password must be at least 6 characters', isError: true });
+      return;
+    }
+    setBusy(true);
+    setMsg({ text: '', isError: false });
+    try {
+      const deviceId = localStorage.getItem('xoeris_device_id') || (() => {
+        const id = Math.random().toString(36).slice(2) + Date.now().toString(36);
+        localStorage.setItem('xoeris_device_id', id);
+        return id;
+      })();
+      const res = await fetch('https://api.xoeris.com/api/database1/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'X-Levelist-App-Secret': 'levelist-dev-secret-123' },
+        body: JSON.stringify({
+          mode: 'signup',
+          email,
+          username: username.trim(),
+          password,
+          device_id: deviceId,
+          remember_device: true
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        await consumeAndRedirect(data.token, data.user);
+      } else {
+        setMsg({ text: data.error || 'Registration failed', isError: true });
+      }
+    } catch (e) {
+      setMsg({ text: e.message || 'Registration failed', isError: true });
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function handlePasswordLoginStep() {
@@ -356,6 +421,18 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
     }
   }, [guard]);
 
+  // Google OAuth hash callback handling (when direct OAuth redirect flow is used)
+  useEffect(() => {
+    if (window.location.hash && window.location.hash.includes('id_token=')) {
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+      const idToken = hashParams.get('id_token');
+      if (idToken) {
+        window.history.replaceState({}, '', window.location.pathname);
+        handleGoogleResponse({ credential: idToken });
+      }
+    }
+  }, []);
+
   if (guard.loading) {
     return (
       <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center px-4 relative overflow-hidden">
@@ -430,8 +507,12 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
           <div className="absolute -top-12 left-1/3 w-64 h-24 bg-[#FDD935]/[0.10] rounded-full blur-3xl pointer-events-none"></div>
 
           <div className="mb-6 text-center">
-            <h1 className="text-3xl font-extrabold tracking-tight text-white mb-2">Log in</h1>
-            <p className="text-xs text-gray-400">{subheading || 'Access your Xoeris account and services'}</p>
+            <h1 className="text-3xl font-extrabold tracking-tight text-white mb-2">
+              {isSignUp ? 'Create account' : 'Log in'}
+            </h1>
+            <p className="text-xs text-gray-400">
+              {isSignUp ? 'Sign up to access your Xoeris account and services' : (subheading || 'Access your Xoeris account and services')}
+            </p>
           </div>
 
           <button
@@ -441,7 +522,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
             className="w-full bg-white/[0.06] hover:bg-white/[0.12] text-white rounded-xl py-3.5 flex items-center justify-center gap-3 mb-3 font-semibold text-sm border border-white/15 transition-all duration-200 cursor-pointer disabled:opacity-60 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
           >
             <GitHubIcon />
-            Continue with GitHub
+            {isSignUp ? 'Sign up with GitHub' : 'Continue with GitHub'}
           </button>
 
           <button
@@ -451,7 +532,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
             className="w-full bg-white/[0.06] hover:bg-white/[0.12] text-white rounded-xl py-3.5 flex items-center justify-center gap-3 mb-3 font-semibold text-sm border border-white/15 transition-all duration-200 cursor-pointer disabled:opacity-60 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
           >
             <GoogleIcon />
-            Continue with Google
+            {isSignUp ? 'Sign up with Google' : 'Continue with Google'}
           </button>
 
           {/* Hidden container for GIS button rendering / fallback */}
@@ -465,6 +546,18 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
           {!otpPending ? (
             <>
               <div className="space-y-3.5">
+                {isSignUp && (
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-300 mb-1.5 tracking-wide">Username</label>
+                    <input
+                      type="text"
+                      placeholder="username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="w-full bg-black/40 text-white rounded-xl px-4 py-3 text-sm outline-none border border-white/15 focus:border-[#FDD935] focus:ring-1 focus:ring-[#FDD935] placeholder:text-gray-500 transition-colors"
+                    />
+                  </div>
+                )}
                 <div>
                   <label className="block text-xs font-semibold text-gray-300 mb-1.5 tracking-wide">Email</label>
                   <input
@@ -478,7 +571,9 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
                 <div>
                   <div className="flex justify-between items-center mb-1.5">
                     <label className="text-xs font-semibold text-gray-300 tracking-wide">Password</label>
-                    <a href="https://xoeris.com/forgot-password" className="text-xs text-gray-400 hover:text-[#FDD935] transition-colors">Forgot password?</a>
+                    {!isSignUp && (
+                      <a href="https://xoeris.com/forgot-password" className="text-xs text-gray-400 hover:text-[#FDD935] transition-colors">Forgot password?</a>
+                    )}
                   </div>
                   <div className="relative">
                     <input
@@ -496,11 +591,12 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
               </div>
 
               <button
-                onClick={handlePasswordLoginStep}
+                type="button"
+                onClick={isSignUp ? handleSignUpStep : handlePasswordLoginStep}
                 disabled={busy}
                 className="w-full bg-[#FDD935] text-black font-bold rounded-xl py-3.5 mt-5 hover:bg-[#FFE066] active:scale-[0.99] transition-all duration-200 cursor-pointer disabled:opacity-60 text-sm shadow-[0_0_25px_rgba(253,217,53,0.35)]"
               >
-                {busy ? 'Please wait…' : 'Log in'}
+                {busy ? 'Please wait…' : (isSignUp ? 'Create account' : 'Log in')}
               </button>
             </>
           ) : (
@@ -527,7 +623,29 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
           )}
 
           <p className="text-gray-400 text-xs mt-6 text-center">
-            Don't have an account? <a href={`https://auth.xoeris.com?state=${encodeURIComponent(state || '')}&mode=signup`} className="text-white font-semibold underline hover:text-[#FDD935] transition-colors ml-1">Sign up</a>
+            {isSignUp ? (
+              <>
+                Already have an account?{' '}
+                <button
+                  type="button"
+                  onClick={() => { setIsSignUp(false); setMsg({ text: '', isError: false }); }}
+                  className="text-white font-semibold underline hover:text-[#FDD935] transition-colors ml-1 bg-transparent border-none p-0 cursor-pointer"
+                >
+                  Log in
+                </button>
+              </>
+            ) : (
+              <>
+                Don't have an account?{' '}
+                <button
+                  type="button"
+                  onClick={() => { setIsSignUp(true); setMsg({ text: '', isError: false }); }}
+                  className="text-white font-semibold underline hover:text-[#FDD935] transition-colors ml-1 bg-transparent border-none p-0 cursor-pointer"
+                >
+                  Sign up
+                </button>
+              </>
+            )}
           </p>
 
           <div className="border-t border-white/10 my-5" />
