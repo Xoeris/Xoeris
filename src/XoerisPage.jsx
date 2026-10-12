@@ -165,7 +165,7 @@ export default function XoerisPage({ onNavigate }) {
 
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center relative z-10">
             <button
-              onClick={() => onNavigate('xoeris')}
+              onClick={() => { window.location.href = 'https://xoeris.com'; }}
               onMouseEnter={() => handleMouseEnter(null)}
               className="flex items-center group bg-transparent border-none p-0 cursor-pointer"
             >
@@ -377,13 +377,54 @@ export default function XoerisPage({ onNavigate }) {
 
           {/* Mobile Nav Dropdown */}
           {mobileMenuOpen && (
-            <div className="lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-2xl border-t border-white/10 shadow-2xl py-6 px-6 flex flex-col gap-5 text-white max-h-[80vh] overflow-y-auto">
-              <button onClick={() => { onNavigate('chat'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-white">Claude & Products</button>
-              <button onClick={() => { onNavigate('digital-artifacts'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Artifacts & Capabilities</button>
-              <button onClick={() => { onNavigate('pricing'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Enterprise</button>
-              <button onClick={() => { onNavigate('about'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Resources</button>
-              <button onClick={() => { onNavigate('pricing'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Pricing</button>
+            <div className="lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-2xl border-t border-white/10 shadow-2xl py-6 px-6 flex flex-col gap-5 text-white max-h-[85vh] overflow-y-auto">
+              {/* Product Section */}
+              <div className="space-y-3">
+                <div className="text-xs font-bold uppercase tracking-wider text-[#FDD935]">Products</div>
+                <div className="grid grid-cols-2 gap-2 pl-2">
+                  {['APEX', 'Horizone Engine', 'Horizone IDE', 'MOVA', 'Musify', 'Xalme', 'Xalme Code'].map((item) => (
+                    <button
+                      key={item}
+                      onClick={() => { onNavigate('chat'); setMobileMenuOpen(false); }}
+                      className="text-left text-sm font-semibold text-gray-300 hover:text-white bg-transparent border-none p-1 cursor-pointer"
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Models Section */}
+              <div className="space-y-3 pt-2 border-t border-white/10">
+                <div className="text-xs font-bold uppercase tracking-wider text-[#FDD935]">Models</div>
+                <div className="grid grid-cols-2 gap-2 pl-2">
+                  {['Elarion', 'Nebula', 'Forge', 'Atlas'].map((model) => (
+                    <button
+                      key={model}
+                      onClick={() => { onNavigate('chat'); setMobileMenuOpen(false); }}
+                      className="text-left text-sm font-semibold text-gray-300 hover:text-white bg-transparent border-none p-1 cursor-pointer flex items-center justify-between"
+                    >
+                      <span>{model}</span>
+                      <ArrowUpRight size={12} className="text-gray-500" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pricing Section */}
+              <div className="pt-2 border-t border-white/10">
+                <button
+                  onClick={() => { onNavigate('pricing'); setMobileMenuOpen(false); }}
+                  className="text-left text-base font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer w-full flex items-center justify-between"
+                >
+                  <span>Pricing</span>
+                  <span className="text-xs px-2 py-0.5 rounded bg-[#FDD935]/15 text-[#FDD935] border border-[#FDD935]/30 uppercase font-black">Plans</span>
+                </button>
+              </div>
+
               <div className="w-full h-px bg-white/10 my-1"></div>
+
+              {/* User Account / Auth */}
               {currentUser ? (
                 <div className="flex items-center justify-between py-2 border-y border-white/10 my-1">
                   <div className="flex items-center gap-3">
@@ -401,16 +442,26 @@ export default function XoerisPage({ onNavigate }) {
                   </div>
                   <button
                     onClick={() => { clearSession(); setMobileMenuOpen(false); setCurrentUser(null); }}
-                    className="text-xs text-red-400 underline bg-transparent border-none p-0 cursor-pointer"
+                    className="text-xs text-red-400 hover:text-red-300 underline bg-transparent border-none p-0 cursor-pointer"
                   >
                     Log out
                   </button>
                 </div>
               ) : (
-                <button onClick={() => { onNavigate('auth'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Login</button>
+                <button
+                  onClick={() => { onNavigate('auth'); setMobileMenuOpen(false); }}
+                  className="text-left text-base font-semibold text-gray-300 hover:text-white bg-transparent border-none p-0 cursor-pointer"
+                >
+                  Login
+                </button>
               )}
-              <button onClick={() => { onNavigate('subscriptions'); setMobileMenuOpen(false); }} className="w-full py-3 text-sm font-semibold rounded-lg border border-white/20 text-white text-center">Contact sales</button>
-              <button onClick={() => { onNavigate('chat'); setMobileMenuOpen(false); }} className="w-full py-3 text-sm font-semibold rounded-lg bg-white text-black text-center">Try Xalme</button>
+
+              <button
+                onClick={() => { onNavigate('chat'); setMobileMenuOpen(false); }}
+                className="w-full py-3.5 text-sm font-black uppercase tracking-wider rounded-xl bg-[#FDD935] hover:bg-[#FFE066] text-black text-center shadow-[0_0_20px_rgba(253,217,53,0.3)] border-none cursor-pointer"
+              >
+                Try Xalme
+              </button>
             </div>
           )}
         </nav>
@@ -578,7 +629,7 @@ export default function XoerisPage({ onNavigate }) {
 
           <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-4 gap-16 mb-16 relative z-10">
             <div className="md:col-span-3">
-              <button onClick={() => onNavigate('xoeris')} className="flex items-center gap-3 mb-6 group inline-flex bg-transparent border-none p-0 cursor-pointer">
+              <button onClick={() => { window.location.href = 'https://xoeris.com'; }} className="flex items-center gap-3 mb-6 group inline-flex bg-transparent border-none p-0 cursor-pointer">
                 <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="h-10 w-40 object-contain object-left transition-transform duration-300 group-hover:scale-105" />
               </button>
               <p className="text-gray-400 max-w-sm font-medium leading-relaxed mb-6">

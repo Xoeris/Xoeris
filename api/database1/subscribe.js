@@ -20,7 +20,7 @@ export default async function handler(req, res) {
       try { body = JSON.parse(body); } catch { body = {}; }
     }
 
-    const { plan = 'pro', billingCycle = 'yearly', cardLast4 = '2609', cardBrand = 'Visa', email: clientEmail } = body || {};
+    const { plan = 'pro', billingCycle = 'yearly', cardLast4 = '', cardBrand = '', email: clientEmail } = body || {};
 
     const authHeader = req.headers.authorization || '';
     const token = authHeader.replace(/^Bearer\s+/i, '');

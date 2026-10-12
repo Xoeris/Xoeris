@@ -16,13 +16,14 @@ export default function SubscriptionsPage({ onNavigate }) {
   const [paymentError, setPaymentError] = useState('');
   const [successReceipt, setSuccessReceipt] = useState(null);
 
-  // Payment method state (default card from screenshot Visa •••• 2609)
-  const [paymentCard, setPaymentCard] = useState({
-    brand: 'Visa',
-    last4: '2609',
-    expMonth: '12',
-    expYear: '28',
-    cardholder: 'Developer Account'
+  // Payment method state (null by default; no hardcoded dummy card placeholders)
+  const [paymentCard, setPaymentCard] = useState(() => {
+    try {
+      const saved = localStorage.getItem('xoeris_saved_payment_card');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
   });
 
   // Modal for changing/adding card
@@ -35,6 +36,15 @@ export default function SubscriptionsPage({ onNavigate }) {
     postal: ''
   });
   const [cardFormError, setCardFormError] = useState('');
+
+  const getCardBrand = (num) => {
+    const clean = (num || '').replace(/\D/g, '');
+    if (clean.startsWith('4')) return 'Visa';
+    if (clean.startsWith('5') || clean.startsWith('2')) return 'Mastercard';
+    if (clean.startsWith('34') || clean.startsWith('37')) return 'Amex';
+    if (clean.startsWith('6')) return 'Discover';
+    return 'Card';
+  };
 
   useEffect(() => {
     const handlePopState = () => {
@@ -56,6 +66,7 @@ export default function SubscriptionsPage({ onNavigate }) {
     const raw = e.target.value.replace(/\D/g, '').slice(0, 16);
     const formatted = raw.replace(/(\d{4})/g, '$1 ').trim();
     setCardForm((prev) => ({ ...prev, number: formatted }));
+    if (cardFormError) setCardFormError('');
   };
 
   const handleExpChange = (e) => {
@@ -64,39 +75,42 @@ export default function SubscriptionsPage({ onNavigate }) {
       raw = raw.slice(0, 2) + '/' + raw.slice(2);
     }
     setCardForm((prev) => ({ ...prev, exp: raw }));
+    if (cardFormError) setCardFormError('');
   };
 
   const handleSaveCard = (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     setCardFormError('');
     const rawNumber = cardForm.number.replace(/\s/g, '');
     if (rawNumber.length < 15) {
       setCardFormError('Please enter a valid 16-digit card number.');
-      return;
+      return false;
     }
     const [month, year] = cardForm.exp.split('/');
     if (!month || !year || Number(month) < 1 || Number(month) > 12) {
       setCardFormError('Please enter a valid expiration date (MM/YY).');
-      return;
+      return false;
     }
     if (cardForm.cvc.length < 3) {
       setCardFormError('Please enter a valid CVC code.');
-      return;
+      return false;
     }
 
-    let detectedBrand = 'Visa';
-    if (rawNumber.startsWith('5') || rawNumber.startsWith('2')) detectedBrand = 'Mastercard';
-    else if (rawNumber.startsWith('3')) detectedBrand = 'Amex';
-    else if (rawNumber.startsWith('6')) detectedBrand = 'Discover';
-
-    setPaymentCard({
+    const detectedBrand = getCardBrand(rawNumber);
+    const newCard = {
       brand: detectedBrand,
       last4: rawNumber.slice(-4),
       expMonth: month,
       expYear: year,
       cardholder: cardForm.cardholder || 'Cardholder'
-    });
+    };
+
+    setPaymentCard(newCard);
+    try {
+      localStorage.setItem('xoeris_saved_payment_card', JSON.stringify(newCard));
+    } catch {}
     setShowCardModal(false);
+    return true;
   };
 
   // Real payment processing handler
@@ -104,6 +118,24 @@ export default function SubscriptionsPage({ onNavigate }) {
     if (!termsAgreed) {
       setPaymentError('Please agree to the recurring subscription terms before proceeding.');
       return;
+    }
+
+    let activeCard = paymentCard;
+    if (!activeCard) {
+      const valid = handleSaveCard();
+      if (!valid) {
+        setPaymentError('Please enter valid payment card details before subscribing.');
+        return;
+      }
+      const rawNumber = cardForm.number.replace(/\s/g, '');
+      const [month, year] = cardForm.exp.split('/');
+      activeCard = {
+        brand: getCardBrand(rawNumber),
+        last4: rawNumber.slice(-4),
+        expMonth: month,
+        expYear: year,
+        cardholder: cardForm.cardholder || 'Cardholder'
+      };
     }
 
     setPaymentError('');
@@ -116,8 +148,8 @@ export default function SubscriptionsPage({ onNavigate }) {
       const payload = {
         plan: 'pro',
         billingCycle,
-        cardLast4: paymentCard.last4,
-        cardBrand: paymentCard.brand,
+        cardLast4: activeCard.last4,
+        cardBrand: activeCard.brand,
         email: user?.email || undefined
       };
 
@@ -267,7 +299,7 @@ export default function SubscriptionsPage({ onNavigate }) {
           </button>
 
           <button 
-            onClick={() => onNavigate ? onNavigate('xoeris') : window.location.href = '/'}
+            onClick={() => { window.location.href = 'https://xoeris.com'; }}
             className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer"
           >
             <img src="/xoeris_logo_emblem.png" alt="Xoeris Logo" className="w-6 h-6 object-contain" />
@@ -320,7 +352,7 @@ export default function SubscriptionsPage({ onNavigate }) {
             icon={ShieldCheck}
             features={[
               "Chat with Xalme on Web for a limited usage",
-              "Standard Claude 3.5 Sonnet queries",
+              "Standard Xalme 3.5 Core queries",
               "Basic context window support",
               "Access to community extensions",
               "Standard customer support"
@@ -336,7 +368,7 @@ export default function SubscriptionsPage({ onNavigate }) {
             features={[
               "Chat with Xalme on web, Android, and desktop",
               "5x higher usage limits compared to Free tier",
-              "Access to more Xalme models (including Claude Opus 3)",
+              "Access to advanced Xalme Opus & Core models",
               "Priority access during peak system demand",
               "Early access to new features and sidecar releases"
             ]}
@@ -377,11 +409,8 @@ export default function SubscriptionsPage({ onNavigate }) {
           <span className="text-xs font-bold uppercase tracking-wider">Back to plans</span>
         </button>
 
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-8">
           <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">Pro plan</h1>
-          <div className="px-3 py-1 rounded-full bg-[#FDD935]/10 border border-[#FDD935]/30 text-[#FDD935] text-[11px] font-black uppercase tracking-widest flex items-center gap-1.5">
-            <Sparkles size={12} /> Xoeris Developer
-          </div>
         </div>
 
         {/* Payment Cycle Switcher */}
@@ -475,28 +504,93 @@ export default function SubscriptionsPage({ onNavigate }) {
             </span>
           </h3>
 
-          <div 
-            onClick={() => setShowCardModal(true)}
-            className="flex items-center justify-between p-5 bg-white/[0.02] border border-white/10 rounded-2xl hover:border-[#FDD935]/40 hover:bg-white/[0.04] transition-all cursor-pointer group shadow-sm"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-[#FDD935]/30 transition-colors">
-                <CreditCard size={20} className="text-[#FDD935]" />
+          {paymentCard ? (
+            <div 
+              onClick={() => setShowCardModal(true)}
+              className="flex items-center justify-between p-5 bg-white/[0.02] border border-white/10 rounded-2xl hover:border-[#FDD935]/40 hover:bg-white/[0.04] transition-all cursor-pointer group shadow-sm"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-[#FDD935]/30 transition-colors">
+                  <CreditCard size={20} className="text-[#FDD935]" />
+                </div>
+                <div>
+                  <div className="text-white font-bold text-sm tracking-wide">
+                    {paymentCard.brand} •••• {paymentCard.last4}
+                  </div>
+                  <div className="text-gray-400 text-xs mt-0.5">
+                    Expires {paymentCard.expMonth}/{paymentCard.expYear} · {paymentCard.cardholder}
+                  </div>
+                </div>
               </div>
+              <div className="flex items-center gap-2 text-gray-400 group-hover:text-white transition-colors">
+                <span className="text-xs font-semibold">Change</span>
+                <ArrowRight size={18} className="text-gray-400 group-hover:text-[#FDD935] group-hover:translate-x-0.5 transition-all" />
+              </div>
+            </div>
+          ) : (
+            <div className="p-6 bg-white/[0.02] border border-white/10 rounded-2xl space-y-4 backdrop-blur-md">
               <div>
-                <div className="text-white font-bold text-sm tracking-wide">
-                  {paymentCard.brand} •••• {paymentCard.last4}
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Card Number</label>
+                  {cardForm.number && (
+                    <span className="text-[10px] font-mono font-bold text-[#FDD935] uppercase px-1.5 py-0.5 rounded bg-[#FDD935]/10 border border-[#FDD935]/20">
+                      {getCardBrand(cardForm.number)}
+                    </span>
+                  )}
                 </div>
-                <div className="text-gray-400 text-xs mt-0.5">
-                  Expires {paymentCard.expMonth}/{paymentCard.expYear} · {paymentCard.cardholder}
+                <div className="relative">
+                  <input 
+                    type="text"
+                    placeholder="1234 5678 9012 3456"
+                    value={cardForm.number}
+                    onChange={handleCardNumberChange}
+                    maxLength={19}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
+                  />
+                  <CreditCard size={18} className="absolute right-3.5 top-3.5 text-gray-500" />
                 </div>
               </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Cardholder Name</label>
+                <input 
+                  type="text"
+                  placeholder="Full name on card"
+                  value={cardForm.cardholder}
+                  onChange={(e) => setCardForm(prev => ({ ...prev, cardholder: e.target.value }))}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Expiration</label>
+                  <input 
+                    type="text"
+                    placeholder="MM/YY"
+                    value={cardForm.exp}
+                    onChange={handleExpChange}
+                    maxLength={5}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">CVC</label>
+                  <input 
+                    type="password"
+                    placeholder="CVC"
+                    value={cardForm.cvc}
+                    onChange={(e) => setCardForm(prev => ({ ...prev, cvc: e.target.value.replace(/\D/g, '').slice(0, 4) }))}
+                    maxLength={4}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
+                  />
+                </div>
+              </div>
+              {cardFormError && (
+                <p className="text-red-400 text-xs mt-1">{cardFormError}</p>
+              )}
             </div>
-            <div className="flex items-center gap-2 text-gray-400 group-hover:text-white transition-colors">
-              <span className="text-xs font-semibold hidden sm:inline">Change</span>
-              <ArrowRight size={18} className="text-gray-400 group-hover:text-[#FDD935] group-hover:translate-x-0.5 transition-all" />
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Error message */}
@@ -572,7 +666,7 @@ export default function SubscriptionsPage({ onNavigate }) {
                   <div className="relative">
                     <input 
                       type="text"
-                      placeholder="4532 8900 1234 2609"
+                      placeholder="1234 5678 9012 3456"
                       value={cardForm.number}
                       onChange={handleCardNumberChange}
                       maxLength={19}

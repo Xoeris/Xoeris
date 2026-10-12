@@ -71,7 +71,7 @@ export default function DigitalArtifactsPage({ onNavigate }) {
         <header className="mb-20">
           <div className="flex items-center gap-6 mb-8">
             <button 
-              onClick={() => onNavigate('xoeris')}
+              onClick={() => { window.location.href = 'https://xoeris.com'; }}
               className="h-10 w-40 transition-transform duration-300 hover:scale-105 bg-transparent border-none p-0 cursor-pointer"
             >
               <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="w-full h-full object-contain object-left" />

@@ -36,7 +36,7 @@ export default function AboutPage({ onNavigate }) {
         ></div>
 
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center relative z-10">
-          <button onClick={() => onNavigate('xoeris')} className="flex items-center group bg-transparent border-none p-0 cursor-pointer">
+          <button onClick={() => { window.location.href = 'https://xoeris.com'; }} className="flex items-center group bg-transparent border-none p-0 cursor-pointer">
             <div className="h-10 w-40 transition-transform duration-300 group-hover:scale-105">
                <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="w-full h-full object-contain object-left" />
             </div>
@@ -135,7 +135,7 @@ export default function AboutPage({ onNavigate }) {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-16">
             <div>
-              <button onClick={() => onNavigate('xoeris')} className="flex items-center mb-6 group bg-transparent border-none p-0 cursor-pointer">
+              <button onClick={() => { window.location.href = 'https://xoeris.com'; }} className="flex items-center mb-6 group bg-transparent border-none p-0 cursor-pointer">
                 <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="h-10 w-40 object-contain object-left" />
               </button>
               <p className="text-gray-400 text-sm max-w-sm leading-relaxed">

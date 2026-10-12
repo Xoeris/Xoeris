@@ -165,8 +165,8 @@ export default function AureviaPage({ onNavigate }) {
       <header className="border-b border-[#1A1A24] bg-[#0A0A0F]/80 backdrop-blur-md px-4 sm:px-8 py-3 flex items-center justify-between z-30 sticky top-0">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => onNavigate ? onNavigate("xoeris") : (window.location.href = "https://xoeris.com")}
-            className="flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-white transition-colors group"
+            onClick={() => { window.location.href = "https://xoeris.com"; }}
+            className="flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-white transition-colors group cursor-pointer bg-transparent border-none p-0"
           >
             <svg
               className="w-4 h-4 transition-transform group-hover:-translate-x-0.5 text-[#32F18A]"

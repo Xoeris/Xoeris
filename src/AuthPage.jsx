@@ -569,21 +569,19 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
         {/* Top Header: Logo + Back button */}
         <div className="mb-6 flex items-center justify-between">
           <button
-            onClick={() => onNavigate ? onNavigate('xoeris') : window.location.href = 'https://xoeris.com'}
+            onClick={() => { window.location.href = 'https://xoeris.com'; }}
             className="flex items-center group bg-transparent border-none p-0 cursor-pointer text-left"
           >
             <div className="h-9 w-36 transition-transform duration-300 group-hover:scale-105">
               <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="w-full h-full object-contain object-left" />
             </div>
           </button>
-          {onNavigate && (
-            <button
-              onClick={() => onNavigate('xoeris')}
-              className="text-xs font-medium text-gray-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 cursor-pointer"
-            >
-              ← Back to Xoeris
-            </button>
-          )}
+          <button
+            onClick={() => { window.location.href = 'https://xoeris.com'; }}
+            className="text-xs font-medium text-gray-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 cursor-pointer"
+          >
+            ← Back to Xoeris
+          </button>
         </div>
 
         {/* Liquid Glass Card */}

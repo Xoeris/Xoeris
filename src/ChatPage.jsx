@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Send, ArrowLeft, RefreshCw, Plus, ChevronDown, User,
-  Search, Folder, Layout, Sliders, SlidersHorizontal, Mic,
+  Search, Folder, Layout, SlidersHorizontal, Mic,
   AudioWaveform, ArrowUp, PanelLeft, Sparkles, MessageSquare,
-  LogOut, ExternalLink, X
+  LogOut, ExternalLink, X, Trash2, Copy, Check, Terminal, Cpu, Code
 } from 'lucide-react';
 
 import AuthPage from './AuthPage';
@@ -11,12 +11,15 @@ import { getStoredUser, getStoredToken, setSession, clearSession, syncUserFromDa
 
 const PUBLIC_API_KEY = import.meta.env.VITE_XOERIS_PUBLIC_KEY || '';
 
-// Authentic Claude sunburst asterisk icon
-function ClaudeSpark({ className = "w-7 h-7 text-[#D97706]" }) {
+// Xoeris Spark Emblem Icon
+function XalmeSpark({ className = "w-6 h-6 text-[#FDD935]" }) {
   return (
-    <svg className={className} viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
-      <path d="M16 2.5c.83 0 1.5.67 1.5 1.5v4c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5V4c0-.83.67-1.5 1.5-1.5zm0 18c.83 0 1.5.67 1.5 1.5v4c0 .83-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5v-4c0-.83.67-1.5 1.5-1.5zm13.5-6c0 .83-.67 1.5-1.5 1.5h-4c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5h4c.83 0 1.5.67 1.5 1.5zm-18 0c0 .83-.67 1.5-1.5 1.5H6c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5h4c.83 0 1.5.67 1.5 1.5zm14.05-9.55a1.5 1.5 0 0 1 0 2.12l-2.83 2.83a1.5 1.5 0 0 1-2.12-2.12l2.83-2.83a1.5 1.5 0 0 1 2.12 0zm-12.73 12.73a1.5 1.5 0 0 1 0 2.12l-2.83 2.83a1.5 1.5 0 0 1-2.12-2.12l2.83-2.83a1.5 1.5 0 0 1 2.12 0zm12.73 0a1.5 1.5 0 0 1-2.12 0l-2.83-2.83a1.5 1.5 0 0 1 2.12-2.12l2.83 2.83a1.5 1.5 0 0 1 0 2.12zm-12.73-12.73a1.5 1.5 0 0 1-2.12 0l-2.83-2.83a1.5 1.5 0 0 1 2.12-2.12l2.83 2.83a1.5 1.5 0 0 1 0 2.12z" />
-    </svg>
+    <div className="relative inline-flex items-center justify-center">
+      <div className="absolute inset-0 bg-[#FDD935]/20 rounded-full blur-sm" />
+      <svg className={`${className} relative z-10`} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M12 2L14.2 8.8L21 11L14.2 13.2L12 20L9.8 13.2L3 11L9.8 8.8L12 2Z" />
+      </svg>
+    </div>
   );
 }
 
@@ -31,19 +34,48 @@ export default function ChatPage({ onNavigate }) {
   const [currentUser, setCurrentUser] = useState(() => getStoredUser());
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [selectedModel, setSelectedModel] = useState('Sonnet 3.5');
+  const [selectedModel, setSelectedModel] = useState('Xalme 3.5 Core');
   const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
 
   // Chat conversation state
+  const [currentThreadId, setCurrentThreadId] = useState(() => {
+    return localStorage.getItem('xalme_active_thread_id') || `thread_${Date.now()}`;
+  });
+
+  // Persistent threads from localStorage (no fake dummy items)
+  const [threads, setThreads] = useState(() => {
+    try {
+      const stored = localStorage.getItem('xalme_chat_threads');
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
+
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [statusText, setStatusText] = useState('');
+  const [copiedIndex, setCopiedIndex] = useState(null);
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
 
+  // Load active thread messages on mount or thread switch
   useEffect(() => {
-    // Check if token was provided in URL query parameters
+    try {
+      const storedMessages = localStorage.getItem(`xalme_msgs_${currentThreadId}`);
+      if (storedMessages) {
+        setMessages(JSON.parse(storedMessages));
+      } else {
+        setMessages([]);
+      }
+    } catch {
+      setMessages([]);
+    }
+  }, [currentThreadId]);
+
+  // Auth sync and incoming query param handling
+  useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const urlToken = params.get('token');
     if (urlToken) {
@@ -60,7 +92,6 @@ export default function ChatPage({ onNavigate }) {
       const token = getStoredToken();
       const authenticated = Boolean(token) || localStorage.getItem('xoeris_chat_auth') === 'true';
       setIsAuthenticated(authenticated);
-      // Auto-sync from database using shared cookie/token
       syncUserFromDatabase().then((user) => {
         if (user) {
           setIsAuthenticated(true);
@@ -98,55 +129,96 @@ export default function ChatPage({ onNavigate }) {
     return 'Good evening';
   };
 
-  const userName = currentUser?.name || currentUser?.username || 'Pecel';
+  const userName = currentUser?.name || currentUser?.username || 'Architect';
 
-  const handleSend = async (e) => {
-    if (e) e.preventDefault();
-    if (!input.trim() || loading) return;
+  // Create a new thread
+  const handleStartNewChat = () => {
+    const newId = `thread_${Date.now()}`;
+    setCurrentThreadId(newId);
+    setMessages([]);
+    setInput('');
+    localStorage.setItem('xalme_active_thread_id', newId);
+  };
 
-    if (!PUBLIC_API_KEY) {
-      setStatusText('Chat is temporarily unavailable (missing client key).');
-      return;
+  // Switch to an existing thread
+  const handleSelectThread = (threadId) => {
+    setCurrentThreadId(threadId);
+    localStorage.setItem('xalme_active_thread_id', threadId);
+  };
+
+  // Delete a thread
+  const handleDeleteThread = (e, threadId) => {
+    e.stopPropagation();
+    const updated = threads.filter((t) => t.id !== threadId);
+    setThreads(updated);
+    localStorage.setItem('xalme_chat_threads', JSON.stringify(updated));
+    localStorage.removeItem(`xalme_msgs_${threadId}`);
+    if (currentThreadId === threadId) {
+      handleStartNewChat();
     }
+  };
 
-    const userMessage = input.trim();
+  const handleSend = async (userPromptText) => {
+    const textToSend = typeof userPromptText === 'string' ? userPromptText : input.trim();
+    if (!textToSend || loading) return;
+
     setInput('');
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
     }
-    setMessages((prev) => [...prev, { role: 'user', content: userMessage }]);
+
+    const updatedMessages = [...messages, { role: 'user', content: textToSend }];
+    setMessages(updatedMessages);
     setLoading(true);
-    setStatusText('Routing through api.xoeris.com...');
+    setStatusText('Xalme is synthesizing response...');
+
+    // Save/update thread list in localStorage
+    const existingThread = threads.find((t) => t.id === currentThreadId);
+    if (!existingThread) {
+      const newThread = {
+        id: currentThreadId,
+        title: textToSend.slice(0, 36) + (textToSend.length > 36 ? '…' : ''),
+        createdAt: new Date().toISOString()
+      };
+      const updatedThreads = [newThread, ...threads];
+      setThreads(updatedThreads);
+      localStorage.setItem('xalme_chat_threads', JSON.stringify(updatedThreads));
+    }
+    localStorage.setItem(`xalme_msgs_${currentThreadId}`, JSON.stringify(updatedMessages));
 
     try {
       const response = await fetch('https://api.xoeris.com/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${PUBLIC_API_KEY}`
+          ...(PUBLIC_API_KEY ? { 'Authorization': `Bearer ${PUBLIC_API_KEY}` } : {})
         },
         body: JSON.stringify({
           messages: [
-            ...messages.filter(m => m.role !== 'system'),
-            { role: 'user', content: userMessage }
+            { role: 'system', content: 'You are Xalme, an advanced AI reasoning system developed by Xoeris. You provide elegant, robust, and precise architectural and software engineering guidance.' },
+            ...updatedMessages.filter(m => m.role !== 'system')
           ],
-          max_new_tokens: 512,
+          max_new_tokens: 768,
           temperature: 0.7
         })
       });
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Server returned ${response.status}`);
+        throw new Error(errorData.error || `Server responded with ${response.status}`);
       }
 
       const data = await response.json();
       const assistantMessage = data.choices?.[0]?.message?.content || 'No response payload received.';
-      setMessages((prev) => [...prev, { role: 'assistant', content: assistantMessage }]);
+      const finalMessages = [...updatedMessages, { role: 'assistant', content: assistantMessage }];
+      setMessages(finalMessages);
+      localStorage.setItem(`xalme_msgs_${currentThreadId}`, JSON.stringify(finalMessages));
       setStatusText('');
     } catch (err) {
-      setMessages((prev) => [...prev, { role: 'assistant', content: `[ERROR] ${err.message}` }]);
-      setStatusText('Execution failed.');
+      const errorMessages = [...updatedMessages, { role: 'assistant', content: `[XALME SYSTEM ALERT] ${err.message}` }];
+      setMessages(errorMessages);
+      localStorage.setItem(`xalme_msgs_${currentThreadId}`, JSON.stringify(errorMessages));
+      setStatusText('Execution completed with warnings.');
     } finally {
       setLoading(false);
     }
@@ -162,7 +234,13 @@ export default function ChatPage({ onNavigate }) {
   const handleInputChange = (e) => {
     setInput(e.target.value);
     e.target.style.height = 'auto';
-    e.target.style.height = `${Math.min(e.target.scrollHeight, 200)}px`;
+    e.target.style.height = `${Math.min(e.target.scrollHeight, 220)}px`;
+  };
+
+  const handleCopy = (text, idx) => {
+    navigator.clipboard.writeText(text);
+    setCopiedIndex(idx);
+    setTimeout(() => setCopiedIndex(null), 2000);
   };
 
   // Auth Screen Render using unified AuthPage design
@@ -177,151 +255,146 @@ export default function ChatPage({ onNavigate }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#1f1e1d] text-[#ECE7DE] flex font-sans selection:bg-[#D97706]/30 selection:text-white overflow-hidden relative">
-      
-      {/* Claude Sidebar */}
+    <div className="min-h-screen bg-[#050505] text-white flex font-sans selection:bg-[#FDD935] selection:text-black overflow-hidden relative">
+      {/* Cyber Grid Background */}
+      <div className="fixed inset-0 z-0 bg-[linear-gradient(rgba(253,217,53,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.02)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-40"></div>
+
+      {/* Cyber ambient glow blobs */}
+      <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden mix-blend-screen opacity-20">
+        <div className="absolute top-[-15%] left-[-10%] w-[55vw] h-[55vw] bg-[#FDD935]/15 rounded-full blur-[140px]" />
+        <div className="absolute bottom-[-15%] right-[-10%] w-[45vw] h-[45vw] bg-[#FFC94A]/10 rounded-full blur-[140px]" />
+      </div>
+
+      {/* Xoeris Xalme Sidebar */}
       <aside
         className={`fixed md:relative top-0 bottom-0 left-0 ${
           sidebarOpen ? 'w-64' : 'w-0 -translate-x-full md:w-0'
-        } border-r border-[#2c2a27] bg-[#181715] flex flex-col justify-between transition-all duration-300 overflow-hidden z-50 shrink-0 h-full`}
+        } border-r border-white/10 bg-[#0a0a0a]/95 backdrop-blur-2xl flex flex-col justify-between transition-all duration-300 overflow-hidden z-50 shrink-0 h-full`}
       >
         <div className="flex flex-col h-full overflow-hidden">
-          {/* Top Header: Collapse icon + Claude / Xalme title */}
-          <div className="px-4 py-3 flex items-center justify-between border-b border-[#262421]">
+          {/* Top Header: Collapse icon + Xalme title */}
+          <div className="px-4 py-3.5 flex items-center justify-between border-b border-white/10">
             <div className="flex items-center gap-2.5">
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="text-[#9A9488] hover:text-[#ECE7DE] p-1.5 rounded-lg hover:bg-white/5 transition-colors cursor-pointer bg-transparent border-none"
-                title="Close sidebar"
+                className="text-gray-400 hover:text-white p-1.5 rounded-lg hover:bg-white/5 transition-colors cursor-pointer bg-transparent border-none"
+                title="Collapse sidebar"
               >
                 <PanelLeft size={18} />
               </button>
               <button
-                onClick={() => onNavigate ? onNavigate('xoeris') : window.location.href = 'https://xoeris.com'}
-                className="font-serif text-xl tracking-tight text-[#ECE7DE] hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer text-left flex items-center gap-2"
+                onClick={() => { window.location.href = 'https://xoeris.com'; }}
+                className="flex items-center gap-2 group bg-transparent border-none p-0 cursor-pointer text-left"
               >
-                <span>Claude</span>
+                <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="h-5 w-auto object-contain transition-transform group-hover:scale-105" />
+                <span className="font-black text-lg tracking-wider text-white">Xalme</span>
+                <span className="text-[10px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-[#FDD935]/15 text-[#FDD935] border border-[#FDD935]/30">AI</span>
               </button>
             </div>
             <button
-              onClick={() => onNavigate ? onNavigate('xoeris') : window.location.href = 'https://xoeris.com'}
-              className="text-[11px] text-[#7A7468] hover:text-[#ECE7DE] bg-transparent border-none p-0 cursor-pointer"
+              onClick={() => { window.location.href = 'https://xoeris.com'; }}
+              className="text-gray-400 hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer"
               title="Return to xoeris.com"
             >
-              <ExternalLink size={13} />
+              <ExternalLink size={14} />
             </button>
           </div>
 
-          <div className="p-3 space-y-2">
-            {/* Search Pill Button */}
+          {/* Action Toolbar */}
+          <div className="p-3 space-y-2 border-b border-white/5">
+            {/* + New Chat Button in Xoeris Electric Yellow */}
             <button
-              onClick={() => {}}
-              className="w-full py-1.5 px-3 bg-[#262522] hover:bg-[#2e2d29] border border-[#383632]/60 rounded-xl text-xs text-[#8C877C] flex items-center gap-2 transition-colors cursor-pointer text-left"
+              onClick={handleStartNewChat}
+              className="w-full py-2.5 px-3.5 bg-[#FDD935] hover:bg-[#FFE066] text-black font-black uppercase tracking-wider text-xs rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer border-none shadow-[0_0_15px_rgba(253,217,53,0.3)] hover:shadow-[0_0_20px_rgba(253,217,53,0.5)] active:scale-[0.98]"
             >
-              <Search size={14} className="text-[#8C877C]" />
-              <span>Search</span>
-            </button>
-
-            {/* + New Button */}
-            <button
-              onClick={() => {
-                setMessages([]);
-                setInput('');
-              }}
-              className="w-full py-2 px-3 bg-[#262522] hover:bg-[#2e2d29] border border-[#383632]/60 rounded-xl text-sm font-semibold text-[#ECE7DE] flex items-center gap-2 transition-colors cursor-pointer text-left"
-            >
-              <Plus size={16} className="text-[#ECE7DE]" />
-              <span>New</span>
+              <Plus size={16} className="text-black stroke-[3]" />
+              <span>New Chat</span>
             </button>
           </div>
 
-          {/* Primary Navigation Items */}
-          <div className="px-3 py-1 space-y-0.5">
-            <button className="w-full px-3 py-2 rounded-xl text-xs font-medium text-[#C5BFAF] hover:text-white hover:bg-white/5 flex items-center gap-2.5 transition-colors cursor-pointer bg-transparent border-none text-left">
-              <Folder size={15} className="text-[#8C877C]" />
-              <span>Projects</span>
-            </button>
-            <button className="w-full px-3 py-2 rounded-xl text-xs font-medium text-[#C5BFAF] hover:text-white hover:bg-white/5 flex items-center gap-2.5 transition-colors cursor-pointer bg-transparent border-none text-left">
-              <Layout size={15} className="text-[#8C877C]" />
-              <span>Artifacts</span>
-            </button>
-            <button className="w-full px-3 py-2 rounded-xl text-xs font-medium text-[#C5BFAF] hover:text-white hover:bg-white/5 flex items-center gap-2.5 transition-colors cursor-pointer bg-transparent border-none text-left">
-              <SlidersHorizontal size={15} className="text-[#8C877C]" />
-              <span>Customize</span>
-            </button>
-          </div>
-
-          {/* Pinned & Older Chats Section */}
-          <div className="flex-1 px-3 py-2 overflow-y-auto space-y-4">
-            {/* Pinned Section */}
-            <div>
-              <div className="px-2 py-1 text-[11px] font-semibold text-[#6e685f] uppercase tracking-wider">
-                Pinned
-              </div>
-              <button className="w-full px-2.5 py-1.5 rounded-lg text-xs text-[#C5BFAF] hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors cursor-pointer bg-transparent border-none text-left truncate">
-                <Folder size={14} className="text-[#8C877C] shrink-0" />
-                <span className="truncate">IA BISMILLAH</span>
-              </button>
+          {/* Real Chat History Section (NO FAKE PLACEHOLDERS) */}
+          <div className="flex-1 px-3 py-3 overflow-y-auto space-y-4">
+            <div className="flex items-center justify-between px-2 text-[11px] font-bold text-gray-500 uppercase tracking-widest">
+              <span>Recent Sessions</span>
+              <span className="text-[10px] font-mono text-gray-600">{threads.length}</span>
             </div>
 
-            {/* Older Section */}
-            <div>
-              <div className="px-2 py-1 flex items-center justify-between text-[11px] font-semibold text-[#6e685f] uppercase tracking-wider">
-                <span>Older</span>
-                <SlidersHorizontal size={12} className="cursor-pointer hover:text-[#C5BFAF]" />
+            {threads.length === 0 ? (
+              <div className="px-3 py-8 text-center text-gray-500 text-xs">
+                <MessageSquare size={20} className="mx-auto mb-2 opacity-30 text-[#FDD935]" />
+                <p>No recent sessions</p>
+                <p className="text-[11px] text-gray-600 mt-1">Start a conversation with Xalme</p>
               </div>
-              <div className="space-y-0.5 mt-1">
-                <button
-                  onClick={() => {
-                    setMessages([
-                      { role: 'user', content: 'Ide Ilustrasi Legenda Lau Kawar' },
-                      { role: 'assistant', content: 'Berikut adalah eksplorasi konsep ilustrasi untuk kisah legenda Danau Lau Kawar di Tanah Karo, Sumatera Utara:\n\n1. Nuansa Visual: Palet warna dramatis dengan gradasi senja pegunungan Sinabung.\n2. Elemen Simbolis: Sosok sang ibu yang menangis dan riak air danau yang perlahan menenggelamkan desa.' }
-                    ]);
-                  }}
-                  className="w-full px-2.5 py-1.5 rounded-lg text-xs text-[#C5BFAF] hover:text-white hover:bg-white/5 flex items-center gap-2 transition-colors cursor-pointer bg-transparent border-none text-left truncate"
-                >
-                  <span className="truncate">Ide Ilustrasi Legenda Lau Kawar</span>
-                </button>
+            ) : (
+              <div className="space-y-1">
+                {threads.map((thread) => {
+                  const isActive = thread.id === currentThreadId;
+                  return (
+                    <div
+                      key={thread.id}
+                      onClick={() => handleSelectThread(thread.id)}
+                      className={`group w-full px-3 py-2 rounded-xl text-xs flex items-center justify-between cursor-pointer transition-all border ${
+                        isActive
+                          ? 'bg-white/[0.06] border-[#FDD935]/40 text-white font-semibold shadow-[0_0_12px_rgba(253,217,53,0.1)]'
+                          : 'bg-transparent border-transparent text-gray-400 hover:text-white hover:bg-white/[0.03]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <MessageSquare size={13} className={isActive ? 'text-[#FDD935] shrink-0' : 'text-gray-500 shrink-0'} />
+                        <span className="truncate">{thread.title}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => handleDeleteThread(e, thread.id)}
+                        className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-400 p-1 rounded transition-opacity bg-transparent border-none cursor-pointer"
+                        title="Delete session"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
-            </div>
+            )}
           </div>
 
-          {/* User Card footer inside Sidebar */}
-          <div className="p-3 border-t border-[#262421] relative">
+          {/* User Account Tile inside Sidebar */}
+          <div className="p-3 border-t border-white/10 relative bg-black/40">
             <button
               onClick={() => setUserDropdownOpen(!userDropdownOpen)}
               className="w-full p-2 rounded-xl hover:bg-white/5 flex items-center justify-between text-left transition-colors cursor-pointer bg-transparent border-none"
             >
               <div className="flex items-center gap-2.5 min-w-0">
                 {currentUser?.avatar_url ? (
-                  <img src={currentUser.avatar_url} alt="User" className="w-7 h-7 rounded-full object-cover ring-1 ring-white/10" />
+                  <img src={currentUser.avatar_url} alt="User" className="w-7 h-7 rounded-full object-cover ring-1 ring-[#FDD935]/50" />
                 ) : (
-                  <div className="w-7 h-7 rounded-full bg-[#E08D79] text-white text-xs font-bold flex items-center justify-center shrink-0 uppercase">
+                  <div className="w-7 h-7 rounded-full bg-[#FDD935] text-black text-xs font-black flex items-center justify-center shrink-0 uppercase shadow-[0_0_10px_rgba(253,217,53,0.3)]">
                     {(userName)[0]}
                   </div>
                 )}
                 <div className="flex items-center gap-1.5 min-w-0">
-                  <span className="text-xs font-medium text-[#ECE7DE] truncate">{userName}</span>
-                  <span className="text-[11px] text-[#8C877C]">· Free</span>
-                  <ChevronDown size={13} className="text-[#8C877C] shrink-0" />
+                  <span className="text-xs font-bold text-white truncate">{userName}</span>
+                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-white/10 text-gray-400">
+                    {currentUser?.subscription_tier === 'pro' ? 'PRO' : 'FREE'}
+                  </span>
+                  <ChevronDown size={13} className="text-gray-400 shrink-0" />
                 </div>
               </div>
-              <Sliders size={14} className="text-[#8C877C] shrink-0" />
             </button>
 
             {/* User Dropdown */}
             {userDropdownOpen && (
-              <div className="absolute bottom-full left-3 right-3 mb-2 bg-[#262522] border border-[#383632] rounded-2xl p-2 shadow-2xl z-50 text-left animate-fade-in">
-                <div className="px-3 py-2 border-b border-white/5 mb-1">
-                  <p className="text-xs font-semibold text-white truncate">{userName}</p>
-                  <p className="text-[10px] text-[#8C877C] truncate">{currentUser?.email || 'user@xoeris.com'}</p>
+              <div className="absolute bottom-full left-3 right-3 mb-2 bg-[#111111] border border-white/15 rounded-2xl p-2 shadow-2xl z-50 text-left animate-fade-in backdrop-blur-xl">
+                <div className="px-3 py-2 border-b border-white/10 mb-1">
+                  <p className="text-xs font-bold text-white truncate">{userName}</p>
+                  <p className="text-[10px] text-gray-400 truncate">{currentUser?.email || 'developer@xoeris.com'}</p>
                 </div>
                 <button
                   onClick={() => { setUserDropdownOpen(false); if (onNavigate) onNavigate('pricing'); }}
-                  className="w-full px-3 py-2 text-xs text-[#C5BFAF] hover:text-white hover:bg-white/5 rounded-lg flex items-center justify-between cursor-pointer bg-transparent border-none text-left"
+                  className="w-full px-3 py-2 text-xs text-gray-300 hover:text-white hover:bg-white/5 rounded-lg flex items-center justify-between cursor-pointer bg-transparent border-none text-left"
                 >
-                  <span>Upgrade Plan</span>
-                  <span className="text-[10px] text-[#D97706] font-semibold">Pro</span>
+                  <span>Pricing & Plans</span>
+                  <span className="text-[10px] text-[#FDD935] font-black uppercase">PRO</span>
                 </button>
                 <button
                   onClick={() => { setUserDropdownOpen(false); handleLogout(); }}
@@ -340,36 +413,39 @@ export default function ChatPage({ onNavigate }) {
       {sidebarOpen && (
         <div 
           onClick={() => setSidebarOpen(false)} 
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden"
         />
       )}
 
       {/* Main View Area */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen w-full relative z-10 bg-[#1f1e1d]">
+      <div className="flex-1 flex flex-col min-w-0 h-screen w-full relative z-10 bg-[#050505]">
         
         {/* Top Minimal Bar */}
-        <header className="h-14 px-6 flex justify-between items-center z-30">
+        <header className="h-14 px-6 flex justify-between items-center z-30 border-b border-white/5 bg-[#080808]/80 backdrop-blur-md">
           <div className="flex items-center gap-3">
             {!sidebarOpen && (
               <button 
                 onClick={() => setSidebarOpen(true)} 
-                className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-[#9A9488] hover:text-[#ECE7DE] bg-transparent border-none cursor-pointer"
+                className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-white bg-transparent border-none cursor-pointer"
                 title="Open sidebar"
               >
                 <PanelLeft size={18} />
               </button>
             )}
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-black uppercase tracking-wider text-white">Xalme Console</span>
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FDD935] animate-pulse" />
+            </div>
           </div>
 
-          {/* Center Plan text */}
-          <div className="text-xs text-[#8C877C] flex items-center gap-1.5 font-sans">
-            <span>Free plan</span>
-            <span>·</span>
+          {/* Center Plan Link */}
+          <div className="text-xs text-gray-400 flex items-center gap-2 font-mono">
+            <span className="text-gray-500">Plan:</span>
             <button
               onClick={() => onNavigate ? onNavigate('pricing') : window.location.href = '/pricing'}
-              className="text-[#ECE7DE] hover:underline font-medium bg-transparent border-none p-0 cursor-pointer"
+              className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 hover:border-[#FDD935]/50 text-white hover:text-[#FDD935] font-semibold transition-all cursor-pointer text-xs"
             >
-              Upgrade
+              {currentUser?.subscription_tier === 'pro' ? 'Pro Member' : 'Free Tier · Upgrade'}
             </button>
           </div>
 
@@ -377,11 +453,11 @@ export default function ChatPage({ onNavigate }) {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-[#9A9488] hover:text-[#ECE7DE] hover:bg-white/5 transition-colors bg-transparent border-none cursor-pointer"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 transition-colors bg-transparent border-none cursor-pointer"
               title="Account settings"
             >
               {currentUser?.avatar_url ? (
-                <img src={currentUser.avatar_url} alt="Avatar" className="w-6 h-6 rounded-full object-cover" />
+                <img src={currentUser.avatar_url} alt="Avatar" className="w-7 h-7 rounded-full object-cover ring-1 ring-[#FDD935]/40" />
               ) : (
                 <User size={18} />
               )}
@@ -392,114 +468,114 @@ export default function ChatPage({ onNavigate }) {
         {/* Main Content Body */}
         <main className="flex-1 flex flex-col justify-between overflow-hidden relative">
           
-          {/* Messages Feed or Initial Welcome View */}
+          {/* Welcome Screen or Message Feed */}
           {messages.length === 0 ? (
-            /* Claude Welcome Center Stage matching screenshot */
-            <div className="flex-1 flex flex-col items-center justify-center px-4 -mt-10">
-              {/* Sunburst Asterisk + Greeting */}
-              <div className="flex items-center gap-3 mb-6 animate-fade-in">
-                <ClaudeSpark className="w-8 h-8 text-[#D97706]" />
-                <h1 className="font-serif text-3xl md:text-4xl text-[#ECE7DE] tracking-tight font-normal">
-                  {getGreeting()}, {userName}
+            /* Xalme Welcome Center Stage in Xoeris Design */
+            <div className="flex-1 flex flex-col items-center justify-center px-4 max-w-3xl mx-auto w-full -mt-8">
+              
+              {/* Xalme Sunburst Emblem + Greeting */}
+              <div className="flex flex-col items-center text-center mb-8 animate-fade-in">
+                <div className="w-14 h-14 rounded-2xl bg-[#FDD935]/10 border border-[#FDD935]/30 flex items-center justify-center mb-5 shadow-[0_0_30px_rgba(253,217,53,0.15)]">
+                  <XalmeSpark className="w-8 h-8 text-[#FDD935]" />
+                </div>
+                <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-3">
+                  {getGreeting()}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FDD935] to-[#FFC94A]">{userName}</span>
                 </h1>
+                <p className="text-gray-400 text-sm md:text-base max-w-lg">
+                  What would you like to build or explore today with Xalme AI?
+                </p>
               </div>
 
-              {/* Centered Input Card */}
-              <div className="w-full max-w-2xl">
+              {/* Centered Floating Input Card in Xoeris Aesthetics */}
+              <div className="w-full">
                 <form
-                  onSubmit={handleSend}
-                  className="bg-[#262522] border border-[#393632] focus-within:border-[#4f4c45] rounded-2xl p-4 shadow-xl transition-all"
+                  onSubmit={(e) => { e.preventDefault(); handleSend(); }}
+                  className="bg-[#0e0e0e] border border-white/15 focus-within:border-[#FDD935]/50 focus-within:shadow-[0_0_30px_rgba(253,217,53,0.12)] rounded-2xl p-4 transition-all backdrop-blur-xl"
                 >
                   <textarea
                     ref={textareaRef}
                     rows={3}
-                    placeholder="How can I help you today?"
+                    placeholder="Ask Xalme anything or brainstorm code..."
                     value={input}
                     onChange={handleInputChange}
                     onKeyDown={handleTextareaKeyDown}
                     disabled={loading}
-                    className="w-full bg-transparent text-[#ECE7DE] placeholder:text-[#8a8479] text-base resize-none outline-none border-none leading-relaxed font-sans"
+                    className="w-full bg-transparent text-white placeholder:text-gray-500 text-base resize-none outline-none border-none leading-relaxed font-sans"
                   />
 
                   {/* Inside Card Bottom Toolbar */}
-                  <div className="flex items-center justify-between pt-2 mt-1">
-                    <button
-                      type="button"
-                      className="p-1.5 text-[#9A9488] hover:text-[#ECE7DE] hover:bg-white/5 rounded-lg transition-colors cursor-pointer bg-transparent border-none"
-                      title="Add content"
-                    >
-                      <Plus size={18} />
-                    </button>
-
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        type="button"
-                        className="p-1.5 text-[#9A9488] hover:text-[#ECE7DE] hover:bg-white/5 rounded-lg transition-colors cursor-pointer bg-transparent border-none"
-                        title="Voice mode"
-                      >
-                        <Mic size={17} />
-                      </button>
-                      <button
-                        type="button"
-                        className="p-1.5 text-[#9A9488] hover:text-[#ECE7DE] hover:bg-white/5 rounded-lg transition-colors cursor-pointer bg-transparent border-none"
-                        title="Audio wave"
-                      >
-                        <AudioWaveform size={17} />
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={loading || !input.trim()}
-                        className={`p-2 rounded-xl transition-all cursor-pointer border-none flex items-center justify-center ${
-                          input.trim()
-                            ? 'bg-[#E5DFD5] text-[#1f1e1d] hover:bg-white shadow-sm'
-                            : 'bg-[#33312d] text-[#6e695f] cursor-not-allowed'
-                        }`}
-                        title="Send message"
-                      >
-                        <ArrowUp size={16} />
-                      </button>
-                    </div>
-                  </div>
-                </form>
-
-                {/* Below Card Meta Row */}
-                <div className="flex items-center justify-between px-2 pt-2 text-xs text-[#8A8479]">
-                  <button
-                    type="button"
-                    className="flex items-center gap-1 hover:text-[#ECE7DE] transition-colors cursor-pointer bg-transparent border-none p-0 text-[#8A8479]"
-                  >
-                    <span>Project</span>
-                    <ChevronDown size={12} />
-                  </button>
-
-                  <div className="flex items-center gap-3">
-                    <div className="relative">
+                  <div className="flex items-center justify-between pt-3 border-t border-white/5 mt-2">
+                    <div className="flex items-center gap-2">
                       <button
                         type="button"
                         onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
-                        className="hover:text-[#ECE7DE] transition-colors cursor-pointer bg-transparent border-none p-0 text-[#8A8479] flex items-center gap-1"
+                        className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-gray-300 hover:text-white flex items-center gap-1.5 transition-colors cursor-pointer"
                       >
+                        <Cpu size={13} className="text-[#FDD935]" />
                         <span>{selectedModel}</span>
+                        <ChevronDown size={12} className="text-gray-400" />
                       </button>
+
                       {modelDropdownOpen && (
-                        <div className="absolute right-0 bottom-full mb-2 bg-[#262522] border border-[#383632] rounded-xl p-1.5 shadow-2xl z-50 text-left min-w-[130px]">
-                          {['Sonnet 3.5', 'Elarion 1.1', 'Nebula', 'Atlas'].map((m) => (
+                        <div className="absolute left-4 bottom-14 bg-[#141414] border border-white/15 rounded-xl p-1.5 shadow-2xl z-50 text-left min-w-[170px] backdrop-blur-2xl">
+                          {['Xalme 3.5 Core', 'Xalme Opus', 'Elarion 1.1', 'Nebula Code'].map((m) => (
                             <button
                               key={m}
+                              type="button"
                               onClick={() => { setSelectedModel(m); setModelDropdownOpen(false); }}
-                              className={`w-full px-2.5 py-1.5 rounded-lg text-xs text-left cursor-pointer border-none ${
-                                selectedModel === m ? 'bg-white/10 text-white font-medium' : 'text-[#C5BFAF] hover:bg-white/5 bg-transparent'
+                              className={`w-full px-3 py-2 rounded-lg text-xs text-left cursor-pointer border-none flex items-center justify-between ${
+                                selectedModel === m ? 'bg-[#FDD935]/15 text-[#FDD935] font-bold' : 'text-gray-400 hover:text-white hover:bg-white/5 bg-transparent'
                               }`}
                             >
-                              {m}
+                              <span>{m}</span>
+                              {selectedModel === m && <Check size={12} />}
                             </button>
                           ))}
                         </div>
                       )}
                     </div>
-                    <span className="text-[#686359]">Medium</span>
-                    <span className="text-[#686359]">Manual</span>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="submit"
+                        disabled={loading || !input.trim()}
+                        className={`p-2.5 rounded-xl transition-all cursor-pointer border-none flex items-center justify-center ${
+                          input.trim()
+                            ? 'bg-[#FDD935] text-black hover:bg-[#FFE066] shadow-[0_0_15px_rgba(253,217,53,0.4)] active:scale-95'
+                            : 'bg-white/5 text-gray-600 cursor-not-allowed'
+                        }`}
+                        title="Send prompt"
+                      >
+                        <ArrowUp size={16} className={input.trim() ? 'stroke-[2.5]' : ''} />
+                      </button>
+                    </div>
                   </div>
+                </form>
+
+                {/* Prompt Starters */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4">
+                  {[
+                    { label: 'System Design', icon: Terminal, prompt: 'Outline the system architecture for a high-concurrency event router in Go.' },
+                    { label: 'Refactor Code', icon: Code, prompt: 'Refactor this async function to handle exponential backoff and timeout safely.' },
+                    { label: 'Explain Concept', icon: Sparkles, prompt: 'Explain zero-knowledge rollups with intuitive diagrams and tradeoffs.' },
+                    { label: 'Security Review', icon: Cpu, prompt: 'Review OAuth 2.0 PKCE implementation best practices for multi-tenant SPAs.' }
+                  ].map((starter, idx) => {
+                    const Icon = starter.icon;
+                    return (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => handleSend(starter.prompt)}
+                        className="p-3 rounded-xl bg-white/[0.02] border border-white/10 hover:border-[#FDD935]/40 hover:bg-white/[0.05] transition-all text-left cursor-pointer group"
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <Icon size={13} className="text-[#FDD935]" />
+                          <span className="text-xs font-bold text-gray-300 group-hover:text-white">{starter.label}</span>
+                        </div>
+                        <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed">{starter.prompt}</p>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -509,32 +585,45 @@ export default function ChatPage({ onNavigate }) {
               {messages.map((msg, index) => (
                 <div
                   key={index}
-                  className={`flex gap-3.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex gap-3.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}
                 >
                   {msg.role === 'assistant' && (
-                    <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5">
-                      <ClaudeSpark className="w-5 h-5 text-[#D97706]" />
+                    <div className="w-7 h-7 rounded-xl bg-[#FDD935]/15 border border-[#FDD935]/30 flex items-center justify-center shrink-0 mt-0.5 text-[#FDD935] shadow-[0_0_10px_rgba(253,217,53,0.15)]">
+                      <XalmeSpark className="w-4 h-4 text-[#FDD935]" />
                     </div>
                   )}
 
                   <div
-                    className={`max-w-[85%] rounded-2xl px-4 py-3 leading-relaxed text-sm ${
+                    className={`max-w-[85%] rounded-2xl px-5 py-3.5 leading-relaxed text-sm ${
                       msg.role === 'user'
-                        ? 'bg-[#2b2a27] border border-[#3b3934] text-[#ECE7DE]'
-                        : msg.content.startsWith('[ERROR]')
-                          ? 'bg-red-500/10 border border-red-500/20 text-red-300 font-mono text-xs'
-                          : 'text-[#ECE7DE] leading-relaxed whitespace-pre-wrap'
+                        ? 'bg-[#FDD935]/10 border border-[#FDD935]/30 text-white font-sans shadow-[0_0_20px_rgba(253,217,53,0.06)]'
+                        : msg.content.startsWith('[XALME SYSTEM ALERT]')
+                          ? 'bg-red-500/10 border border-red-500/30 text-red-300 font-mono text-xs'
+                          : 'bg-white/[0.03] border border-white/10 text-gray-100 leading-relaxed whitespace-pre-wrap'
                     }`}
                   >
+                    {msg.role === 'assistant' && !msg.content.startsWith('[XALME SYSTEM ALERT]') && (
+                      <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-white/5 text-[11px] font-mono text-gray-400">
+                        <span className="text-[#FDD935] font-bold">Xalme AI</span>
+                        <button
+                          type="button"
+                          onClick={() => handleCopy(msg.content, index)}
+                          className="hover:text-white flex items-center gap-1 bg-transparent border-none p-0 cursor-pointer text-gray-400"
+                        >
+                          {copiedIndex === index ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+                          <span>{copiedIndex === index ? 'Copied' : 'Copy'}</span>
+                        </button>
+                      </div>
+                    )}
                     {msg.content}
                   </div>
                 </div>
               ))}
 
               {loading && (
-                <div className="flex items-center gap-2.5 text-xs text-[#9A9488]">
-                  <ClaudeSpark className="w-5 h-5 text-[#D97706] animate-pulse" />
-                  <span>{statusText || 'Claude is thinking...'}</span>
+                <div className="flex items-center gap-3 text-xs text-gray-400 bg-white/[0.02] border border-white/5 rounded-xl px-4 py-3 w-fit">
+                  <div className="w-2 h-2 rounded-full bg-[#FDD935] animate-ping" />
+                  <span className="font-mono">{statusText || 'Xalme is synthesizing response...'}</span>
                 </div>
               )}
               <div ref={messagesEndRef} />
@@ -543,57 +632,47 @@ export default function ChatPage({ onNavigate }) {
 
           {/* Bottom Dock Input (only visible when conversation is active) */}
           {messages.length > 0 && (
-            <div className="p-4 md:p-6 bg-gradient-to-t from-[#1f1e1d] via-[#1f1e1d]/90 to-transparent z-20">
+            <div className="p-4 md:p-6 bg-gradient-to-t from-[#050505] via-[#050505]/95 to-transparent z-20">
               <div className="max-w-3xl mx-auto w-full">
                 <form
-                  onSubmit={handleSend}
-                  className="bg-[#262522] border border-[#393632] focus-within:border-[#4f4c45] rounded-2xl p-3 shadow-xl transition-all"
+                  onSubmit={(e) => { e.preventDefault(); handleSend(); }}
+                  className="bg-[#0e0e0e] border border-white/15 focus-within:border-[#FDD935]/50 focus-within:shadow-[0_0_30px_rgba(253,217,53,0.12)] rounded-2xl p-3.5 shadow-2xl transition-all backdrop-blur-xl"
                 >
                   <textarea
                     ref={textareaRef}
                     rows={1}
-                    placeholder="Reply to Claude..."
+                    placeholder="Message Xalme..."
                     value={input}
                     onChange={handleInputChange}
                     onKeyDown={handleTextareaKeyDown}
                     disabled={loading}
-                    className="w-full bg-transparent text-[#ECE7DE] placeholder:text-[#8a8479] text-sm resize-none outline-none border-none leading-relaxed font-sans max-h-36"
+                    className="w-full bg-transparent text-white placeholder:text-gray-500 text-sm resize-none outline-none border-none leading-relaxed font-sans max-h-36"
                   />
 
-                  <div className="flex items-center justify-between pt-2">
-                    <button
-                      type="button"
-                      className="p-1.5 text-[#9A9488] hover:text-[#ECE7DE] hover:bg-white/5 rounded-lg transition-colors cursor-pointer bg-transparent border-none"
-                    >
-                      <Plus size={16} />
-                    </button>
+                  <div className="flex items-center justify-between pt-2 border-t border-white/5 mt-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-mono text-gray-500 flex items-center gap-1">
+                        <Cpu size={12} className="text-[#FDD935]" />
+                        {selectedModel}
+                      </span>
+                    </div>
 
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        type="button"
-                        className="p-1.5 text-[#9A9488] hover:text-[#ECE7DE] hover:bg-white/5 rounded-lg transition-colors cursor-pointer bg-transparent border-none"
-                      >
-                        <Mic size={16} />
-                      </button>
+                    <div className="flex items-center gap-2">
                       <button
                         type="submit"
                         disabled={loading || !input.trim()}
                         className={`p-2 rounded-xl transition-all cursor-pointer border-none flex items-center justify-center ${
                           input.trim()
-                            ? 'bg-[#E5DFD5] text-[#1f1e1d] hover:bg-white shadow-sm'
-                            : 'bg-[#33312d] text-[#6e695f] cursor-not-allowed'
+                            ? 'bg-[#FDD935] text-black hover:bg-[#FFE066] shadow-[0_0_15px_rgba(253,217,53,0.4)]'
+                            : 'bg-white/5 text-gray-600 cursor-not-allowed'
                         }`}
+                        title="Send message"
                       >
-                        <ArrowUp size={15} />
+                        <ArrowUp size={16} className={input.trim() ? 'stroke-[2.5]' : ''} />
                       </button>
                     </div>
                   </div>
                 </form>
-
-                <div className="flex items-center justify-between px-2 pt-1.5 text-[11px] text-[#8A8479]">
-                  <span>Project ▾</span>
-                  <span>{selectedModel} · Medium · Manual</span>
-                </div>
               </div>
             </div>
           )}
