@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Check, Zap, ShieldCheck, Info, ArrowLeft, ArrowRight, CreditCard, Store, Building2 } from 'lucide-react';
+import { Check, Zap, ShieldCheck, Info, ArrowLeft, ArrowRight, CreditCard } from 'lucide-react';
 import FadeIn from './components/FadeIn';
 
 export default function SubscriptionsPage({ onNavigate }) {
@@ -7,7 +7,6 @@ export default function SubscriptionsPage({ onNavigate }) {
     return window.location.pathname === '/payment' ? 'payment' : 'pricing';
   });
   const [billingCycle, setBillingCycle] = useState('yearly');
-  const [activeTab, setActiveTab] = useState('individual');
 
   useEffect(() => {
     const handlePopState = () => {
@@ -39,7 +38,7 @@ export default function SubscriptionsPage({ onNavigate }) {
           {price !== '0' && <span className="text-hide-text-muted text-sm font-medium">USD / month</span>}
         </div>
         <div className="h-5">
-          {price !== '0' && (billingCycle === 'yearly' || title === 'Max') && (
+          {price !== '0' && (billingCycle === 'yearly' || title === 'Ultra') && (
             <div className="text-hide-text-muted text-xs mt-1">billed annually</div>
           )}
         </div>
@@ -65,246 +64,92 @@ export default function SubscriptionsPage({ onNavigate }) {
   );
 
   const PricingView = () => {
-    if (activeTab === 'individual') {
-      return (
-        <div className="max-w-7xl mx-auto px-6 py-12 md:py-20">
-          <header className="text-center mb-16">
-            <h1 className="text-5xl md:text-6xl font-black text-hide-text-primary mb-10 tracking-tight">Plans that grow with you</h1>
-            
-            {/* Tab Switcher */}
-            <div className="inline-flex p-1.5 bg-hide-canvas rounded-hide-lg border border-hide-border-subtle mb-10">
-              <button 
-                onClick={() => setActiveTab('individual')}
-                className={`px-8 py-2.5 rounded-hide-md text-sm font-bold transition-all duration-hide-fast ${activeTab === 'individual' ? 'bg-hide-elevated text-hide-text-primary shadow-lg' : 'text-hide-text-muted hover:text-hide-text-primary'}`}
-              >
-                Individual
-              </button>
-              <button 
-                onClick={() => setActiveTab('team')}
-                className={`px-8 py-2.5 rounded-hide-md text-sm font-bold transition-all duration-hide-fast ${activeTab === 'team' ? 'bg-hide-elevated text-hide-text-primary shadow-lg' : 'text-hide-text-muted hover:text-hide-text-primary'}`}
-              >
-                Team and Enterprise
-              </button>
-            </div>
-
-            {/* Billing Toggle */}
-            <div className="flex items-center justify-center gap-4">
-              <span className={`text-sm font-bold transition-colors ${billingCycle === 'monthly' ? 'text-hide-text-primary' : 'text-hide-text-muted'}`}>Monthly</span>
-              <button 
-                onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
-                className={`relative w-12 h-6 rounded-full p-1 transition-colors duration-hide-fast ${billingCycle === 'yearly' ? 'bg-hide-action' : 'bg-hide-toggle-track'}`}
-              >
-                <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-hide-medium ${billingCycle === 'yearly' ? 'translate-x-6' : 'translate-x-0'}`} />
-              </button>
-              <div className="flex items-center gap-2">
-                <span className={`text-sm font-bold transition-colors ${billingCycle === 'yearly' ? 'text-hide-text-primary' : 'text-hide-text-muted'}`}>Yearly</span>
-              </div>
-            </div>
-          </header>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <PricingCard 
-              title="Free"
-              description="Meet Xoeris"
-              price="0"
-              buttonText="Use Xoeris for free"
-              icon={Zap}
-              features={[
-                "Real-time data visualization",
-                "Basic dataset exploration",
-                "Community API access",
-                "Standard export formats",
-                "Public dashboard hosting"
-              ]}
-            />
-            <PricingCard 
-              title="Pro"
-              description="Deep analysis and collaboration"
-              highlighted={true}
-              price={billingCycle === 'yearly' ? '35' : '50'}
-              buttonText="Get Pro plan"
-              icon={ShieldCheck}
-              features={[
-                "Xoeris Engine directly in your workflow",
-                "Advanced predictive modeling",
-                "Priority API throughput",
-                "Custom data connectors",
-                "Private encrypted storage"
-              ]}
-            />
-            <PricingCard 
-              title="Max"
-              description="Enterprise-grade performance"
-              price="100"
-              buttonText="Get Max plan"
-              icon={Info}
-              features={[
-                "Unlimited data processing",
-                "Dedicated node clusters",
-                "Early access to ML models",
-                "SLA-backed uptime",
-                "24/7 dedicated support"
-              ]}
-            />
-          </div>
-
-          <p className="mt-12 text-center text-hide-text-disabled text-xs max-w-2xl mx-auto">
-            *Usage limits apply. Prices shown don't include applicable tax. Prices and plans are subject to change at Xoeris's discretion.
-          </p>
-        </div>
-      );
-    }
-
     return (
-      <div className="max-w-5xl mx-auto px-6 py-12 md:py-20">
+      <div className="max-w-7xl mx-auto px-6 py-12 md:py-20">
+        <div className="mb-6">
+          <button 
+            onClick={() => {
+              if (window.history.length > 1) {
+                window.history.back();
+              } else if (onNavigate) {
+                onNavigate('xoeris');
+              }
+            }}
+            className="inline-flex items-center gap-2.5 text-hide-text-muted hover:text-hide-text-primary transition-colors duration-hide-fast group cursor-pointer bg-transparent border-none p-0"
+            title="Navigate to previous page"
+          >
+            <div className="w-10 h-10 rounded-hide-lg bg-hide-elevated border border-hide-border-subtle flex items-center justify-center group-hover:border-hide-border-default transition-all duration-hide-fast group-hover:-translate-x-1">
+              <ArrowLeft size={18} className="text-hide-text-primary" />
+            </div>
+            <span className="text-xs font-bold uppercase tracking-widest text-hide-text-muted group-hover:text-hide-text-primary transition-colors">Back</span>
+          </button>
+        </div>
+
         <header className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-black text-hide-text-primary mb-10 tracking-tight">Enterprise-grade security</h1>
-          
-          <div className="inline-flex p-1.5 bg-hide-canvas rounded-hide-lg border border-hide-border-subtle mb-10">
+          <h1 className="text-5xl md:text-6xl font-black text-hide-text-primary mb-10 tracking-tight">Plans that grow with you</h1>
+
+          {/* Billing Toggle */}
+          <div className="flex items-center justify-center gap-4">
+            <span className={`text-sm font-bold transition-colors ${billingCycle === 'monthly' ? 'text-hide-text-primary' : 'text-hide-text-muted'}`}>Monthly</span>
             <button 
-              onClick={() => setActiveTab('individual')}
-              className={`px-8 py-2.5 rounded-hide-md text-sm font-bold transition-all duration-hide-fast ${activeTab === 'individual' ? 'bg-hide-elevated text-hide-text-primary shadow-lg' : 'text-hide-text-muted hover:text-hide-text-primary'}`}
+              onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
+              className={`relative w-12 h-6 rounded-full p-1 transition-colors duration-hide-fast ${billingCycle === 'yearly' ? 'bg-hide-action' : 'bg-hide-toggle-track'}`}
             >
-              Individual
+              <div className={`w-4 h-4 bg-white rounded-full transition-transform duration-hide-medium ${billingCycle === 'yearly' ? 'translate-x-6' : 'translate-x-0'}`} />
             </button>
-            <button 
-              onClick={() => setActiveTab('team')}
-              className={`px-8 py-2.5 rounded-hide-md text-sm font-bold transition-all duration-hide-fast ${activeTab === 'team' ? 'bg-hide-elevated text-hide-text-primary shadow-lg' : 'text-hide-text-muted hover:text-hide-text-primary'}`}
-            >
-              Team and Enterprise
-            </button>
+            <div className="flex items-center gap-2">
+              <span className={`text-sm font-bold transition-colors ${billingCycle === 'yearly' ? 'text-hide-text-primary' : 'text-hide-text-muted'}`}>Yearly</span>
+            </div>
           </div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Team Card */}
-          <div className="bg-hide-canvas border border-hide-border-subtle rounded-hide-xl p-8 flex flex-col relative overflow-hidden">
-            <div className="flex justify-between items-start mb-6">
-              <div className="w-16 h-16 rounded-hide-lg bg-hide-elevated flex items-center justify-center border border-hide-border-subtle">
-                <Store className="text-hide-text-muted" size={32} />
-              </div>
-              <span className="px-2 py-0.5 rounded-hide-md bg-hide-elevated border border-hide-border-subtle text-[10px] text-hide-text-muted font-bold">5-150 users</span>
-            </div>
-            
-            <h3 className="text-3xl font-bold text-hide-text-primary mb-2">Team</h3>
-            <p className="text-hide-text-muted text-sm mb-10">Predictable usage per seat</p>
-
-            <div className="bg-hide-primary rounded-hide-lg p-6 border border-hide-border-subtle mb-10 space-y-8">
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="text-hide-text-primary font-bold mb-1">Standard seat</div>
-                  <div className="text-hide-text-muted text-[10px] leading-relaxed">
-                    All Xoeris features, plus more usage than Pro*<br/>
-                    $25 /mo when billed monthly
-                  </div>
-                </div>
-                <div className="text-hide-text-primary font-bold text-lg flex items-baseline gap-1">
-                  $20<span className="text-hide-text-muted text-xs">/mo</span>
-                </div>
-              </div>
-              <div className="h-px bg-hide-border-subtle" />
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="text-hide-text-primary font-bold mb-1">Premium seat</div>
-                  <div className="text-hide-text-muted text-[10px] leading-relaxed">
-                    5x more usage than standard seats*<br/>
-                    $125 /mo when billed monthly
-                  </div>
-                </div>
-                <div className="text-hide-text-primary font-bold text-lg flex items-baseline gap-1">
-                  $100<span className="text-hide-text-muted text-xs">/mo</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-4 mb-10">
-              {[
-                "200K context window",
-                "Extra usage available at API rates",
-                "Xoeris Code",
-                "Cowork",
-                "Central billing and administration",
-                "Single sign-on (SSO) and domain capture",
-                "Admin controls for remote and local connectors",
-                "Enterprise deployment for the Xoeris desktop app",
-                "Enterprise search across your organization",
-                "Connect Microsoft 365, Slack, and more",
-                "No model training on your content by default"
-              ].map((f, i) => (
-                <div key={i} className="flex gap-3 text-sm text-hide-text-secondary">
-                  <Check size={18} className="text-hide-action shrink-0" />
-                  <span>{f}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-auto space-y-4">
-              <button className="w-full py-4 rounded-hide-lg bg-hide-ghost text-hide-text-muted font-bold text-sm cursor-not-allowed">
-                Get Team plan
-              </button>
-              <div className="flex items-center justify-center gap-2 text-[10px] text-hide-text-muted font-bold uppercase tracking-widest bg-hide-elevated py-3 rounded-hide-lg border border-hide-border-subtle">
-                <Info size={14} /> Work email address required
-              </div>
-            </div>
-          </div>
-
-          {/* Enterprise Card */}
-          <div className="bg-hide-canvas border border-hide-border-subtle rounded-hide-xl p-8 flex flex-col relative overflow-hidden">
-            <div className="flex justify-between items-start mb-6">
-              <div className="w-16 h-16 rounded-hide-lg bg-hide-elevated flex items-center justify-center border border-hide-border-subtle">
-                <Building2 className="text-hide-text-muted" size={32} />
-              </div>
-              <span className="px-2 py-0.5 rounded-hide-md bg-hide-elevated border border-hide-border-subtle text-[10px] text-hide-text-muted font-bold">20+ users</span>
-            </div>
-            
-            <h3 className="text-3xl font-bold text-hide-text-primary mb-2">Enterprise</h3>
-            <p className="text-hide-text-muted text-sm mb-10">Flexible pooled usage</p>
-
-            <div className="bg-hide-primary rounded-hide-lg p-6 border border-hide-border-subtle mb-10">
-              <div className="text-hide-text-primary font-bold mb-2">Seat price + usage at API rates</div>
-              <div className="text-hide-text-muted text-[10px]">
-                $20/seat. Usage cost scales with model and task.
-              </div>
-            </div>
-
-            <div className="text-[10px] font-bold text-hide-text-muted uppercase tracking-widest mb-6">All Team features, plus:</div>
-            
-            <div className="space-y-4 mb-10">
-              {[
-                "Pay-as-you-go pricing with pooled usage across your org",
-                "Set user and org spend limits",
-                "500K context window",
-                "Role-based access with fine grained permissioning",
-                "System for Cross-domain Identity Management (SCIM)",
-                "Audit logs",
-                "Compliance API for observability and monitoring",
-                "Network-level access control",
-                "Custom data retention controls",
-                "IP allowlisting",
-                "Google Docs cataloging"
-              ].map((f, i) => (
-                <div key={i} className="flex gap-3 text-sm text-hide-text-secondary">
-                  <Check size={18} className="text-hide-action shrink-0" />
-                  <span>{f}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-auto space-y-4">
-              <button className="w-full py-4 rounded-hide-lg bg-hide-ghost text-hide-text-muted font-bold text-sm cursor-not-allowed">
-                Get Enterprise plan
-              </button>
-              <div className="p-4 bg-hide-elevated rounded-hide-lg border border-hide-border-subtle">
-                <div className="flex gap-2 text-[10px] text-hide-text-muted font-bold leading-relaxed uppercase tracking-widest">
-                  <Info size={14} className="shrink-0" />
-                  <span>A work email address is required to create an Enterprise account. <a href="#" className="text-hide-text-secondary underline">Contact sales</a> for more information.</span>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <PricingCard 
+            title="Free"
+            description="Meet Xoeris"
+            price="0"
+            buttonText="Use Xoeris for free"
+            icon={Zap}
+            features={[
+              "Basic Xoeris products",
+              "Chat with Xalme on Web for a limited usage",
+              "Join Xoeris Community",
+              "Being a contributor for Xoeris Development Programs"
+            ]}
+          />
+          <PricingCard 
+            title="Pro"
+            description="Deep analysis and collaboration"
+            highlighted={true}
+            price={billingCycle === 'yearly' ? '35' : '50'}
+            buttonText="Get Pro plan"
+            icon={ShieldCheck}
+            features={[
+              "Pro Xoeris products",
+              "Chat with Xalme on web, Android, and desktop",
+              "Higher usage limits",
+              "Access to more Xalme models",
+              "Customer support from Xoeris Agent",
+              "Early access to Beta Xoeris products and features"
+            ]}
+          />
+          <PricingCard 
+            title="Ultra"
+            description="Enterprise-grade performance"
+            price="100"
+            buttonText="Get Ultra plan"
+            icon={Info}
+            features={[
+              "All Xoeris products",
+              "Access Xalme Code on web",
+              "Up to 10x more usage than Pro*",
+              "High priorities for customer support from Xoeris Agent",
+              "Early access to Alpha, Beta, and Dev Xoeris products and advanced features"
+            ]}
+          />
         </div>
 
-        <p className="mt-12 text-center text-hide-text-disabled text-[10px] max-w-2xl mx-auto">
+        <p className="mt-12 text-center text-hide-text-disabled text-xs max-w-2xl mx-auto">
           *Usage limits apply. Prices shown don't include applicable tax. Prices and plans are subject to change at Xoeris's discretion.
         </p>
       </div>

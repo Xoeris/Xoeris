@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-  Menu, X, ArrowRight, Globe, Cpu, Shield, Zap
+  Menu, X, ArrowRight, Globe, Cpu, Shield, Zap,
+  ChevronDown, ChevronUp, Download, ArrowUpRight
 } from 'lucide-react';
 import FadeIn from './components/FadeIn';
 
@@ -20,6 +21,45 @@ export default function XoerisPage({ onNavigate }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeTelemetryNode, setActiveTelemetryNode] = useState('xime');
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const navRef = useRef(null);
+  const hoverTimeoutRef = useRef(null);
+
+  const handleMouseEnter = (dropdownKey) => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    if (dropdownKey) {
+      setActiveDropdown(dropdownKey);
+    } else {
+      setActiveDropdown(null);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    hoverTimeoutRef.current = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 200);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (navRef.current && !navRef.current.contains(event.target)) {
+        setActiveDropdown(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Status blades adapted from Acelbyte for Xoeris nodes
   const statusBlades = [
@@ -92,35 +132,160 @@ export default function XoerisPage({ onNavigate }) {
         <div className="absolute inset-0 bg-black/60 backdrop-blur-[60px]"></div>
       </div>
 
-      <div className="animate-fade-in relative z-10">
-        {/* Navigation */}
-        <nav className={`fixed w-full z-50 transition-all duration-300 gpu-accel ${isScrolled ? 'py-4 shadow-lg backdrop-blur-xl bg-black/50 border-b border-[#FDD935]/20' : 'py-6 bg-transparent'}`}>
-          <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center">
-            <button onClick={() => onNavigate('xoeris')} className="flex items-center group bg-transparent border-none p-0 cursor-pointer">
+      {/* Navigation - Liquid Glass Sticky Top */}
+      <nav
+        ref={navRef}
+        onMouseLeave={handleMouseLeave}
+        className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 ${isScrolled ? 'py-3.5' : 'py-5'}`}
+      >
+        {/* Isolated Liquid Glass Header Background */}
+        <div
+          className="absolute inset-0 pointer-events-none liquid-glass-panel border-b border-white/10"
+          style={{ backdropFilter: 'blur(28px) saturate(190%)', WebkitBackdropFilter: 'blur(28px) saturate(190%)' }}
+        ></div>
+
+        <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center relative z-10">
+            <button
+              onClick={() => onNavigate('xoeris')}
+              onMouseEnter={() => handleMouseEnter(null)}
+              className="flex items-center group bg-transparent border-none p-0 cursor-pointer"
+            >
               <div className="h-10 w-40 transition-transform duration-300 group-hover:scale-105">
                 <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="w-full h-full object-contain object-left" />
               </div>
             </button>
 
-            {/* Desktop Nav */}
-            <div className="hidden md:flex items-center gap-8">
-              <button onClick={() => onNavigate('subscriptions')} className="text-sm font-bold text-gray-300 hover:text-[#FDD935] hover:drop-shadow-[0_0_8px_rgba(253,217,53,0.8)] transition-all duration-300 ease-hyper uppercase tracking-wider bg-transparent border-none p-0 cursor-pointer">Pricing</button>
-              <button onClick={() => onNavigate('about')} className="text-sm font-bold text-gray-300 hover:text-[#FDD935] hover:drop-shadow-[0_0_8px_rgba(253,217,53,0.8)] transition-all duration-300 ease-hyper uppercase tracking-wider bg-transparent border-none p-0 cursor-pointer">About</button>
-
-              <div className="w-px h-6 bg-[#FDD935]/20"></div>
-
-              <button
-                onClick={() => onNavigate('subscriptions')}
-                className="px-6 py-2.5 text-sm font-black uppercase tracking-wider rounded-lg transition-all duration-500 ease-hyper hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(253,217,53,0.4)] hover:shadow-[0_0_30px_rgba(253,217,53,0.7)] cursor-pointer"
-                style={{ backgroundColor: colors.primary, color: '#000' }}
+            {/* Desktop Nav Tabs matching Image 2 */}
+            <div className="hidden lg:flex items-center gap-7" onMouseLeave={handleMouseLeave}>
+              {/* Product Tab with Mega Menu */}
+              <div
+                className="relative py-2"
+                onMouseEnter={() => handleMouseEnter('product')}
               >
-                Get Started
+                <button
+                  onClick={() => setActiveDropdown(prev => prev === 'product' ? null : 'product')}
+                  className={`flex items-center gap-1.5 text-sm font-semibold transition-colors bg-transparent border-none p-0 cursor-pointer ${activeDropdown === 'product' ? 'text-white' : 'text-gray-300 hover:text-white'}`}
+                >
+                  <span>Product</span>
+                  {activeDropdown === 'product' ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+                </button>
+
+                {/* Mega Menu Dropdown: Product (matching Image 2) */}
+                {activeDropdown === 'product' && (
+                  <div
+                    onMouseEnter={() => handleMouseEnter('product')}
+                    onMouseLeave={handleMouseLeave}
+                    className="hidden lg:block absolute top-full left-0 w-[540px] pt-2 z-50"
+                  >
+                    <div
+                      className="relative liquid-glass-panel border border-white/20 rounded-3xl shadow-none p-8 text-left overflow-hidden ring-1 ring-white/10"
+                      style={{ backdropFilter: 'blur(32px) saturate(190%)', WebkitBackdropFilter: 'blur(32px) saturate(190%)' }}
+                    >
+                      {/* Liquid Glass specular sheen */}
+                      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none"></div>
+                      <div className="absolute -top-12 left-1/3 w-72 h-28 bg-[#FDD935]/[0.08] rounded-full blur-3xl pointer-events-none"></div>
+
+                      <div className="grid grid-cols-2 gap-8 relative z-10">
+                        {/* Column 1: Products */}
+                        <div className="border-r border-white/10 pr-6">
+                          <div className="text-xs font-semibold text-gray-400 mb-3 tracking-wide">Product</div>
+                          <ul className="space-y-2.5">
+                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">APEX</button></li>
+                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Horizone Engine</button></li>
+                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Horizone IDE</button></li>
+                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">MOVA</button></li>
+                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Musify</button></li>
+                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Xalme</button></li>
+                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Xalme Code</button></li>
+                          </ul>
+                        </div>
+
+                        {/* Column 2: Models */}
+                        <div>
+                          <div className="text-xs font-semibold text-gray-400 mb-3 tracking-wide">Models</div>
+                          <ul className="space-y-2.5">
+                            <li>
+                              <button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors flex items-center justify-between group bg-transparent border-none p-0 cursor-pointer w-full text-left">
+                                <span>Elarion</span>
+                                <ArrowUpRight size={14} className="text-gray-400 group-hover:text-[#FDD935] transition-colors" />
+                              </button>
+                            </li>
+                            <li>
+                              <button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors flex items-center justify-between group bg-transparent border-none p-0 cursor-pointer w-full text-left">
+                                <span>Nebula</span>
+                                <ArrowUpRight size={14} className="text-gray-400 group-hover:text-[#FDD935] transition-colors" />
+                              </button>
+                            </li>
+                            <li>
+                              <button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors flex items-center justify-between group bg-transparent border-none p-0 cursor-pointer w-full text-left">
+                                <span>Forge</span>
+                                <ArrowUpRight size={14} className="text-gray-400 group-hover:text-[#FDD935] transition-colors" />
+                              </button>
+                            </li>
+                            <li>
+                              <button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors flex items-center justify-between group bg-transparent border-none p-0 cursor-pointer w-full text-left">
+                                <span>Atlas</span>
+                                <ArrowUpRight size={14} className="text-gray-400 group-hover:text-[#FDD935] transition-colors" />
+                              </button>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      {/* Bottom Bar */}
+                      <div className="border-t border-white/10 mt-8 pt-5 flex justify-between items-center text-xs relative z-10">
+                        <button onClick={() => { setActiveDropdown(null); onNavigate('subscriptions'); }} className="font-semibold text-white underline hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer">
+                          Import to Xoeris
+                        </button>
+                        <div className="flex items-center gap-3">
+                          <button onClick={() => { setActiveDropdown(null); onNavigate('subscriptions'); }} className="px-3.5 py-1.5 rounded-lg border border-white/20 hover:border-white/40 text-white font-medium flex items-center gap-1.5 transition-colors bg-white/10 hover:bg-white/15 backdrop-blur-md cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
+                            <span>Download apps</span>
+                            <Download size={13} />
+                          </button>
+                          <button onClick={() => { setActiveDropdown(null); onNavigate('auth'); }} className="px-3.5 py-1.5 rounded-lg border border-white/20 hover:border-white/40 text-white font-medium flex items-center gap-1.5 transition-colors bg-white/10 hover:bg-white/15 backdrop-blur-md cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]">
+                            <span>Login</span>
+                            <ArrowUpRight size={13} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Pricing Tab */}
+              <div
+                className="relative py-2"
+                onMouseEnter={() => handleMouseEnter(null)}
+              >
+                <button
+                  onClick={() => { setActiveDropdown(null); onNavigate('subscriptions'); }}
+                  className="flex items-center text-sm font-semibold text-gray-300 hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer"
+                >
+                  <span>Pricing</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Right Action Buttons */}
+            <div className="hidden lg:flex items-center gap-4" onMouseEnter={() => handleMouseEnter(null)}>
+              <button
+                onClick={() => onNavigate('auth')}
+                className="text-sm font-semibold text-gray-300 hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer"
+              >
+                Login
+              </button>
+              <button
+                onClick={() => onNavigate('chat')}
+                className="px-4 py-2 text-sm font-semibold text-black bg-white rounded-lg hover:bg-gray-100 transition-all cursor-pointer shadow-sm"
+              >
+                Try Xalme
               </button>
             </div>
 
             {/* Mobile Menu Toggle */}
             <button
-              className="md:hidden text-[#FDD935] transition-transform duration-300 ease-hyper active:scale-90 bg-transparent border-none p-0"
+              className="lg:hidden text-[#FDD935] transition-transform duration-300 ease-hyper active:scale-90 bg-transparent border-none p-0"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
@@ -129,29 +294,25 @@ export default function XoerisPage({ onNavigate }) {
 
           {/* Mobile Nav Dropdown */}
           {mobileMenuOpen && (
-            <div className="md:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-2xl border-t border-[#FDD935]/20 shadow-[0_20px_40px_rgba(253,217,53,0.1)] py-6 flex flex-col items-center gap-6 text-white">
-              <button onClick={() => { onNavigate('subscriptions'); setMobileMenuOpen(false); }} className="text-lg font-bold text-gray-300 hover:text-[#FDD935] uppercase tracking-widest bg-transparent border-none">Pricing</button>
-              <button onClick={() => { onNavigate('about'); setMobileMenuOpen(false); }} className="text-lg font-bold text-gray-300 hover:text-[#FDD935] uppercase tracking-widest bg-transparent border-none">About</button>
-              <div className="w-1/2 h-px bg-[#FDD935]/20 my-2"></div>
-              <button
-                onClick={() => { onNavigate('subscriptions'); setMobileMenuOpen(false); }}
-                className="px-8 py-3 text-sm font-black uppercase tracking-wider rounded-lg shadow-[0_0_20px_rgba(253,217,53,0.4)]"
-                style={{ backgroundColor: colors.primary, color: '#000' }}
-              >
-                Get Started
-              </button>
+            <div className="lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-2xl border-t border-white/10 shadow-2xl py-6 px-6 flex flex-col gap-5 text-white max-h-[80vh] overflow-y-auto">
+              <button onClick={() => { onNavigate('chat'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-white">Claude & Products</button>
+              <button onClick={() => { onNavigate('digital-artifacts'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Artifacts & Capabilities</button>
+              <button onClick={() => { onNavigate('subscriptions'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Enterprise</button>
+              <button onClick={() => { onNavigate('about'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Resources</button>
+              <button onClick={() => { onNavigate('subscriptions'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Pricing</button>
+              <div className="w-full h-px bg-white/10 my-1"></div>
+              <button onClick={() => { onNavigate('auth'); setMobileMenuOpen(false); }} className="text-left text-base font-semibold text-gray-300">Login</button>
+              <button onClick={() => { onNavigate('subscriptions'); setMobileMenuOpen(false); }} className="w-full py-3 text-sm font-semibold rounded-lg border border-white/20 text-white text-center">Contact sales</button>
+              <button onClick={() => { onNavigate('chat'); setMobileMenuOpen(false); }} className="w-full py-3 text-sm font-semibold rounded-lg bg-white text-black text-center">Try Xalme</button>
             </div>
           )}
         </nav>
 
-        {/* Hero Section */}
+        <div className="animate-fade-in relative z-10">
+          {/* Hero Section */}
         <section className="relative pt-40 pb-20 md:pt-56 md:pb-32 px-6 md:px-12 max-w-7xl mx-auto overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 items-center">
             <div className="z-10 relative text-white">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FDD935]/10 border border-[#FDD935]/30 text-xs font-bold uppercase tracking-widest mb-8 text-[#FDD935] shadow-[0_0_20px_rgba(253,217,53,0.15)] backdrop-blur-md">
-                <span className="w-2 h-2 rounded-full bg-[#FDD935] animate-pulse"></span>
-                Powered by XESC
-              </div>
               <h1 className="text-6xl md:text-8xl font-black leading-[1.05] mb-6 tracking-tighter drop-shadow-2xl">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FDD935] to-[#FFC94A] drop-shadow-[0_0_20px_rgba(253,217,53,0.5)]">
                   XOERIS
@@ -168,12 +329,6 @@ export default function XoerisPage({ onNavigate }) {
                 >
                   Get Started <Zap size={18} />
                 </button>
-                <a
-                  href="#architecture"
-                  className="flex items-center justify-center gap-3 px-8 py-4 text-sm uppercase tracking-widest font-bold border border-[#FDD935]/30 transition-all duration-500 ease-hyper hover:bg-[#FDD935]/10 hover:border-[#FDD935] active:scale-95 rounded-lg bg-[#FDD935]/5 backdrop-blur-md text-[#FDD935] cursor-pointer"
-                >
-                  <Cpu size={18} /> System Architecture
-                </a>
               </div>
             </div>
 
@@ -322,10 +477,6 @@ export default function XoerisPage({ onNavigate }) {
               <p className="text-gray-400 max-w-sm font-medium leading-relaxed mb-6">
                 Pioneering professional software ecosystems, modular operating system frameworks, and interactive digital computing environments.
               </p>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                All Planetary Nodes Operational
-              </div>
             </div>
 
             <div>

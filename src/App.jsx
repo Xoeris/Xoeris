@@ -63,6 +63,7 @@ export default function App() {
     }
     if (path === '/about') return 'about';
     if (path === '/chat') return 'chat';
+    if (path === '/login' || path === '/auth') return 'auth';
 
     if (path === '/subscription' || path === '/payment') return 'subscriptions';
 
@@ -121,6 +122,7 @@ export default function App() {
       else if (path === '/xoeris') setCurrentPage('xoeris');
       else if (path === '/about') setCurrentPage('about');
       else if (path === '/chat') setCurrentPage('chat');
+      else if (path === '/login' || path === '/auth') setCurrentPage('auth');
       else if (path === '/digital-artifacts') setCurrentPage('digital-artifacts');
       else if (path === '/subscription') setCurrentPage('subscriptions');
       else if (path.startsWith('/aurevia') || path.startsWith('/search')) setCurrentPage('aurevia');
@@ -171,6 +173,8 @@ export default function App() {
       aurevia: '/aurevia',
       about: '/about',
       chat: '/chat',
+      auth: '/login',
+      login: '/login',
       acelbyte: '/',
       xoeris: '/',
       developers: '/',
@@ -185,7 +189,7 @@ export default function App() {
     const finalPath = (newPath === '/xoeris') ? '/' : newPath;
 
     window.history.pushState({}, '', finalPath);
-    setCurrentPage((page === 'acelbyte' || page === 'developers' || page === 'tartaruga') ? 'xoeris' : page);
+    setCurrentPage((page === 'acelbyte' || page === 'developers' || page === 'tartaruga') ? 'xoeris' : (page === 'login' ? 'auth' : page));
     window.scrollTo(0, 0);
   };
 
@@ -202,7 +206,7 @@ export default function App() {
       )}
 
       <div key={currentPage}>
-        {currentPage === 'auth' && <AuthPage />}
+        {currentPage === 'auth' && <AuthPage onNavigate={handleNavigate} />}
         {currentPage === 'aurevia' && <AureviaPage onNavigate={handleNavigate} />}
         {currentPage === 'about' && <AboutPage onNavigate={handleNavigate} />}
         {currentPage === 'chat' && <ChatPage onNavigate={handleNavigate} />}

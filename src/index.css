@@ -118,6 +118,12 @@ body {
   perspective: 1000px;
 }
 
+.liquid-glass-panel {
+  -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+  backdrop-filter: blur(28px) saturate(190%) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(16, 16, 16, 0.42) 35%, rgba(6, 6, 6, 0.52) 100%) !important;
+}
+
 .will-change-filter {
   will-change: filter;
 }

@@ -7,8 +7,8 @@ function GitHubIcon() {
     </svg>
   );
 }
-export default function AuthPage() {
-  // Guard: require valid state param (login request)
+export default function AuthPage({ onNavigate }) {
+  // Guard: allow direct login if accessed on xoeris.com / local web or if valid state param exists
   const [guard, setGuard] = useState({ loading: true, valid: false, error: '', client: '', redirectUri: '' });
   const [mode, setMode] = useState('login'); // login | otp
   const [email, setEmail] = useState('');
@@ -25,8 +25,16 @@ export default function AuthPage() {
   const redirectParam = params.get('redirect_uri');
 
   useEffect(() => {
+    const isDirectWebLogin = !window.location.hostname.includes('auth.xoeris.com') ||
+      clientParam === 'xoeris' ||
+      clientParam === 'web';
+
     if (!state) {
-      setGuard({ loading: false, valid: false, error: 'Missing login request. Open via app.', client: '', redirectUri: '' });
+      if (isDirectWebLogin) {
+        setGuard({ loading: false, valid: true, error: '', client: 'xoeris', redirectUri: '/' });
+      } else {
+        setGuard({ loading: false, valid: false, error: 'Missing login request. Open via app.', client: '', redirectUri: '' });
+      }
       return;
     }
     const verify = async () => {
@@ -35,11 +43,17 @@ export default function AuthPage() {
         const data = await res.json();
         if (data.valid) {
           setGuard({ loading: false, valid: true, error: '', client: data.client || clientParam || '', redirectUri: data.redirect_uri || redirectParam || '' });
+        } else if (isDirectWebLogin) {
+          setGuard({ loading: false, valid: true, error: '', client: 'xoeris', redirectUri: '/' });
         } else {
           setGuard({ loading: false, valid: false, error: data.error || 'Invalid or expired login request', client: '', redirectUri: '' });
         }
       } catch (e) {
-        setGuard({ loading: false, valid: false, error: e.message, client: '', redirectUri: '' });
+        if (isDirectWebLogin) {
+          setGuard({ loading: false, valid: true, error: '', client: 'xoeris', redirectUri: '/' });
+        } else {
+          setGuard({ loading: false, valid: false, error: e.message, client: '', redirectUri: '' });
+        }
       }
     };
     verify();
@@ -89,18 +103,33 @@ export default function AuthPage() {
   }, [guard.valid, guard.redirectUri]);
 
   const consumeAndRedirect = async (token, user) => {
-    try { await fetch('/api/auth/consume', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ state }) }); } catch {}
+    if (token) {
+      try {
+        localStorage.setItem('xoeris_token', token);
+        if (user) localStorage.setItem('xoeris_user', JSON.stringify(user));
+      } catch {}
+    }
+    if (state) {
+      try { await fetch('/api/auth/consume', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ state }) }); } catch {}
+    }
     const target = guard.redirectUri || redirectParam;
-    if (target) {
+    if (target && target !== '/') {
       const sep = target.includes('?') ? '&' : '?';
       const payload = encodeURIComponent(token || '');
-      window.location.href = `${target}${sep}token=${payload}&state=${encodeURIComponent(state)}`;
+      window.location.href = `${target}${sep}token=${payload}&state=${encodeURIComponent(state || '')}`;
     } else if (guard.client === 'hide' || clientParam === 'hide') {
       // For HIDE desktop, show token and instruct to return to app (deep link)
-      window.location.href = `hide://auth?token=${encodeURIComponent(token || '')}&state=${encodeURIComponent(state)}`;
-      setTimeout(() => { window.location.href = 'https://xoeris.com?auth=success'; }, 1500);
+      window.location.href = `hide://auth?token=${encodeURIComponent(token || '')}&state=${encodeURIComponent(state || '')}`;
+      setTimeout(() => {
+        if (onNavigate) onNavigate('xoeris');
+        else window.location.href = 'https://xoeris.com?auth=success';
+      }, 1500);
     } else {
-      window.location.href = 'https://xoeris.com?auth=success';
+      if (onNavigate) {
+        onNavigate('xoeris');
+      } else {
+        window.location.href = 'https://xoeris.com?auth=success';
+      }
     }
   };
 
@@ -233,114 +262,175 @@ export default function AuthPage() {
 
   if (guard.loading) {
     return (
-      <div className="min-h-screen bg-hide-canvas flex items-center justify-center px-4">
-        <p className="text-hide-text-muted animate-pulse text-sm">Verifying login request…</p>
+      <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center px-4 relative overflow-hidden">
+        <div className="fixed inset-0 z-[-2] bg-[linear-gradient(rgba(253,217,53,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-50"></div>
+        <p className="text-gray-400 animate-pulse text-sm">Verifying login request…</p>
       </div>
     );
   }
 
   if (!guard.valid) {
     return (
-      <div className="min-h-screen bg-hide-canvas flex flex-col items-center justify-center px-4">
-        <div className="w-full max-w-[600px] text-center">
-          <h1 className="text-2xl font-bold text-hide-text-primary mb-3">Authentication required</h1>
-          <p className="text-hide-text-secondary text-sm mb-2">{guard.error}</p>
-          <p className="text-hide-text-muted text-xs mb-6">auth.xoeris.com can only be opened via a login request from an app (HIDE, Levelist, or xoeris.com). Direct navigation is blocked.</p>
-          <a href="https://xoeris.com" className="inline-block bg-hide-action text-hide-action-text rounded-hide-lg px-6 py-3 text-sm font-semibold hover:bg-hide-action-hover transition-colors duration-hide-fast">Go to Xoeris</a>
+      <div className="min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center px-4 relative overflow-hidden">
+        <div className="fixed inset-0 z-[-2] bg-[linear-gradient(rgba(253,217,53,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-50"></div>
+        <div className="relative liquid-glass-panel border border-white/20 rounded-3xl p-8 max-w-[520px] w-full text-center ring-1 ring-white/10" style={{ backdropFilter: 'blur(32px) saturate(190%)', WebkitBackdropFilter: 'blur(32px) saturate(190%)' }}>
+          <div className="h-10 w-36 mx-auto mb-6">
+            <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="w-full h-full object-contain" />
+          </div>
+          <h1 className="text-2xl font-bold text-white mb-3">Authentication required</h1>
+          <p className="text-gray-300 text-sm mb-2">{guard.error}</p>
+          <p className="text-gray-400 text-xs mb-6">auth.xoeris.com can only be opened via a login request from an app (HIDE, Levelist, or xoeris.com). Direct navigation is blocked.</p>
+          {onNavigate ? (
+            <button onClick={() => onNavigate('xoeris')} className="inline-block bg-[#FDD935] text-black font-semibold rounded-xl px-6 py-3 text-sm hover:bg-[#FFE066] transition-all cursor-pointer border-none shadow-[0_0_20px_rgba(253,217,53,0.3)]">Go to Xoeris</button>
+          ) : (
+            <a href="https://xoeris.com" className="inline-block bg-[#FDD935] text-black font-semibold rounded-xl px-6 py-3 text-sm hover:bg-[#FFE066] transition-all border-none shadow-[0_0_20px_rgba(253,217,53,0.3)]">Go to Xoeris</a>
+          )}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-hide-canvas flex flex-col items-center justify-center px-4 py-8">
-      <div className="w-full max-w-[600px]">
-        <div className="mb-10">
-          <span className="text-hide-text-primary font-black tracking-tight text-xl">Xoeris</span>
-          <span className="text-hide-text-muted text-xl"> / </span>
-          <span className="text-hide-text-secondary text-xl">Acelbyte</span>
-        </div>
-        <h1 className="text-4xl font-bold text-hide-text-primary text-center mb-8">Log in</h1>
+    <div className="min-h-screen bg-[#050505] text-white selection:bg-[#FDD935] selection:text-black flex flex-col items-center justify-center px-4 py-12 relative overflow-hidden">
+      {/* Cyber Grid Background */}
+      <div className="fixed inset-0 z-[-2] bg-[linear-gradient(rgba(253,217,53,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-50"></div>
 
-        <button
-          onClick={handleGitHubLogin}
-          disabled={busy}
-          className="w-full bg-hide-elevated text-hide-text-primary rounded-hide-lg py-4 flex items-center justify-center gap-3 mb-3 font-medium border border-hide-border-subtle hover:bg-hide-hover hover:border-hide-border-default transition-all duration-hide-fast disabled:opacity-60"
-        >
-          <GitHubIcon />
-          Continue with GitHub
-        </button>
+      {/* Shared Animated Background Blobs */}
+      <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden mix-blend-screen gpu-accel">
+        <div className="blob blob-1 will-change-transform" style={{ backgroundColor: '#FDD935' }}></div>
+        <div className="blob blob-2 will-change-transform" style={{ backgroundColor: '#FFC94A' }}></div>
+        <div className="blob blob-3 will-change-transform" style={{ backgroundColor: '#FEF08A' }}></div>
+        <div className="absolute inset-0 bg-black/65 backdrop-blur-[60px]"></div>
+      </div>
 
-        <div className="w-full mb-3 flex justify-center">
-          <div id="google-signin-button" className="w-full flex justify-center min-h-[44px]"></div>
-        </div>
-
-        <div className="border-t border-hide-border-default my-6" />
-
-        {!otpPending ? (
-          <>
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full bg-hide-input text-hide-text-primary rounded-hide-md p-4 mb-3 outline-none border border-hide-border-input focus:border-hide-action placeholder:text-hide-text-muted transition-colors duration-hide-fast"
-            />
-            <div className="relative mb-3">
-              <input
-                type={showPw ? 'text' : 'password'}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-hide-input text-hide-text-primary rounded-hide-md p-4 pr-12 outline-none border border-hide-border-input focus:border-hide-action placeholder:text-hide-text-muted transition-colors duration-hide-fast"
-              />
-              <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-hide-text-muted hover:text-hide-text-secondary">
-                {showPw ? '🙈' : '👁️'}
-              </button>
+      <div className="w-full max-w-[460px] relative z-10">
+        {/* Top Header: Logo + Back button */}
+        <div className="mb-6 flex items-center justify-between">
+          <button
+            onClick={() => onNavigate ? onNavigate('xoeris') : window.location.href = 'https://xoeris.com'}
+            className="flex items-center group bg-transparent border-none p-0 cursor-pointer text-left"
+          >
+            <div className="h-9 w-36 transition-transform duration-300 group-hover:scale-105">
+              <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="w-full h-full object-contain object-left" />
             </div>
-            <a href="https://xoeris.com/forgot-password" className="text-hide-text-secondary text-sm hover:text-hide-text-primary transition-colors duration-hide-fast">Forget password?</a>
-
+          </button>
+          {onNavigate && (
             <button
-              onClick={handlePasswordLoginStep}
-              disabled={busy}
-              className="w-full bg-hide-action text-hide-action-text font-semibold rounded-hide-lg py-4 mt-4 hover:bg-hide-action-hover transition-all duration-hide-fast disabled:opacity-60"
+              onClick={() => onNavigate('xoeris')}
+              className="text-xs font-medium text-gray-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 cursor-pointer"
             >
-              {busy ? 'Please wait…' : 'Log in'}
+              ← Back to Xoeris
             </button>
-          </>
-        ) : (
-          <div className="bg-hide-primary border border-hide-border-subtle rounded-hide-xl p-5">
-            <h3 className="text-hide-text-primary font-semibold text-center mb-2">Enter OTP</h3>
-            <p className="text-hide-text-secondary text-xs text-center mb-4">6-digit code sent to {pendingEmail} (10 min expiry)</p>
-            <input
-              type="text"
-              placeholder="123456"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0,6))}
-              maxLength={6}
-              className="w-full bg-hide-canvas text-hide-text-primary tracking-[0.5em] text-center text-xl rounded-hide-md p-4 mb-3 outline-none border border-hide-border-input focus:border-hide-action transition-colors duration-hide-fast"
-            />
-            <div className="flex gap-3">
-              <button onClick={handleVerifyOtp} disabled={busy} className="flex-1 bg-hide-action text-hide-action-text font-semibold rounded-hide-lg py-3 hover:bg-hide-action-hover transition-all duration-hide-fast disabled:opacity-60">Verify &amp; Continue</button>
-              <button onClick={() => { setOtpPending(false); setOtp(''); setMsg({ text: '', isError: false }); }} className="px-6 bg-hide-ghost text-hide-text-primary rounded-hide-lg hover:bg-hide-hover transition-colors duration-hide-fast">Back</button>
-            </div>
+          )}
+        </div>
+
+        {/* Liquid Glass Card */}
+        <div
+          className="relative liquid-glass-panel border border-white/20 rounded-3xl p-8 sm:p-9 text-left overflow-hidden ring-1 ring-white/10 shadow-2xl"
+          style={{ backdropFilter: 'blur(32px) saturate(190%)', WebkitBackdropFilter: 'blur(32px) saturate(190%)' }}
+        >
+          {/* Top specular sheen */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none"></div>
+          <div className="absolute -top-12 left-1/3 w-64 h-24 bg-[#FDD935]/[0.10] rounded-full blur-3xl pointer-events-none"></div>
+
+          <div className="mb-6 text-center">
+            <h1 className="text-3xl font-extrabold tracking-tight text-white mb-2">Log in</h1>
+            <p className="text-xs text-gray-400">Access your Xoeris account and services</p>
           </div>
-        )}
 
-        {msg.text && (
-          <p className={`text-sm mt-4 text-center ${msg.isError ? 'text-hide-error' : 'text-hide-success'}`}>{msg.text}</p>
-        )}
+          <button
+            onClick={handleGitHubLogin}
+            disabled={busy}
+            className="w-full bg-white/[0.06] hover:bg-white/[0.12] text-white rounded-xl py-3.5 flex items-center justify-center gap-3 mb-3 font-semibold text-sm border border-white/15 transition-all duration-200 cursor-pointer disabled:opacity-60 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)]"
+          >
+            <GitHubIcon />
+            Continue with GitHub
+          </button>
 
-        <p className="text-hide-text-secondary text-sm mt-6 text-center">
-          Don't have an account? <a href={`https://auth.xoeris.com?state=${encodeURIComponent(state)}&mode=signup`} className="text-hide-text-primary underline hover:text-hide-text-emphasis transition-colors duration-hide-fast">Sign up</a>
-        </p>
+          <div className="w-full mb-3 flex justify-center">
+            <div id="google-signin-button" className="w-full flex justify-center min-h-[44px]"></div>
+          </div>
 
-        <div className="border-t border-hide-border-default my-6" />
+          <div className="relative my-6 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>
+            <span className="relative bg-[#0b0b0b] px-3 text-[11px] font-medium uppercase tracking-wider text-gray-400 rounded-full border border-white/10">or continue with</span>
+          </div>
 
-        <p className="text-hide-text-muted text-xs text-center leading-relaxed">
-          By continuing, you are agreeing to Xoeris's <a href="https://xoeris.com/terms" className="underline hover:text-hide-text-secondary transition-colors duration-hide-fast">Terms of Service</a> and{' '}
-          <a href="https://xoeris.com/privacy" className="underline hover:text-hide-text-secondary transition-colors duration-hide-fast">Privacy Policy</a>.
-        </p>
+          {!otpPending ? (
+            <>
+              <div className="space-y-3.5">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-300 mb-1.5 tracking-wide">Email</label>
+                  <input
+                    type="email"
+                    placeholder="name@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-black/40 text-white rounded-xl px-4 py-3 text-sm outline-none border border-white/15 focus:border-[#FDD935] focus:ring-1 focus:ring-[#FDD935] placeholder:text-gray-500 transition-colors"
+                  />
+                </div>
+                <div>
+                  <div className="flex justify-between items-center mb-1.5">
+                    <label className="text-xs font-semibold text-gray-300 tracking-wide">Password</label>
+                    <a href="https://xoeris.com/forgot-password" className="text-xs text-gray-400 hover:text-[#FDD935] transition-colors">Forgot password?</a>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type={showPw ? 'text' : 'password'}
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full bg-black/40 text-white rounded-xl px-4 py-3 pr-11 text-sm outline-none border border-white/15 focus:border-[#FDD935] focus:ring-1 focus:ring-[#FDD935] placeholder:text-gray-500 transition-colors"
+                    />
+                    <button type="button" onClick={() => setShowPw(!showPw)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white bg-transparent border-none p-0 cursor-pointer text-sm">
+                      {showPw ? '🙈' : '👁️'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={handlePasswordLoginStep}
+                disabled={busy}
+                className="w-full bg-[#FDD935] text-black font-bold rounded-xl py-3.5 mt-5 hover:bg-[#FFE066] active:scale-[0.99] transition-all duration-200 cursor-pointer disabled:opacity-60 text-sm shadow-[0_0_25px_rgba(253,217,53,0.35)]"
+              >
+                {busy ? 'Please wait…' : 'Log in'}
+              </button>
+            </>
+          ) : (
+            <div className="bg-black/50 border border-white/15 rounded-2xl p-5">
+              <h3 className="text-white font-bold text-center mb-1 text-sm">Enter verification code</h3>
+              <p className="text-gray-400 text-xs text-center mb-4">6-digit code sent to {pendingEmail}</p>
+              <input
+                type="text"
+                placeholder="123456"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0,6))}
+                maxLength={6}
+                className="w-full bg-black/60 text-[#FDD935] tracking-[0.5em] text-center text-xl font-mono rounded-xl p-3.5 mb-3 outline-none border border-white/20 focus:border-[#FDD935] transition-colors"
+              />
+              <div className="flex gap-2.5">
+                <button onClick={handleVerifyOtp} disabled={busy} className="flex-1 bg-[#FDD935] text-black font-bold rounded-xl py-3 text-xs hover:bg-[#FFE066] transition-all cursor-pointer disabled:opacity-60">Verify &amp; Continue</button>
+                <button onClick={() => { setOtpPending(false); setOtp(''); setMsg({ text: '', isError: false }); }} className="px-5 bg-white/10 hover:bg-white/15 text-white text-xs font-semibold rounded-xl transition-colors cursor-pointer border border-white/10">Back</button>
+              </div>
+            </div>
+          )}
+
+          {msg.text && (
+            <p className={`text-xs mt-4 text-center font-medium ${msg.isError ? 'text-red-400' : 'text-[#FDD935]'}`}>{msg.text}</p>
+          )}
+
+          <p className="text-gray-400 text-xs mt-6 text-center">
+            Don't have an account? <a href={`https://auth.xoeris.com?state=${encodeURIComponent(state || '')}&mode=signup`} className="text-white font-semibold underline hover:text-[#FDD935] transition-colors ml-1">Sign up</a>
+          </p>
+
+          <div className="border-t border-white/10 my-5" />
+
+          <p className="text-gray-400 text-[11px] text-center leading-relaxed">
+            By continuing, you agree to Xoeris's <a href="https://xoeris.com/terms" className="text-gray-300 underline hover:text-white transition-colors">Terms of Service</a> and{' '}
+            <a href="https://xoeris.com/privacy" className="text-gray-300 underline hover:text-white transition-colors">Privacy Policy</a>.
+          </p>
+        </div>
       </div>
     </div>
   );
