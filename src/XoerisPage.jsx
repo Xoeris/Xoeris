@@ -628,7 +628,7 @@ export default function XoerisPage({ onNavigate }) {
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-32 bg-[#FDD935] opacity-5 blur-[100px] pointer-events-none"></div>
 
           <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-4 gap-16 mb-16 relative z-10">
-            <div className="md:col-span-2">
+            <div className="md:col-span-3">
               <button onClick={() => onNavigate('xoeris')} className="flex items-center gap-3 mb-6 group inline-flex bg-transparent border-none p-0 cursor-pointer">
                 <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="h-10 w-40 object-contain object-left transition-transform duration-300 group-hover:scale-105" />
               </button>
@@ -644,21 +644,7 @@ export default function XoerisPage({ onNavigate }) {
             <div>
               <h4 className="text-xs font-black text-[#FDD935] uppercase tracking-[0.2em] mb-6 drop-shadow-[0_0_5px_rgba(253,217,53,0.5)]">Ecosystem</h4>
               <ul className="space-y-4 text-gray-400 font-medium">
-                <li><a href="#platforms" className="hover:text-[#FDD935] transition-colors duration-300">XIME Modular OS</a></li>
-                <li><a href="#architecture" className="hover:text-[#FDD935] transition-colors duration-300">Architecture Nodes</a></li>
-                <li><button onClick={() => onNavigate('aurevia')} className="hover:text-[#FDD935] transition-colors duration-300 bg-transparent border-none p-0 cursor-pointer text-left">Aurevia Search</button></li>
                 <li><button onClick={() => onNavigate('subscriptions')} className="hover:text-[#FDD935] transition-colors duration-300 bg-transparent border-none p-0 cursor-pointer text-left">Subscriptions</button></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-xs font-black text-[#FDD935] uppercase tracking-[0.2em] mb-6 drop-shadow-[0_0_5px_rgba(253,217,53,0.5)]">Company</h4>
-              <ul className="space-y-4 text-gray-400 font-medium">
-                <li><button onClick={() => onNavigate('about')} className="hover:text-[#FDD935] transition-colors duration-300 bg-transparent border-none p-0 cursor-pointer text-left">About Firm</button></li>
-                <li><button onClick={() => onNavigate('digital-artifacts')} className="hover:text-[#FDD935] transition-colors duration-300 bg-transparent border-none p-0 cursor-pointer text-left">Digital Artifacts</button></li>
-                <li><a href="#" className="hover:text-[#FDD935] transition-colors duration-300">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-[#FDD935] transition-colors duration-300">Terms of Service</a></li>
-                <li><a href="#" className="hover:text-[#FDD935] transition-colors duration-300">Security & Compliance</a></li>
               </ul>
             </div>
           </div>
