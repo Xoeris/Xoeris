@@ -9,6 +9,7 @@ import XoerisPage from './XoerisPage';
 import SubscriptionsPage from './SubscriptionsPage';
 import AureviaPage from './AureviaPage';
 import AuthPage from './AuthPage';
+import { setSession, syncUserFromDatabase } from './services/authService';
 
 // Product Deep-Dive Pages
 import VocalisProductPage from './VocalisProductPage';
@@ -74,6 +75,20 @@ export default function App() {
   });
 
   useEffect(() => {
+    // Capture cross-domain token from auth.xoeris.com
+    const searchParams = new URLSearchParams(window.location.search);
+    const incomingToken = searchParams.get('token');
+    if (incomingToken) {
+      setSession(incomingToken, null);
+      syncUserFromDatabase().catch(() => null);
+      searchParams.delete('token');
+      searchParams.delete('auth');
+      searchParams.delete('state');
+      const cleanSearch = searchParams.toString();
+      const cleanUrl = window.location.pathname + (cleanSearch ? `?${cleanSearch}` : '') + window.location.hash;
+      window.history.replaceState({}, '', cleanUrl);
+    }
+
     // Auto-redirect removed routes to /
     const path = window.location.pathname.toLowerCase();
     if (path === '/xoeris' || path === '/about/acelbyte' || path === '/acelbyte' || path === '/developers' || path === '/tartaruga') {

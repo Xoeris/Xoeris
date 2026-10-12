@@ -46,11 +46,23 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
   const params = new URLSearchParams(window.location.search);
   const state = params.get('state');
   const clientParam = params.get('client');
-  const redirectParam = params.get('redirect_uri');
+  const redirectParam = params.get('redirect_uri') || params.get('redirect') || params.get('return_to') || params.get('from');
   const [isSignUp, setIsSignUp] = useState(params.get('mode') === 'signup');
   const githubProcessedRef = useRef(false);
 
   useEffect(() => {
+    // Remember where the login originated
+    if (redirectParam) {
+      sessionStorage.setItem('xoeris_auth_return_to', redirectParam);
+    } else if (document.referrer) {
+      try {
+        const refUrl = new URL(document.referrer);
+        if (!refUrl.hostname.includes('auth.xoeris.com')) {
+          sessionStorage.setItem('xoeris_auth_return_to', document.referrer);
+        }
+      } catch {}
+    }
+
     // Direct navigation is always permitted for web users on any domain
     if (!state) {
       setGuard({
@@ -58,7 +70,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
         valid: true,
         error: '',
         client: clientParam || 'xoeris',
-        redirectUri: redirectParam || '/'
+        redirectUri: redirectParam || ''
       });
       return;
     }
@@ -70,10 +82,10 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
           setGuard({ loading: false, valid: true, error: '', client: data.client || clientParam || '', redirectUri: data.redirect_uri || redirectParam || '' });
         } else {
           // Graceful fallback to direct login instead of locking out the user
-          setGuard({ loading: false, valid: true, error: '', client: clientParam || 'xoeris', redirectUri: redirectParam || '/' });
+          setGuard({ loading: false, valid: true, error: '', client: clientParam || 'xoeris', redirectUri: redirectParam || '' });
         }
       } catch (e) {
-        setGuard({ loading: false, valid: true, error: '', client: clientParam || 'xoeris', redirectUri: redirectParam || '/' });
+        setGuard({ loading: false, valid: true, error: '', client: clientParam || 'xoeris', redirectUri: redirectParam || '' });
       }
     };
     verify();
@@ -134,7 +146,39 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
       onSuccess(token, user);
       return;
     }
-    const target = guard.redirectUri || redirectParam;
+
+    const isAuthSubdomain = window.location.hostname.includes('auth.xoeris.com') || window.location.hostname.startsWith('auth.');
+    let target = guard.redirectUri || redirectParam || sessionStorage.getItem('xoeris_auth_return_to');
+    sessionStorage.removeItem('xoeris_auth_return_to');
+
+    // For HIDE desktop app
+    if (guard.client === 'hide' || clientParam === 'hide') {
+      window.location.href = `hide://auth?token=${encodeURIComponent(token || '')}&state=${encodeURIComponent(state || '')}`;
+      setTimeout(() => {
+        window.location.href = 'https://xoeris.com?auth=success';
+      }, 1500);
+      return;
+    }
+
+    // When on auth.xoeris.com, we must redirect outward to the calling application or xoeris.com
+    if (isAuthSubdomain) {
+      if (!target || target === '/' || target.includes('auth.xoeris.com')) {
+        target = 'https://xoeris.com';
+      } else if (target.startsWith('/')) {
+        if (target === '/chat') {
+          target = 'https://xalme.xoeris.com/chat';
+        } else {
+          target = `https://xoeris.com${target}`;
+        }
+      }
+      const sep = target.includes('?') ? '&' : '?';
+      const tokenParam = token ? `token=${encodeURIComponent(token)}` : '';
+      const stParam = state ? `&state=${encodeURIComponent(state)}` : '';
+      window.location.href = `${target}${sep}${tokenParam}${stParam}&auth=success`;
+      return;
+    }
+
+    // When on same origin (e.g. localhost or xoeris.com/login)
     if (target && target.startsWith('/')) {
       const pageKey = target.replace(/^\//, '') || 'xoeris';
       if (onNavigate) {
@@ -142,23 +186,19 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
       } else {
         window.location.href = target;
       }
-    } else if (target && target !== '/') {
+      return;
+    }
+
+    if (target && (target.startsWith('http://') || target.startsWith('https://'))) {
       const sep = target.includes('?') ? '&' : '?';
-      const payload = encodeURIComponent(token || '');
-      window.location.href = `${target}${sep}token=${payload}&state=${encodeURIComponent(state || '')}`;
-    } else if (guard.client === 'hide' || clientParam === 'hide') {
-      // For HIDE desktop, show token and instruct to return to app (deep link)
-      window.location.href = `hide://auth?token=${encodeURIComponent(token || '')}&state=${encodeURIComponent(state || '')}`;
-      setTimeout(() => {
-        if (onNavigate) onNavigate('xoeris');
-        else window.location.href = 'https://xoeris.com?auth=success';
-      }, 1500);
+      window.location.href = `${target}${sep}token=${encodeURIComponent(token || '')}&auth=success`;
+      return;
+    }
+
+    if (onNavigate) {
+      onNavigate('xoeris');
     } else {
-      if (onNavigate) {
-        onNavigate('xoeris');
-      } else {
-        window.location.href = 'https://xoeris.com?auth=success';
-      }
+      window.location.href = 'https://xoeris.com?auth=success';
     }
   };
 
