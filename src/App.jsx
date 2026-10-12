@@ -87,6 +87,9 @@ export default function App() {
       const cleanSearch = searchParams.toString();
       const cleanUrl = window.location.pathname + (cleanSearch ? `?${cleanSearch}` : '') + window.location.hash;
       window.history.replaceState({}, '', cleanUrl);
+    } else {
+      // Auto-sync session from shared .xoeris.com cookies or stored tokens
+      syncUserFromDatabase().catch(() => null);
     }
 
     // Auto-redirect removed routes to /

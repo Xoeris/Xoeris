@@ -52,8 +52,9 @@ export function getAppDisplayName(req) {
   return 'Levelist';
 }
 
-export function setCorsHeaders(res, methods = 'POST, OPTIONS') {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+export function setCorsHeaders(res, methods = 'POST, OPTIONS', req = null) {
+  const origin = (req && req.headers && req.headers.origin) ? req.headers.origin : '*';
+  res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', methods);
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Levelist-App-Secret, X-Mova-App-Secret, X-Musify-App-Secret, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');

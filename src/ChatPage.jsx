@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 import AuthPage from './AuthPage';
-import { getStoredUser, clearSession } from './services/authService';
+import { getStoredUser, getStoredToken, setSession, clearSession, syncUserFromDatabase } from './services/authService';
 
 const PUBLIC_API_KEY = import.meta.env.VITE_XOERIS_PUBLIC_KEY || '';
 
@@ -21,11 +21,11 @@ function ClaudeSpark({ className = "w-7 h-7 text-[#D97706]" }) {
 }
 
 export default function ChatPage({ onNavigate }) {
-  // Check for Xoeris auth token or chat auth
+  // Check for Xoeris auth token or chat auth across subdomains
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    const hasToken = Boolean(localStorage.getItem('xoeris_token'));
+    const token = getStoredToken();
     const hasChatAuth = localStorage.getItem('xoeris_chat_auth') === 'true';
-    return hasToken || hasChatAuth;
+    return Boolean(token) || hasChatAuth;
   });
 
   const [currentUser, setCurrentUser] = useState(() => getStoredUser());
@@ -47,16 +47,36 @@ export default function ChatPage({ onNavigate }) {
     const params = new URLSearchParams(window.location.search);
     const urlToken = params.get('token');
     if (urlToken) {
-      localStorage.setItem('xoeris_token', urlToken);
-      localStorage.setItem('xoeris_chat_auth', 'true');
+      setSession(urlToken, null);
       setIsAuthenticated(true);
-      window.history.replaceState({}, '', window.location.pathname);
+      syncUserFromDatabase().catch(() => null);
+      params.delete('token');
+      params.delete('auth');
+      params.delete('state');
+      const cleanSearch = params.toString();
+      const cleanUrl = window.location.pathname + (cleanSearch ? `?${cleanSearch}` : '');
+      window.history.replaceState({}, '', cleanUrl);
     } else {
-      const authenticated = Boolean(localStorage.getItem('xoeris_token')) ||
-        localStorage.getItem('xoeris_chat_auth') === 'true';
+      const token = getStoredToken();
+      const authenticated = Boolean(token) || localStorage.getItem('xoeris_chat_auth') === 'true';
       setIsAuthenticated(authenticated);
+      // Auto-sync from database using shared cookie/token
+      syncUserFromDatabase().then((user) => {
+        if (user) {
+          setIsAuthenticated(true);
+          setCurrentUser(user);
+        }
+      }).catch(() => null);
     }
     setCurrentUser(getStoredUser());
+
+    const handleAuthChange = () => {
+      const token = getStoredToken();
+      setIsAuthenticated(Boolean(token));
+      setCurrentUser(getStoredUser());
+    };
+    window.addEventListener('xoeris_auth_change', handleAuthChange);
+    return () => window.removeEventListener('xoeris_auth_change', handleAuthChange);
   }, []);
 
   useEffect(() => {

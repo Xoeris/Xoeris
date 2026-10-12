@@ -2,11 +2,16 @@ import { neon } from '@neondatabase/serverless';
 import { verifySessionToken, normalizeEmail, setCorsHeaders } from '../_lib/auth.js';
 
 export default async function handler(req, res) {
-  setCorsHeaders(res, 'GET, POST, OPTIONS');
+  setCorsHeaders(res, 'GET, POST, OPTIONS', req);
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const authHeader = req.headers.authorization || '';
-  const token = authHeader.replace(/^Bearer\s+/i, '') || req.query?.token;
+  let token = authHeader.replace(/^Bearer\s+/i, '') || req.query?.token;
+
+  if (!token && req.headers.cookie) {
+    const match = req.headers.cookie.match(/(?:^|;\s*)(?:xoeris_token|xoeris_session_token)=([^;]+)/);
+    if (match) token = decodeURIComponent(match[1]);
+  }
 
   if (!token) {
     return res.status(401).json({ error: 'Missing token' });
@@ -39,7 +44,7 @@ export default async function handler(req, res) {
     }
 
     const user = rows[0];
-    return res.status(200).json({ user });
+    return res.status(200).json({ user, token });
   } catch (err) {
     return res.status(401).json({ error: 'Invalid or expired token', details: err.message });
   }
