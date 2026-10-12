@@ -209,9 +209,21 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
   }
 
   async function handleGoogleLoginClick() {
-    const cid = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    let cid = import.meta.env.VITE_GOOGLE_CLIENT_ID;
     if (!cid) {
-      setMsg({ text: 'Google OAuth not configured (VITE_GOOGLE_CLIENT_ID)', isError: true });
+      try {
+        const apiUrl = window.location.hostname.includes('xoeris.com')
+          ? 'https://api.xoeris.com/api/database1/google-config'
+          : '/api/database1/google-config';
+        const res = await fetch(apiUrl).catch(() => null);
+        if (res && res.ok) {
+          const cfg = await res.json().catch(() => ({}));
+          if (cfg.clientId) cid = cfg.clientId;
+        }
+      } catch {}
+    }
+    if (!cid) {
+      setMsg({ text: 'Google OAuth not configured (VITE_GOOGLE_CLIENT_ID missing)', isError: true });
       return;
     }
 
