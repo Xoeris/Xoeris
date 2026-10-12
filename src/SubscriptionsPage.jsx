@@ -351,11 +351,10 @@ export default function SubscriptionsPage({ onNavigate }) {
             highlighted={false}
             icon={ShieldCheck}
             features={[
+              "Basic Xoeris products",
               "Chat with Xalme on Web for a limited usage",
-              "Standard Xalme 3.5 Core queries",
-              "Basic context window support",
-              "Access to community extensions",
-              "Standard customer support"
+              "Join Xoeris Community",
+              "Being a contributor for Xoeris Development Programs"
             ]}
           />
           <PricingCard 
@@ -366,11 +365,12 @@ export default function SubscriptionsPage({ onNavigate }) {
             highlighted={true}
             icon={Zap}
             features={[
+              "Pro Xoeris products",
               "Chat with Xalme on web, Android, and desktop",
-              "5x higher usage limits compared to Free tier",
-              "Access to advanced Xalme Opus & Core models",
-              "Priority access during peak system demand",
-              "Early access to new features and sidecar releases"
+              "Higher usage limits",
+              "Access to more Xalme models",
+              "Customer support from Xoeris Agent",
+              "Early access to Beta Xoeris products and features"
             ]}
           />
           <PricingCard 
@@ -381,11 +381,11 @@ export default function SubscriptionsPage({ onNavigate }) {
             highlighted={false}
             icon={Zap}
             features={[
+              "All Xoeris products",
               "Access Xalme Code on web",
-              "Unlimited high-speed reasoning calls",
-              "Extended 200k+ context window buffers",
-              "Dedicated infrastructure cluster routing",
-              "24/7 Priority engineering SLA support"
+              "Up to 10x more usage than Pro*",
+              "High priorities for customer support from Xoeris Agent",
+              "Early access to Alpha, Beta, and Dev Xoeris products and advanced features"
             ]}
           />
         </div>

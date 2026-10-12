@@ -681,7 +681,6 @@ export default function XoerisPage({ onNavigate }) {
             <div className="flex gap-8 mt-4 md:mt-0 text-xs font-bold uppercase tracking-widest">
               <a href="#" className="hover:text-[#FDD935] transition-colors">Privacy</a>
               <a href="#" className="hover:text-[#FDD935] transition-colors">Terms</a>
-              <a href="#" className="hover:text-[#FDD935] transition-colors">EULA</a>
             </div>
           </div>
         </footer>

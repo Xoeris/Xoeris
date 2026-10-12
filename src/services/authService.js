@@ -76,7 +76,7 @@ export function setSession(token, user) {
   window.dispatchEvent(new Event('xoeris_auth_change'));
 }
 
-export function clearSession() {
+export function clearSession(reload = true) {
   localStorage.removeItem('xoeris_token');
   localStorage.removeItem('xoeris_user');
   localStorage.removeItem('xoeris_chat_auth');
@@ -85,6 +85,9 @@ export function clearSession() {
   deleteSharedCookie('xoeris_chat_auth');
   deleteSharedCookie('xoeris_token');
   window.dispatchEvent(new Event('xoeris_auth_change'));
+  if (reload && typeof window !== 'undefined') {
+    window.location.reload();
+  }
 }
 
 export async function syncUserFromDatabase() {

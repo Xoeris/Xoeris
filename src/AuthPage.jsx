@@ -48,7 +48,23 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
   const clientParam = params.get('client');
   const redirectParam = params.get('redirect_uri') || params.get('redirect') || params.get('return_to') || params.get('from');
   const [isSignUp, setIsSignUp] = useState(params.get('mode') === 'signup');
+  const [googleClientId, setGoogleClientId] = useState(import.meta.env.VITE_GOOGLE_CLIENT_ID || '');
   const githubProcessedRef = useRef(false);
+
+  // Prefetch Google Client ID if missing in client env
+  useEffect(() => {
+    if (!googleClientId) {
+      const apiUrl = window.location.hostname.includes('xoeris.com')
+        ? 'https://api.xoeris.com/api/database1/google-config'
+        : '/api/database1/google-config';
+      fetch(apiUrl)
+        .then((res) => res.json())
+        .then((cfg) => {
+          if (cfg?.clientId) setGoogleClientId(cfg.clientId);
+        })
+        .catch(() => null);
+    }
+  }, [googleClientId]);
 
   useEffect(() => {
     // Remember where the login originated
@@ -107,11 +123,14 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
 
   useEffect(() => {
     const initAndRender = () => {
-      if (guard.valid && window.google?.accounts?.id && import.meta.env.VITE_GOOGLE_CLIENT_ID) {
+      const cid = googleClientId || import.meta.env.VITE_GOOGLE_CLIENT_ID;
+      if (guard.valid && window.google?.accounts?.id && cid) {
         try {
           window.google.accounts.id.initialize({
-            client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+            client_id: cid,
             callback: handleGoogleResponse,
+            auto_select: false,
+            itp_support: true,
             ux_mode: 'popup',
           });
           const btnContainer = document.getElementById('google-signin-button');
@@ -132,7 +151,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
     initAndRender();
     window.addEventListener('gsi_loaded', initAndRender);
     return () => window.removeEventListener('gsi_loaded', initAndRender);
-  }, [guard.valid, guard.redirectUri]);
+  }, [guard.valid, guard.redirectUri, googleClientId]);
 
   const consumeAndRedirect = async (token, user) => {
     if (token) {
@@ -144,6 +163,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
     }
     if (onSuccess) {
       onSuccess(token, user);
+      window.location.reload();
       return;
     }
 
@@ -180,12 +200,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
 
     // When on same origin (e.g. localhost or xoeris.com/login)
     if (target && target.startsWith('/')) {
-      const pageKey = target.replace(/^\//, '') || 'xoeris';
-      if (onNavigate) {
-        onNavigate(pageKey);
-      } else {
-        window.location.href = target;
-      }
+      window.location.href = target;
       return;
     }
 
@@ -195,11 +210,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
       return;
     }
 
-    if (onNavigate) {
-      onNavigate('xoeris');
-    } else {
-      window.location.href = 'https://xoeris.com?auth=success';
-    }
+    window.location.href = '/';
   };
 
   async function handleGoogleResponse(response) {
@@ -248,7 +259,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
   }
 
   async function handleGoogleLoginClick() {
-    let cid = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    let cid = googleClientId || import.meta.env.VITE_GOOGLE_CLIENT_ID;
     if (!cid) {
       try {
         const apiUrl = window.location.hostname.includes('xoeris.com')
@@ -257,7 +268,10 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
         const res = await fetch(apiUrl).catch(() => null);
         if (res && res.ok) {
           const cfg = await res.json().catch(() => ({}));
-          if (cfg.clientId) cid = cfg.clientId;
+          if (cfg.clientId) {
+            cid = cfg.clientId;
+            setGoogleClientId(cid);
+          }
         }
       } catch {}
     }
@@ -269,7 +283,29 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
     setBusy(true);
     setMsg({ text: 'Connecting to Google…', isError: false });
 
-    // Wait briefly for GIS if still initializing
+    // Apple iOS and Safari detection
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+    // On Apple iOS Safari: One Tap is blocked by WebKit ITP and popup blockers.
+    // Trigger direct OAuth 2.0 redirect with prompt=select_account to guarantee the account selector appears!
+    if (isIOS || isSafari) {
+      const redirectUri = window.location.origin + (window.location.pathname === '/' ? (window.location.hostname.includes('auth.xoeris.com') ? '/' : '/login') : window.location.pathname);
+      const nonce = Math.random().toString(36).slice(2) + Date.now().toString(36);
+      const params = new URLSearchParams({
+        client_id: cid,
+        redirect_uri: redirectUri,
+        response_type: 'id_token',
+        scope: 'openid email profile',
+        prompt: 'select_account',
+        nonce: nonce,
+      });
+      window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
+      return;
+    }
+
+    // On desktop browsers: initialize GIS with itp_support and auto_select: false
     let googleApi = window.google;
     if (!googleApi?.accounts?.id) {
       googleApi = await new Promise((resolve) => {
@@ -279,7 +315,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
           if (window.google?.accounts?.id) {
             clearInterval(interval);
             resolve(window.google);
-          } else if (attempts > 20) {
+          } else if (attempts > 15) {
             clearInterval(interval);
             resolve(null);
           }
@@ -292,16 +328,24 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
         googleApi.accounts.id.initialize({
           client_id: cid,
           callback: handleGoogleResponse,
+          auto_select: false,
+          itp_support: true,
           ux_mode: 'popup',
         });
         googleApi.accounts.id.prompt((notification) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            setBusy(false);
-            const btn = document.querySelector('#google-signin-button [role="button"]') ||
-                        document.querySelector('#google-signin-button iframe');
-            if (btn) {
-              btn.click();
-            }
+            // Fallback: direct Google OAuth redirect with prompt=select_account
+            const redirectUri = window.location.origin + (window.location.pathname === '/' ? (window.location.hostname.includes('auth.xoeris.com') ? '/' : '/login') : window.location.pathname);
+            const nonce = Math.random().toString(36).slice(2) + Date.now().toString(36);
+            const params = new URLSearchParams({
+              client_id: cid,
+              redirect_uri: redirectUri,
+              response_type: 'id_token',
+              scope: 'openid email profile',
+              prompt: 'select_account',
+              nonce: nonce,
+            });
+            window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
           }
         });
       } catch (err) {
@@ -309,15 +353,16 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
         setMsg({ text: err.message || 'Failed to initialize Google login', isError: true });
       }
     } else {
-      // Fallback: direct Google OAuth redirect (bypasses script loading delays and blockers)
-      const redirectUri = window.location.origin + '/login';
+      // Fallback: direct Google OAuth redirect with prompt=select_account
+      const redirectUri = window.location.origin + (window.location.pathname === '/' ? (window.location.hostname.includes('auth.xoeris.com') ? '/' : '/login') : window.location.pathname);
+      const nonce = Math.random().toString(36).slice(2) + Date.now().toString(36);
       const params = new URLSearchParams({
         client_id: cid,
         redirect_uri: redirectUri,
         response_type: 'id_token',
         scope: 'openid email profile',
-        nonce: Math.random().toString(36).slice(2),
         prompt: 'select_account',
+        nonce: nonce,
       });
       window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
     }
@@ -516,7 +561,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
       const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
       const idToken = hashParams.get('id_token');
       if (idToken) {
-        window.history.replaceState({}, '', window.location.pathname);
+        window.history.replaceState({}, '', window.location.pathname + window.location.search);
         handleGoogleResponse({ credential: idToken });
       }
     }
