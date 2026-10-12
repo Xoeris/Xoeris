@@ -44,20 +44,6 @@
       }
     },
     {
-      "src": "api/database1/google-config.js",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 10
-      }
-    },
-    {
-      "src": "api/database1/github-config.js",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 10
-      }
-    },
-    {
       "src": "api/database1/sync.js",
       "use": "@vercel/node",
       "config": {
@@ -86,21 +72,7 @@
       }
     },
     {
-      "src": "api/auth/init.js",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
-    },
-    {
-      "src": "api/auth/verify.js",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
-    },
-    {
-      "src": "api/auth/consume.js",
+      "src": "api/auth/flow.js",
       "use": "@vercel/node",
       "config": {
         "maxDuration": 30
@@ -138,11 +110,11 @@
     },
     {
       "source": "/api/database1/google-config",
-      "destination": "api/database1/google-config.js"
+      "destination": "api/database1/google-login.js"
     },
     {
       "source": "/api/database1/github-config",
-      "destination": "api/database1/github-config.js"
+      "destination": "api/database1/github-login.js"
     },
     {
       "source": "/api/database1/sync",
@@ -161,16 +133,8 @@
       "destination": "api/database1/verify-otp.js"
     },
     {
-      "source": "/api/auth/init",
-      "destination": "api/auth/init.js"
-    },
-    {
-      "source": "/api/auth/verify",
-      "destination": "api/auth/verify.js"
-    },
-    {
-      "source": "/api/auth/consume",
-      "destination": "api/auth/consume.js"
+      "source": "/api/auth/:action",
+      "destination": "api/auth/flow.js"
     },
     {
       "source": "/(.*)",

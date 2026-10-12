@@ -22,7 +22,7 @@ git commit -m "%COMMIT_MSG%"
 
 echo.
 echo Pushing to GitHub (xoeris main)...
-git remote add xoeris-website https://github.com/Xoeris/Xoeris-Website.git
+git remote set-url xoeris-website https://github.com/Xoeris/Xoeris-Website.git 2>nul || git remote add xoeris-website https://github.com/Xoeris/Xoeris-Website.git
 git push -u xoeris-website main
 
 if %ERRORLEVEL% EQU 0 (
