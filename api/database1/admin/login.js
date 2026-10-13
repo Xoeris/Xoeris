@@ -1,11 +1,14 @@
 import jwt from 'jsonwebtoken';
 import { normalizeEmail, setCorsHeaders } from '../../_lib/auth.js';
 
-const ADMIN_EMAIL = 'marcelloemar@gmail.com';
-
 export default async function handler(req, res) {
-  setCorsHeaders(res, 'POST, OPTIONS', req);
+  setCorsHeaders(res, 'GET, POST, OPTIONS', req);
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  if (req.method === 'GET') {
+    const targetAdminEmail = normalizeEmail(process.env.ADMIN_EMAIL || 'marcelloemar@gmail.com');
+    return res.status(200).json({ email: targetAdminEmail });
+  }
 
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -19,21 +22,22 @@ export default async function handler(req, res) {
 
     const { email = '', pin = '' } = body || {};
     const normalizedEmail = normalizeEmail(email);
+    const targetAdminEmail = normalizeEmail(process.env.ADMIN_EMAIL || 'marcelloemar@gmail.com');
     const expectedPin = process.env.ADMIN_PIN || '182026';
 
-    if (normalizedEmail !== ADMIN_EMAIL) {
-      return res.status(403).json({ error: 'Unauthorized: Admin access restricted to designated administrator email.' });
+    if (normalizedEmail !== targetAdminEmail) {
+      return res.status(403).json({ error: 'Unauthorized email address.' });
     }
 
     if (!pin || String(pin).trim() !== String(expectedPin).trim()) {
-      return res.status(401).json({ error: 'Invalid Admin Security PIN.' });
+      return res.status(401).json({ error: 'Invalid PIN.' });
     }
 
     const jwtSecret = process.env.JWT_SECRET || 'xoeris-admin-secure-vault-key-2026';
     const adminToken = jwt.sign(
       {
         sub: 'xoeris-admin',
-        email: ADMIN_EMAIL,
+        email: targetAdminEmail,
         role: 'admin',
       },
       jwtSecret,
@@ -45,7 +49,7 @@ export default async function handler(req, res) {
       message: 'Admin authorization granted.',
       token: adminToken,
       admin: {
-        email: ADMIN_EMAIL,
+        email: targetAdminEmail,
         role: 'admin',
         authenticatedAt: new Date().toISOString()
       }

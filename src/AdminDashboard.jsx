@@ -5,7 +5,7 @@ import {
   LogOut, Search, Filter, ArrowUpRight, Volume2, VolumeX, Eye
 } from 'lucide-react';
 
-const ADMIN_EMAIL = 'marcelloemar@gmail.com';
+const DEFAULT_ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'marcelloemar@gmail.com';
 
 export default function AdminDashboard({ onNavigate }) {
   const [token, setToken] = useState(() => {
@@ -17,10 +17,26 @@ export default function AdminDashboard({ onNavigate }) {
   });
 
   // Login form state
-  const [adminEmail, setAdminEmail] = useState(ADMIN_EMAIL);
+  const [adminEmail, setAdminEmail] = useState(DEFAULT_ADMIN_EMAIL);
   const [adminPin, setAdminPin] = useState('');
   const [loginError, setLoginError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  // Prefetch configured ADMIN_EMAIL from backend if available
+  useEffect(() => {
+    const apiUrl = window.location.hostname.includes('xoeris.com')
+      ? 'https://api.xoeris.com/api/database1/admin/login'
+      : '/api/database1/admin/login';
+
+    fetch(apiUrl)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.email) {
+          setAdminEmail(data.email);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   // Dashboard data state
   const [orders, setOrders] = useState([]);
@@ -262,52 +278,24 @@ export default function AdminDashboard({ onNavigate }) {
           <div className="w-full p-8 sm:p-10 rounded-3xl bg-white/[0.02] border border-white/10 backdrop-blur-2xl shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FDD935]/50 to-transparent"></div>
 
-            <div className="w-14 h-14 rounded-2xl bg-[#FDD935]/10 border border-[#FDD935]/30 flex items-center justify-center text-[#FDD935] mx-auto mb-6 shadow-[0_0_25px_rgba(253,217,53,0.2)]">
+            <div className="w-14 h-14 rounded-2xl bg-[#FDD935]/10 border border-[#FDD935]/30 flex items-center justify-center text-[#FDD935] mx-auto mb-8 shadow-[0_0_25px_rgba(253,217,53,0.2)]">
               <ShieldCheck size={28} />
             </div>
 
-            <h1 className="text-2xl font-black text-center text-white tracking-tight uppercase mb-2">
-              Xoeris Admin Core
-            </h1>
-            <p className="text-xs text-center text-gray-400 mb-8 leading-relaxed">
-              Authorized personnel only. Access strictly restricted to designated super-admin email and private PIN.
-            </p>
-
             <form onSubmit={handleLogin} className="space-y-5">
               <div>
-                <label className="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-2">
-                  Admin Email
-                </label>
-                <div className="relative">
-                  <input 
-                    type="email"
-                    value={adminEmail}
-                    onChange={(e) => setAdminEmail(e.target.value)}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-xs font-mono focus:outline-none focus:border-[#FDD935] transition-colors"
-                    required
-                  />
-                  <Mail size={16} className="absolute right-3.5 top-3.5 text-gray-500 pointer-events-none" />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-mono font-bold text-gray-400 uppercase tracking-wider mb-2">
-                  Private Security PIN
-                </label>
                 <div className="relative">
                   <input 
                     type="password"
-                    placeholder="Enter private admin PIN"
+                    placeholder="Enter PIN"
                     value={adminPin}
                     onChange={(e) => setAdminPin(e.target.value)}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-xs font-mono placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
+                    className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
                     required
+                    autoFocus
                   />
-                  <Lock size={16} className="absolute right-3.5 top-3.5 text-gray-500 pointer-events-none" />
+                  <Lock size={16} className="absolute right-3.5 top-4 text-gray-500 pointer-events-none" />
                 </div>
-                <p className="text-[10px] text-gray-500 font-mono mt-1.5">
-                  Set via Vercel environment variable ADMIN_PIN
-                </p>
               </div>
 
               {loginError && (
