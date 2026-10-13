@@ -74,11 +74,13 @@ export default async function handler(req, res) {
     }
 
     // Determine amount
-    let amountDollars = 50;
+    // Pro: $15/mo -> $180/yr - 30% = $126/yr ($10.50/mo)
+    // Ultra: $50/mo -> $600/yr - 30% = $420/yr ($35.00/mo)
+    let amountDollars = 15;
     if (normalizedPlan === 'ultra') {
-      amountDollars = normalizedCycle === 'yearly' ? 1200 : 120;
-    } else {
       amountDollars = normalizedCycle === 'yearly' ? 420 : 50;
+    } else {
+      amountDollars = normalizedCycle === 'yearly' ? 126 : 15;
     }
 
     const transactionRef = `XOERIS-REQ-${Math.random().toString(36).substring(2, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;

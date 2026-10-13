@@ -109,7 +109,7 @@ export default function SubscriptionsPage({ onNavigate }) {
           email: email.trim().toLowerCase(),
           plan: selectedPlan,
           billingCycle,
-          amount: data.amount || (selectedPlan === 'Ultra' ? (billingCycle === 'yearly' ? 1440 : 150) : (billingCycle === 'yearly' ? 420 : 50))
+          amount: data.amount || (selectedPlan === 'Ultra' ? (billingCycle === 'yearly' ? 420 : 50) : (billingCycle === 'yearly' ? 126 : 15))
         });
       } else {
         const errJson = response ? await response.json().catch(() => ({})) : {};
@@ -124,7 +124,7 @@ export default function SubscriptionsPage({ onNavigate }) {
             email: email.trim().toLowerCase(),
             plan: selectedPlan,
             billingCycle,
-            amount: selectedPlan === 'Ultra' ? (billingCycle === 'yearly' ? 1440 : 150) : (billingCycle === 'yearly' ? 420 : 50)
+            amount: selectedPlan === 'Ultra' ? (billingCycle === 'yearly' ? 420 : 50) : (billingCycle === 'yearly' ? 126 : 15)
           });
         }
       }
@@ -279,7 +279,7 @@ export default function SubscriptionsPage({ onNavigate }) {
           <PricingCard 
             title="Pro"
             description="Advanced intelligence and full runtime support for developers."
-            price={billingCycle === 'yearly' ? '35' : '50'}
+            price={billingCycle === 'yearly' ? '10.50' : '15'}
             buttonText="Get Pro"
             highlighted={true}
             onAction={() => handleSwitchView('payment', 'Pro')}
@@ -295,7 +295,7 @@ export default function SubscriptionsPage({ onNavigate }) {
           <PricingCard 
             title="Ultra"
             description="Dedicated compute, limitless bandwidth, and enterprise automation."
-            price={billingCycle === 'yearly' ? '120' : '150'}
+            price={billingCycle === 'yearly' ? '35' : '50'}
             buttonText="Upgrade to Ultra"
             highlighted={false}
             onAction={() => handleSwitchView('payment', 'Ultra')}
@@ -317,15 +317,15 @@ export default function SubscriptionsPage({ onNavigate }) {
     const isYearly = billingCycle === 'yearly';
     const isUltra = selectedPlan === 'Ultra';
     
-    // Amount calculations
-    let amountDue = '420';
-    let monthlyRate = '$35.00';
+    // Amount calculations: Pro $15/mo ($126/yr), Ultra $50/mo ($420/yr)
+    let amountDue = isYearly ? '126' : '15';
+    let monthlyRate = isYearly ? '$10.50' : '$15.00';
     if (isUltra) {
-      amountDue = isYearly ? '1440' : '150';
-      monthlyRate = isYearly ? '$120.00' : '$150.00';
-    } else {
       amountDue = isYearly ? '420' : '50';
       monthlyRate = isYearly ? '$35.00' : '$50.00';
+    } else {
+      amountDue = isYearly ? '126' : '15';
+      monthlyRate = isYearly ? '$10.50' : '$15.00';
     }
 
     const renewalDate = new Date();

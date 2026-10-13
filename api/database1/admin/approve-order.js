@@ -132,9 +132,32 @@ export default async function handler(req, res) {
 
     const expiresAtIso = expiresAt ? expiresAt.toISOString() : null;
 
-    // Check if this is a delete/remove request
+    // Check if this is an order clear/delete action
+    const action = (body?.action || '').toLowerCase();
+    if (action === 'clear' || action === 'clear_orders') {
+      await sql`DELETE FROM SubscriptionOrders`;
+      return res.status(200).json({
+        success: true,
+        message: 'All subscription orders cleared successfully.',
+        action: 'clear'
+      });
+    }
+
+    if (action === 'delete' && orderId) {
+      await sql`DELETE FROM SubscriptionOrders WHERE id = ${Number(orderId)}`;
+      return res.status(200).json({
+        success: true,
+        message: `Order #${orderId} deleted successfully.`,
+        action: 'delete',
+        orderId
+      });
+    }
+
+    // Check if this is a user delete/remove request
     if (normalizedStatus === 'delete' || normalizedStatus === 'remove' || normalizedPlan === 'delete') {
-      await sql`DELETE FROM users WHERE email = ${targetEmail}`;
+      if (targetEmail) {
+        await sql`DELETE FROM users WHERE email = ${targetEmail}`;
+      }
       return res.status(200).json({
         success: true,
         message: `Account ${targetEmail} removed successfully.`,
