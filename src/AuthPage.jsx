@@ -172,12 +172,20 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
     let target = guard.redirectUri || redirectParam || sessionStorage.getItem('xoeris_auth_return_to');
     sessionStorage.removeItem('xoeris_auth_return_to');
 
-    // For HIDE desktop app
-    if (guard.client === 'hide' || clientParam === 'hide') {
-      window.location.href = `hide://auth?token=${encodeURIComponent(token || '')}&state=${encodeURIComponent(state || '')}`;
-      setTimeout(() => {
-        window.location.href = 'https://xoeris.com?auth=success';
-      }, 1500);
+    const clientNorm = (guard.client || clientParam || '').toLowerCase();
+    const isDesktopClient = ['musify', 'apex', 'horizone', 'horizoneide', 'ide', 'hub', 'hide', 'levelist', 'mova'].includes(clientNorm);
+    const isLocalhostTarget = Boolean(target && (target.includes('localhost') || target.includes('127.0.0.1')));
+
+    // Always route desktop and loopback auth through auth.xoeris.com/callback
+    if (isDesktopClient || isLocalhostTarget || (target && target.includes('/callback'))) {
+      const cbBase = isAuthSubdomain ? `${window.location.origin}/callback` : 'https://auth.xoeris.com/callback';
+      const cbUrl = new URL(cbBase);
+      if (token) cbUrl.searchParams.set('token', token);
+      if (state) cbUrl.searchParams.set('state', state);
+      if (clientNorm) cbUrl.searchParams.set('client', clientNorm);
+      if (target) cbUrl.searchParams.set('target', target);
+      cbUrl.searchParams.set('auth', 'success');
+      window.location.href = cbUrl.toString();
       return;
     }
 

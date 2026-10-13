@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
     const { client = 'unknown', redirect_uri = '' } = body || {};
 
-    const allowed = ['hide', 'levelist', 'mova', 'musify', 'xoeris', 'web'];
+    const allowed = ['hide', 'levelist', 'mova', 'musify', 'xoeris', 'web', 'apex', 'horizone', 'horizoneide', 'ide', 'hub'];
     const clientNorm = String(client).toLowerCase();
     if (client && !allowed.includes(clientNorm)) {
       // still allow but log; no strict rejection to keep flexibility

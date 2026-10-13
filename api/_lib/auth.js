@@ -31,6 +31,8 @@ const APP_SECRETS = [
   ['x-levelist-app-secret', 'LEVELIST_APP_SECRET', 'levelist-dev-secret-123'],
   ['x-mova-app-secret', 'MOVA_APP_SECRET', 'mova-dev-secret-123'],
   ['x-musify-app-secret', 'MUSIFY_APP_SECRET', 'musify-dev-secret-123'],
+  ['x-apex-app-secret', 'APEX_APP_SECRET', 'apex-dev-secret-123'],
+  ['x-horizone-app-secret', 'HORIZONE_APP_SECRET', 'horizone-dev-secret-123'],
 ];
 
 export function isValidAppSecret(req) {
@@ -49,6 +51,8 @@ export function getAppDisplayName(req) {
   const headers = (req && req.headers) || {};
   if (headers['x-musify-app-secret']) return 'Musify';
   if (headers['x-mova-app-secret']) return 'MOVA';
+  if (headers['x-apex-app-secret']) return 'APEX';
+  if (headers['x-horizone-app-secret']) return 'Horizone';
   return 'Levelist';
 }
 
@@ -56,6 +60,6 @@ export function setCorsHeaders(res, methods = 'POST, OPTIONS', req = null) {
   const origin = (req && req.headers && req.headers.origin) ? req.headers.origin : '*';
   res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Methods', methods);
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Levelist-App-Secret, X-Mova-App-Secret, X-Musify-App-Secret, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Levelist-App-Secret, X-Mova-App-Secret, X-Musify-App-Secret, X-Apex-App-Secret, X-Horizone-App-Secret, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
 }

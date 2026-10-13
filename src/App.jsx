@@ -8,6 +8,7 @@ import XoerisPage from './XoerisPage';
 import SubscriptionsPage from './SubscriptionsPage';
 import AureviaPage from './AureviaPage';
 import AuthPage from './AuthPage';
+import AuthCallbackPage from './AuthCallbackPage';
 import AdminDashboard from './AdminDashboard';
 import { setSession, syncUserFromDatabase } from './services/authService';
 
@@ -48,7 +49,11 @@ export default function App() {
     const path = window.location.pathname.toLowerCase();
 
     // Check hostnames first (auth must be before generic checks)
-    if (hostname.includes('auth.xoeris.com') || hostname.startsWith('auth.')) return 'auth';
+    if (hostname.includes('auth.xoeris.com') || hostname.startsWith('auth.')) {
+      if (path === '/callback' || path.startsWith('/callback')) return 'auth-callback';
+      return 'auth';
+    }
+    if (path === '/callback' || path.startsWith('/callback')) return 'auth-callback';
     if (hostname.includes('aurevia.xoeris.com') || hostname.includes('aurevia')) return 'aurevia';
     if (hostname.includes('api.xoeris.com')) return 'error-api';
     if (hostname.includes('dl.private.drive.xoeris.com')) return 'error-dl';
@@ -123,7 +128,15 @@ export default function App() {
       const path = window.location.pathname.toLowerCase();
 
       if (hostname.includes('auth.xoeris.com') || hostname.startsWith('auth.')) {
+        if (path === '/callback' || path.startsWith('/callback')) {
+          setCurrentPage('auth-callback');
+          return;
+        }
         setCurrentPage('auth');
+        return;
+      }
+      if (path === '/callback' || path.startsWith('/callback')) {
+        setCurrentPage('auth-callback');
         return;
       }
       if (hostname.includes('aurevia.xoeris.com') || hostname.includes('aurevia')) {
@@ -309,7 +322,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen font-ui relative z-0 overflow-x-hidden bg-[#050505] text-white selection:bg-[#FDD935] selection:text-black">
-      {!['xoeris', 'subscriptions', 'samudra-showcase', 'aurevia', 'auth', 'apex', 'under-construction', 'admin', 'horizoneide', 'mova', 'musify', 'xalme', 'xalmecode'].includes(currentPage) && (
+      {!['xoeris', 'subscriptions', 'samudra-showcase', 'aurevia', 'auth', 'auth-callback', 'apex', 'under-construction', 'admin', 'horizoneide', 'mova', 'musify', 'xalme', 'xalmecode'].includes(currentPage) && (
         <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden opacity-30 mix-blend-screen">
           {/* Xoeris Cyber ambient blobs */}
           <div className="blob blob-1 will-change-transform" style={{ backgroundColor: colors.amber }}></div>
@@ -320,6 +333,7 @@ export default function App() {
       )}
 
       <div key={currentPage}>
+        {currentPage === 'auth-callback' && <AuthCallbackPage onNavigate={handleNavigate} />}
         {currentPage === 'auth' && <AuthPage onNavigate={handleNavigate} />}
         {currentPage === 'aurevia' && <AureviaPage onNavigate={handleNavigate} />}
         {currentPage === 'about' && <AboutPage onNavigate={handleNavigate} />}
