@@ -127,6 +127,11 @@ export default function AdminDashboard({ onNavigate }) {
     if (e) e.preventDefault();
     setLoginError('');
 
+    if (!adminEmail || !adminEmail.includes('@')) {
+      setLoginError('Please enter a valid admin email address');
+      return;
+    }
+
     if (!adminPin || adminPin.trim().length === 0) {
       setLoginError('Please enter your PIN');
       return;
@@ -142,7 +147,7 @@ export default function AdminDashboard({ onNavigate }) {
       let res = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: adminPin.trim() })
+        body: JSON.stringify({ email: adminEmail.trim(), pin: adminPin.trim() })
       }).catch(() => null);
 
       if (!res || !res.ok) {
@@ -150,7 +155,7 @@ export default function AdminDashboard({ onNavigate }) {
           res = await fetch('https://api.xoeris.com/api/database1/admin/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pin: adminPin.trim() })
+            body: JSON.stringify({ email: adminEmail.trim(), pin: adminPin.trim() })
           }).catch(() => null);
         }
       }
@@ -275,7 +280,22 @@ export default function AdminDashboard({ onNavigate }) {
               <ShieldCheck size={28} />
             </div>
 
-            <form onSubmit={handleLogin} className="space-y-5">
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <div className="relative">
+                  <input 
+                    type="email"
+                    placeholder="Enter admin email"
+                    value={adminEmail}
+                    onChange={(e) => setAdminEmail(e.target.value)}
+                    className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
+                    required
+                    autoFocus
+                  />
+                  <Mail size={16} className="absolute right-3.5 top-4 text-gray-500 pointer-events-none" />
+                </div>
+              </div>
+
               <div>
                 <div className="relative">
                   <input 
@@ -285,7 +305,6 @@ export default function AdminDashboard({ onNavigate }) {
                     onChange={(e) => setAdminPin(e.target.value)}
                     className="w-full px-4 py-3.5 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
                     required
-                    autoFocus
                   />
                   <Lock size={16} className="absolute right-3.5 top-4 text-gray-500 pointer-events-none" />
                 </div>
