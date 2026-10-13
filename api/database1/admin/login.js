@@ -6,8 +6,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   if (req.method === 'GET') {
-    const targetAdminEmail = normalizeEmail(process.env.ADMIN_EMAIL || 'marcelloemar@gmail.com');
-    return res.status(200).json({ email: targetAdminEmail });
+    return res.status(200).json({ email: process.env.ADMIN_EMAIL || '' });
   }
 
   if (req.method !== 'POST') {
@@ -20,16 +19,15 @@ export default async function handler(req, res) {
       try { body = JSON.parse(body); } catch { body = {}; }
     }
 
-    const { email = '', pin = '' } = body || {};
-    const normalizedEmail = normalizeEmail(email);
-    const targetAdminEmail = normalizeEmail(process.env.ADMIN_EMAIL || 'marcelloemar@gmail.com');
-    const expectedPin = process.env.ADMIN_PIN || '182026';
+    const { pin = '' } = body || {};
+    const adminPin = process.env.ADMIN_PIN;
+    const adminEmail = process.env.ADMIN_EMAIL || '';
 
-    if (normalizedEmail !== targetAdminEmail) {
-      return res.status(403).json({ error: 'Unauthorized email address.' });
+    if (!adminPin) {
+      return res.status(500).json({ error: 'ADMIN_PIN environment variable is not configured.' });
     }
 
-    if (!pin || String(pin).trim() !== String(expectedPin).trim()) {
+    if (!pin || String(pin).trim() !== String(adminPin).trim()) {
       return res.status(401).json({ error: 'Invalid PIN.' });
     }
 
@@ -37,7 +35,7 @@ export default async function handler(req, res) {
     const adminToken = jwt.sign(
       {
         sub: 'xoeris-admin',
-        email: targetAdminEmail,
+        email: adminEmail,
         role: 'admin',
       },
       jwtSecret,
@@ -49,7 +47,7 @@ export default async function handler(req, res) {
       message: 'Admin authorization granted.',
       token: adminToken,
       admin: {
-        email: targetAdminEmail,
+        email: adminEmail,
         role: 'admin',
         authenticatedAt: new Date().toISOString()
       }

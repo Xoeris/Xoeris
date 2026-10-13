@@ -5,8 +5,6 @@ import {
   LogOut, Search, Filter, ArrowUpRight, Volume2, VolumeX, Eye
 } from 'lucide-react';
 
-const DEFAULT_ADMIN_EMAIL = import.meta.env.VITE_ADMIN_EMAIL || 'marcelloemar@gmail.com';
-
 export default function AdminDashboard({ onNavigate }) {
   const [token, setToken] = useState(() => {
     try {
@@ -17,7 +15,7 @@ export default function AdminDashboard({ onNavigate }) {
   });
 
   // Login form state
-  const [adminEmail, setAdminEmail] = useState(DEFAULT_ADMIN_EMAIL);
+  const [adminEmail, setAdminEmail] = useState(import.meta.env.VITE_ADMIN_EMAIL || '');
   const [adminPin, setAdminPin] = useState('');
   const [loginError, setLoginError] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -129,13 +127,8 @@ export default function AdminDashboard({ onNavigate }) {
     if (e) e.preventDefault();
     setLoginError('');
 
-    if (adminEmail.trim().toLowerCase() !== ADMIN_EMAIL) {
-      setLoginError(`Access strictly restricted to administrator (${ADMIN_EMAIL})`);
-      return;
-    }
-
     if (!adminPin || adminPin.trim().length === 0) {
-      setLoginError('Please enter your private Admin PIN');
+      setLoginError('Please enter your PIN');
       return;
     }
 
@@ -149,7 +142,7 @@ export default function AdminDashboard({ onNavigate }) {
       let res = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: adminEmail.trim(), pin: adminPin.trim() })
+        body: JSON.stringify({ pin: adminPin.trim() })
       }).catch(() => null);
 
       if (!res || !res.ok) {
@@ -157,7 +150,7 @@ export default function AdminDashboard({ onNavigate }) {
           res = await fetch('https://api.xoeris.com/api/database1/admin/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email: adminEmail.trim(), pin: adminPin.trim() })
+            body: JSON.stringify({ pin: adminPin.trim() })
           }).catch(() => null);
         }
       }
