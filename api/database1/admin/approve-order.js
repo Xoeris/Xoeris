@@ -49,7 +49,10 @@ export default async function handler(req, res) {
       userEmail: rawEmail = '', 
       plan = 'pro', 
       status = 'approved',
-      adminNotes = ''
+      adminNotes = '',
+      duration = '',
+      durationValue = 1,
+      durationUnit = 'months'
     } = body || {};
 
     const normalizedPlan = (plan || 'pro').toLowerCase();
@@ -81,10 +84,53 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Target user email is required to assign subscription tier.' });
     }
 
-    // Calculate expiration date
-    const now = new Date();
-    const expiresAt = new Date(now);
-    expiresAt.setFullYear(now.getFullYear() + 1);
+    // Calculate expiration date based on duration (weeks / months / years)
+    let expiresAt = null;
+    let cycleDescription = 'custom';
+
+    if (normalizedPlan !== 'free') {
+      const now = new Date();
+      expiresAt = new Date(now);
+      const parsedVal = Math.max(1, parseInt(durationValue, 10) || 1);
+      const unit = String(durationUnit || '').toLowerCase();
+
+      if (duration === '1w' || (unit.startsWith('week') && parsedVal === 1)) {
+        expiresAt.setDate(now.getDate() + 7);
+        cycleDescription = '1 week';
+      } else if (duration === '2w' || (unit.startsWith('week') && parsedVal === 2)) {
+        expiresAt.setDate(now.getDate() + 14);
+        cycleDescription = '2 weeks';
+      } else if (duration === '1m' || (unit.startsWith('month') && parsedVal === 1)) {
+        expiresAt.setMonth(now.getMonth() + 1);
+        cycleDescription = '1 month';
+      } else if (duration === '3m' || (unit.startsWith('month') && parsedVal === 3)) {
+        expiresAt.setMonth(now.getMonth() + 3);
+        cycleDescription = '3 months';
+      } else if (duration === '6m' || (unit.startsWith('month') && parsedVal === 6)) {
+        expiresAt.setMonth(now.getMonth() + 6);
+        cycleDescription = '6 months';
+      } else if (duration === '1y' || (unit.startsWith('year') && parsedVal === 1)) {
+        expiresAt.setFullYear(now.getFullYear() + 1);
+        cycleDescription = '1 year';
+      } else if (unit.startsWith('week')) {
+        expiresAt.setDate(now.getDate() + parsedVal * 7);
+        cycleDescription = `${parsedVal} weeks`;
+      } else if (unit.startsWith('month')) {
+        expiresAt.setMonth(now.getMonth() + parsedVal);
+        cycleDescription = `${parsedVal} months`;
+      } else if (unit.startsWith('year')) {
+        expiresAt.setFullYear(now.getFullYear() + parsedVal);
+        cycleDescription = `${parsedVal} year${parsedVal > 1 ? 's' : ''}`;
+      } else if (duration === 'never' || unit === 'never') {
+        expiresAt = null;
+        cycleDescription = 'permanent';
+      } else {
+        expiresAt.setFullYear(now.getFullYear() + 1);
+        cycleDescription = '1 year';
+      }
+    }
+
+    const expiresAtIso = expiresAt ? expiresAt.toISOString() : null;
 
     // Update or Insert into users table
     const existingUsers = await sql`
@@ -98,9 +144,9 @@ export default async function handler(req, res) {
       const updated = await sql`
         UPDATE users
         SET subscription_tier = ${normalizedPlan},
-            subscription_status = 'active',
-            subscription_cycle = 'yearly',
-            subscription_expires_at = ${expiresAt.toISOString()}
+            subscription_status = ${normalizedPlan === 'free' ? 'expired' : 'active'},
+            subscription_cycle = ${cycleDescription},
+            subscription_expires_at = ${expiresAtIso}
         WHERE id = ${user.id}
         RETURNING id, username, email, name, subscription_tier, subscription_status, subscription_cycle, subscription_expires_at
       `;
@@ -114,13 +160,13 @@ export default async function handler(req, res) {
             username, email, name, subscription_tier, subscription_status, subscription_cycle, subscription_expires_at, email_verified, created_at
           )
           VALUES (
-            ${usernameSeed}, ${targetEmail}, ${targetEmail.split('@')[0]}, ${normalizedPlan}, 'active', 'yearly', ${expiresAt.toISOString()}, true, CURRENT_TIMESTAMP
+            ${usernameSeed}, ${targetEmail}, ${targetEmail.split('@')[0]}, ${normalizedPlan}, ${normalizedPlan === 'free' ? 'expired' : 'active'}, ${cycleDescription}, ${expiresAtIso}, true, CURRENT_TIMESTAMP
           )
           RETURNING id, username, email, name, subscription_tier, subscription_status, subscription_cycle, subscription_expires_at
         `;
         updatedUser = inserted[0];
-      } catch (err) {
-        console.warn('Could not pre-seed user record:', err.message);
+      } catch (insertErr) {
+        console.warn('Could not pre-seed user:', insertErr.message);
       }
     }
 

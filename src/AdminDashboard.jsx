@@ -50,7 +50,13 @@ export default function AdminDashboard({ onNavigate }) {
   // Manual user tier assignment state
   const [manualEmail, setManualEmail] = useState('');
   const [manualPlan, setManualPlan] = useState('pro');
+  const [manualDurationPreset, setManualDurationPreset] = useState('1m');
+  const [manualCustomVal, setManualCustomVal] = useState(1);
+  const [manualCustomUnit, setManualCustomUnit] = useState('months');
   const [isAssigning, setIsAssigning] = useState(false);
+
+  // Per-order approval duration options map
+  const [orderDurations, setOrderDurations] = useState({});
 
   const prevPendingCountRef = useRef(0);
 
@@ -198,7 +204,7 @@ export default function AdminDashboard({ onNavigate }) {
     } catch {}
   };
 
-  const handleSetUserTier = async (orderId, targetEmail, planToSet, statusToSet = 'approved') => {
+  const handleSetUserTier = async (orderId, targetEmail, planToSet, statusToSet = 'approved', durationOpts = {}) => {
     setActionMessage({ text: '', type: '' });
 
     try {
@@ -216,14 +222,18 @@ export default function AdminDashboard({ onNavigate }) {
           orderId,
           userEmail: targetEmail,
           plan: planToSet,
-          status: statusToSet
+          status: statusToSet,
+          duration: durationOpts.duration || '',
+          durationValue: durationOpts.durationValue || 1,
+          durationUnit: durationOpts.durationUnit || 'months'
         })
       });
 
       if (res && res.ok) {
         const data = await res.json();
+        const durationText = planToSet === 'free' ? 'Reset to Free' : `set as ${planToSet.toUpperCase()}`;
         setActionMessage({
-          text: `Success: ${targetEmail} set as ${planToSet.toUpperCase()} (${statusToSet})`,
+          text: `Success: ${targetEmail} ${durationText}`,
           type: 'success'
         });
         fetchDashboardData(true);
@@ -246,7 +256,11 @@ export default function AdminDashboard({ onNavigate }) {
       return;
     }
     setIsAssigning(true);
-    await handleSetUserTier(null, manualEmail.trim(), manualPlan, 'approved');
+    await handleSetUserTier(null, manualEmail.trim(), manualPlan, 'approved', {
+      duration: manualDurationPreset,
+      durationValue: manualCustomVal,
+      durationUnit: manualCustomUnit
+    });
     setIsAssigning(false);
     setManualEmail('');
   };
@@ -514,11 +528,17 @@ export default function AdminDashboard({ onNavigate }) {
 
         {/* Manual Tier Grant Tool */}
         <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/10 backdrop-blur-xl">
-          <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#FDD935] mb-4 flex items-center gap-2">
-            <User size={16} />
-            <span>Manual User Tier Assignment</span>
-          </h3>
-          <form onSubmit={handleManualAssignment} className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-[#FDD935] flex items-center gap-2">
+              <User size={16} />
+              <span>Manual User Tier Assignment</span>
+            </h3>
+            <span className="text-[11px] text-gray-400 font-mono">
+              Auto reset to Free supported (week / months / year)
+            </span>
+          </div>
+
+          <form onSubmit={handleManualAssignment} className="flex flex-col lg:flex-row gap-3">
             <input 
               type="email"
               placeholder="Target user email (e.g. user@example.com)"
@@ -535,10 +555,50 @@ export default function AdminDashboard({ onNavigate }) {
               <option value="ultra">Set as Ultra</option>
               <option value="free">Reset to Free</option>
             </select>
+
+            {manualPlan !== 'free' && (
+              <select
+                value={manualDurationPreset}
+                onChange={(e) => setManualDurationPreset(e.target.value)}
+                className="px-3 py-3 bg-black border border-white/15 rounded-xl text-white text-xs font-mono focus:outline-none focus:border-[#FDD935]"
+              >
+                <option value="1w">Auto-reset in 1 Week</option>
+                <option value="2w">Auto-reset in 2 Weeks</option>
+                <option value="1m">Auto-reset in 1 Month</option>
+                <option value="3m">Auto-reset in 3 Months</option>
+                <option value="6m">Auto-reset in 6 Months</option>
+                <option value="1y">Auto-reset in 1 Year</option>
+                <option value="custom">Custom Duration...</option>
+                <option value="never">Permanent (No reset)</option>
+              </select>
+            )}
+
+            {manualPlan !== 'free' && manualDurationPreset === 'custom' && (
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  min="1"
+                  max="120"
+                  value={manualCustomVal}
+                  onChange={(e) => setManualCustomVal(e.target.value)}
+                  className="w-16 px-3 py-3 bg-black border border-white/15 rounded-xl text-white text-xs font-mono text-center focus:outline-none focus:border-[#FDD935]"
+                />
+                <select
+                  value={manualCustomUnit}
+                  onChange={(e) => setManualCustomUnit(e.target.value)}
+                  className="px-3 py-3 bg-black border border-white/15 rounded-xl text-white text-xs font-mono focus:outline-none focus:border-[#FDD935]"
+                >
+                  <option value="weeks">Weeks</option>
+                  <option value="months">Months</option>
+                  <option value="years">Years</option>
+                </select>
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={isAssigning}
-              className="px-6 py-3 bg-[#FDD935] hover:bg-[#FFE066] text-black font-black uppercase text-xs rounded-xl border-none cursor-pointer tracking-wider shrink-0"
+              className="px-6 py-3 bg-[#FDD935] hover:bg-[#FFE066] text-black font-black uppercase text-xs rounded-xl border-none cursor-pointer tracking-wider shrink-0 transition-colors"
             >
               {isAssigning ? 'Saving…' : 'Apply Tier'}
             </button>
@@ -666,18 +726,33 @@ export default function AdminDashboard({ onNavigate }) {
                           )}
                         </td>
                         <td className="py-4 text-right pr-2">
-                          <div className="flex items-center justify-end gap-2">
+                          <div className="flex items-center justify-end gap-2 flex-wrap">
+                            <select
+                              value={orderDurations[order.id] || '1y'}
+                              onChange={(e) => setOrderDurations({ ...orderDurations, [order.id]: e.target.value })}
+                              className="px-2 py-1 bg-black/80 border border-white/20 rounded-md text-[10px] font-mono text-gray-300 focus:outline-none focus:border-[#FDD935]"
+                              title="Auto-reset duration"
+                            >
+                              <option value="1w">1 Week reset</option>
+                              <option value="2w">2 Weeks reset</option>
+                              <option value="1m">1 Month reset</option>
+                              <option value="3m">3 Months reset</option>
+                              <option value="6m">6 Months reset</option>
+                              <option value="1y">1 Year reset</option>
+                              <option value="never">Permanent</option>
+                            </select>
+
                             <button
-                              onClick={() => handleSetUserTier(order.id, order.email, 'pro', 'approved')}
+                              onClick={() => handleSetUserTier(order.id, order.email, 'pro', 'approved', { duration: orderDurations[order.id] || '1y' })}
                               className="px-2.5 py-1 bg-[#FDD935] hover:bg-[#FFE066] text-black font-black rounded-lg text-[10px] uppercase transition-colors border-none cursor-pointer"
-                              title="Set user tier to Pro"
+                              title="Set user tier to Pro with auto reset"
                             >
                               Set as Pro
                             </button>
                             <button
-                              onClick={() => handleSetUserTier(order.id, order.email, 'ultra', 'approved')}
+                              onClick={() => handleSetUserTier(order.id, order.email, 'ultra', 'approved', { duration: orderDurations[order.id] || '1y' })}
                               className="px-2.5 py-1 bg-purple-500 hover:bg-purple-400 text-white font-black rounded-lg text-[10px] uppercase transition-colors border-none cursor-pointer"
-                              title="Set user tier to Ultra"
+                              title="Set user tier to Ultra with auto reset"
                             >
                               Set as Ultra
                             </button>

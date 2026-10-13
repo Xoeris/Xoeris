@@ -66,6 +66,20 @@ export default async function handler(req, res) {
       LIMIT 100
     `;
 
+    // Auto reset any expired subscriptions to free
+    try {
+      await sql`
+        UPDATE users
+        SET subscription_tier = 'free',
+            subscription_status = 'expired'
+        WHERE subscription_expires_at IS NOT NULL
+          AND subscription_expires_at <= CURRENT_TIMESTAMP
+          AND subscription_tier != 'free'
+      `;
+    } catch (e) {
+      console.warn('Could not run auto reset query:', e.message);
+    }
+
     let users = [];
     try {
       users = await sql`
