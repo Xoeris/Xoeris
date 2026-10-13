@@ -61,7 +61,7 @@ export default function Xalme({ onNavigate }) {
   return (
     <SoftwareLayout
       title="Xalme"
-      subtitle="Cognitive Intelligence & Conversational Core"
+      subtitle="Xoeris Advanced Large Language Model Enhanced"
       onNavigate={onNavigate}
     >
       {/* Hero Section */}
@@ -69,17 +69,17 @@ export default function Xalme({ onNavigate }) {
         <FadeIn className="max-w-4xl flex flex-col items-center">
           <img 
             src="/xoeris_logo_color.png" 
-            alt="Xalme Assistant" 
+            alt="Xalme" 
             className="w-20 h-20 mb-6 object-contain drop-shadow-[0_0_25px_rgba(253,217,53,0.35)]" 
           />
 
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-[#FDD935] uppercase tracking-widest mb-8 backdrop-blur-md">
             <Sparkles size={14} className="text-[#FDD935]" />
-            Cognitive Intelligence & Conversational Core
+            Xoeris Advanced Large Language Model Enhanced
           </div>
 
-          <h1 className="text-5xl sm:text-7xl md:text-8xl font-black uppercase tracking-tighter leading-none mb-8">
-            Xalme <span className="text-[#FDD935]">Assistant.</span>
+          <h1 className="text-5xl sm:text-7xl md:text-8xl font-black uppercase tracking-tighter leading-none mb-8 text-white">
+            Xalme
           </h1>
 
           <p className="text-lg sm:text-xl text-gray-300 max-w-2xl font-normal leading-relaxed mb-12">

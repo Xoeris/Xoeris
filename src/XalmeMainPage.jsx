@@ -27,10 +27,10 @@ export default function XalmeMainPage({ onNavigate }) {
           <Cpu className="text-[#FFC94A]" size={28} />
         </div>
         <h1 className="text-5xl md:text-7xl font-black uppercase tracking-tight mb-6 leading-none">
-          Xalme Assistant
+          Xalme
         </h1>
         <p className="text-base md:text-lg text-gray-400 font-medium leading-relaxed max-w-2xl mb-12">
-          An AI assistant framework developed by Xoeris to support code generation, project planning, and systems configuration tasks.
+          The foundational artificial intelligence suite engineered by Xoeris. Designed for profound conversational reasoning, system planning, and autonomous task execution.
         </p>
 
         {/* Action Panel Grid */}

@@ -55,7 +55,7 @@ export default function App() {
     if (hostname.includes('drive.xoeris.com')) return 'under-construction';
     if (hostname.includes('xalme.xoeris.com')) {
       if (path === '/chat') return 'chat';
-      return 'xalme-main';
+      return 'xalme';
     }
 
     if (hostname.includes('tartaruga') || path.startsWith('/tartaruga') || path === '/developers') {
@@ -82,7 +82,13 @@ export default function App() {
     if (path === '/horizoneide' || path === '/horizone-ide' || path.startsWith('/horizoneide')) return 'horizoneide';
     if (path === '/mova' || path.startsWith('/mova')) return 'mova';
     if (path === '/musify' || path.startsWith('/musify')) return 'musify';
-    if (path === '/xalme' || path.startsWith('/xalme/about')) return 'xalme';
+    if (path === '/xalme' || path.startsWith('/xalme/about')) {
+      if (hostname.includes('xoeris.com') && !hostname.includes('xalme.xoeris.com')) {
+        window.location.replace('https://xalme.xoeris.com/');
+        return 'xalme';
+      }
+      return 'xalme';
+    }
     if (path === '/xalmecode' || path === '/xalme-code' || path.startsWith('/xalmecode')) return 'xalmecode';
 
     return 'xoeris';
@@ -140,7 +146,7 @@ export default function App() {
         if (path === '/chat') {
           setCurrentPage('chat');
         } else {
-          setCurrentPage('xalme-main');
+          setCurrentPage('xalme');
         }
         return;
       }
@@ -155,7 +161,13 @@ export default function App() {
       else if (path === '/horizoneide' || path === '/horizone-ide' || path.startsWith('/horizoneide')) setCurrentPage('horizoneide');
       else if (path === '/mova' || path.startsWith('/mova')) setCurrentPage('mova');
       else if (path === '/musify' || path.startsWith('/musify')) setCurrentPage('musify');
-      else if (path === '/xalme' || path.startsWith('/xalme/about')) setCurrentPage('xalme');
+      else if (path === '/xalme' || path.startsWith('/xalme/about')) {
+        if (hostname.includes('xoeris.com') && !hostname.includes('xalme.xoeris.com')) {
+          window.location.replace('https://xalme.xoeris.com/');
+          return;
+        }
+        setCurrentPage('xalme');
+      }
       else if (path === '/xalmecode' || path === '/xalme-code' || path.startsWith('/xalmecode')) setCurrentPage('xalmecode');
       else if (path === '/xoeris') setCurrentPage('xoeris');
       else if (path === '/about') setCurrentPage('about');
@@ -221,9 +233,40 @@ export default function App() {
   }, [currentPage]);
 
   const handleNavigate = (page) => {
-    if (page === 'chat' && window.location.hostname.includes('xoeris.com') && !window.location.hostname.includes('xalme.xoeris.com')) {
+    const isXalmeHost = window.location.hostname.includes('xalme.xoeris.com');
+    const isXoerisDomain = window.location.hostname.includes('xoeris.com');
+
+    if (page === 'chat' && isXoerisDomain && !isXalmeHost) {
       window.location.href = 'https://xalme.xoeris.com/chat';
       return;
+    }
+
+    if (page === 'xalme' && isXoerisDomain && !isXalmeHost) {
+      window.location.href = 'https://xalme.xoeris.com/';
+      return;
+    }
+
+    if (isXalmeHost) {
+      if (page === 'xalme') {
+        window.history.pushState({}, '', '/');
+        setCurrentPage('xalme');
+        window.scrollTo(0, 0);
+        return;
+      }
+      if (page === 'chat') {
+        window.history.pushState({}, '', '/chat');
+        setCurrentPage('chat');
+        window.scrollTo(0, 0);
+        return;
+      }
+      if (['xoeris', 'home'].includes(page)) {
+        window.location.href = 'https://xoeris.com';
+        return;
+      }
+      if (['pricing', 'subscriptions', 'payment'].includes(page)) {
+        window.location.href = 'https://xoeris.com/pricing';
+        return;
+      }
     }
 
     if (['under-construction', 'horizoneengine', 'elarion', 'nebula', 'forge', 'atlas'].includes(page.toLowerCase())) {
