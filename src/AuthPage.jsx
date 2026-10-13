@@ -283,29 +283,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
     setBusy(true);
     setMsg({ text: 'Connecting to Google…', isError: false });
 
-    // Apple iOS and Safari detection
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-
-    // On Apple iOS Safari: One Tap is blocked by WebKit ITP and popup blockers.
-    // Trigger direct OAuth 2.0 redirect with prompt=select_account to guarantee the account selector appears!
-    if (isIOS || isSafari) {
-      const redirectUri = window.location.origin + (window.location.pathname === '/' ? (window.location.hostname.includes('auth.xoeris.com') ? '/' : '/login') : window.location.pathname);
-      const nonce = Math.random().toString(36).slice(2) + Date.now().toString(36);
-      const params = new URLSearchParams({
-        client_id: cid,
-        redirect_uri: redirectUri,
-        response_type: 'id_token',
-        scope: 'openid email profile',
-        prompt: 'select_account',
-        nonce: nonce,
-      });
-      window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
-      return;
-    }
-
-    // On desktop browsers: initialize GIS with itp_support and auto_select: false
+    // Use Google Identity Services standard library
     let googleApi = window.google;
     if (!googleApi?.accounts?.id) {
       googleApi = await new Promise((resolve) => {
@@ -315,7 +293,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
           if (window.google?.accounts?.id) {
             clearInterval(interval);
             resolve(window.google);
-          } else if (attempts > 15) {
+          } else if (attempts > 20) {
             clearInterval(interval);
             resolve(null);
           }
@@ -332,20 +310,33 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
           itp_support: true,
           ux_mode: 'popup',
         });
+
+        // Trigger Google One Tap / Account Selector prompt
         googleApi.accounts.id.prompt((notification) => {
           if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            // Fallback: direct Google OAuth redirect with prompt=select_account
-            const redirectUri = window.location.origin + (window.location.pathname === '/' ? (window.location.hostname.includes('auth.xoeris.com') ? '/' : '/login') : window.location.pathname);
-            const nonce = Math.random().toString(36).slice(2) + Date.now().toString(36);
-            const params = new URLSearchParams({
-              client_id: cid,
-              redirect_uri: redirectUri,
-              response_type: 'id_token',
-              scope: 'openid email profile',
-              prompt: 'select_account',
-              nonce: nonce,
-            });
-            window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
+            // If One Tap is suppressed or skipped, click the official rendered button inside google-signin-button
+            const container = document.getElementById('google-signin-button');
+            const innerBtn = container?.querySelector('div[role="button"]') || container?.querySelector('button');
+            if (innerBtn) {
+              innerBtn.click();
+            } else if (container) {
+              // Re-render and trigger
+              googleApi.accounts.id.renderButton(container, {
+                theme: 'filled_black',
+                size: 'large',
+                text: 'continue_with',
+                shape: 'rectangular',
+                logo_alignment: 'center',
+                width: 320
+              });
+              const newlyRendered = container.querySelector('div[role="button"]') || container.querySelector('button');
+              if (newlyRendered) {
+                newlyRendered.click();
+              } else {
+                setBusy(false);
+                setMsg({ text: 'Please tap the Google button again to continue.', isError: false });
+              }
+            }
           }
         });
       } catch (err) {
@@ -353,18 +344,8 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
         setMsg({ text: err.message || 'Failed to initialize Google login', isError: true });
       }
     } else {
-      // Fallback: direct Google OAuth redirect with prompt=select_account
-      const redirectUri = window.location.origin + (window.location.pathname === '/' ? (window.location.hostname.includes('auth.xoeris.com') ? '/' : '/login') : window.location.pathname);
-      const nonce = Math.random().toString(36).slice(2) + Date.now().toString(36);
-      const params = new URLSearchParams({
-        client_id: cid,
-        redirect_uri: redirectUri,
-        response_type: 'id_token',
-        scope: 'openid email profile',
-        prompt: 'select_account',
-        nonce: nonce,
-      });
-      window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
+      setBusy(false);
+      setMsg({ text: 'Google Identity services are loading, please retry in a moment.', isError: true });
     }
   }
 
@@ -667,8 +648,8 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
             {isSignUp ? 'Sign up with Google' : 'Continue with Google'}
           </button>
 
-          {/* Hidden container for GIS button rendering / fallback */}
-          <div id="google-signin-button" className="hidden"></div>
+          {/* Invisible container for GIS official iframe / popup button rendering */}
+          <div id="google-signin-button" className="opacity-0 pointer-events-none absolute -z-50 h-0 overflow-hidden"></div>
 
           <div className="relative my-6 flex items-center justify-center">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10"></div></div>

@@ -4,7 +4,6 @@ import ChatPage from './ChatPage';
 import ErrorPage from './ErrorPage';
 import UnderConstructionPage from './UnderConstructionPage';
 import XalmeMainPage from './XalmeMainPage';
-import DigitalArtifactsPage from './DigitalArtifactsPage';
 import XoerisPage from './XoerisPage';
 import SubscriptionsPage from './SubscriptionsPage';
 import AureviaPage from './AureviaPage';
@@ -13,7 +12,6 @@ import { setSession, syncUserFromDatabase } from './services/authService';
 
 // Product Deep-Dive Pages
 import VocalisProductPage from './VocalisProductPage';
-import CoreAProductPage from './CoreAProductPage';
 
 const PlaceholderProduct = ({ title, onNavigate }) => (
   <div className="min-h-screen bg-hide-canvas text-hide-text-primary flex flex-col items-center justify-center p-10 text-center">
@@ -57,7 +55,6 @@ export default function App() {
       return 'xoeris';
     }
     if (path.startsWith('/aurevia') || path.startsWith('/search')) return 'aurevia';
-    if (path === '/digital-artifacts') return 'digital-artifacts';
     if (path === '/about/acelbyte' || path === '/acelbyte') {
       window.history.replaceState({}, '', '/');
       return 'xoeris';
@@ -69,7 +66,6 @@ export default function App() {
     if (path === '/pricing' || path === '/subscription' || path === '/subscriptions' || path === '/payment') return 'pricing';
 
     if (path.startsWith('/ariasphere/vocalis')) return 'ariasphere-vocalis';
-    if (path.startsWith('/zenith/corea')) return 'zenith-corea';
 
     return 'xoeris';
   });
@@ -136,12 +132,10 @@ export default function App() {
         setCurrentPage('xoeris');
       }
       else if (path.includes('/ariasphere/vocalis')) setCurrentPage('ariasphere-vocalis');
-      else if (path.includes('/zenith/corea')) setCurrentPage('zenith-corea');
       else if (path === '/xoeris') setCurrentPage('xoeris');
       else if (path === '/about') setCurrentPage('about');
       else if (path === '/chat') setCurrentPage('chat');
       else if (path === '/login' || path === '/auth') setCurrentPage('auth');
-      else if (path === '/digital-artifacts') setCurrentPage('digital-artifacts');
       else if (path === '/pricing' || path === '/subscription' || path === '/subscriptions' || path === '/payment') setCurrentPage('pricing');
       else if (path.startsWith('/aurevia') || path.startsWith('/search')) setCurrentPage('aurevia');
       else setCurrentPage('xoeris');
@@ -162,10 +156,8 @@ export default function App() {
       'error-api': 'Restricted Endpoint | Xoeris',
       'error-dl': 'Restricted Storage | Xoeris',
       'ariasphere-vocalis': 'Xoeris Vocalis',
-      'zenith-corea': 'Xoeris Core-A',
       pricing: 'Pricing | Xoeris',
-      subscriptions: 'Pricing | Xoeris',
-      'digital-artifacts': 'Digital Artifacts | Xoeris'
+      subscriptions: 'Pricing | Xoeris'
     };
 
     const icons = {
@@ -173,10 +165,8 @@ export default function App() {
       aurevia: '/xoeris_logo_color.png',
       xoeris: '/xoeris_logo_color.png',
       'ariasphere-vocalis': '/xoeris_logo_color.png',
-      'zenith-corea': '/xoeris_logo_color.png',
       pricing: '/xoeris_logo_color.png',
-      subscriptions: '/xoeris_logo_color.png',
-      'digital-artifacts': '/xoeris_logo_color.png'
+      subscriptions: '/xoeris_logo_color.png'
     };
 
     document.title = titles[currentPage] || 'Xoeris';
@@ -204,11 +194,9 @@ export default function App() {
       developers: '/',
       tartaruga: '/',
       'ariasphere-vocalis': '/ariasphere/vocalis',
-      'zenith-corea': '/zenith/corea',
       pricing: '/pricing',
       subscriptions: '/pricing',
-      payment: '/payment',
-      'digital-artifacts': '/digital-artifacts'
+      payment: '/payment'
     };
 
     const newPath = pathMap[page] || '/';
@@ -221,7 +209,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen font-ui relative z-0 overflow-x-hidden bg-[#050505] text-white selection:bg-[#FDD935] selection:text-black">
-      {!['xoeris', 'digital-artifacts', 'subscriptions', 'samudra-showcase', 'aurevia', 'auth'].includes(currentPage) && (
+      {!['xoeris', 'subscriptions', 'samudra-showcase', 'aurevia', 'auth'].includes(currentPage) && (
         <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden opacity-30 mix-blend-screen">
           {/* Xoeris Cyber ambient blobs */}
           <div className="blob blob-1 will-change-transform" style={{ backgroundColor: colors.amber }}></div>
@@ -242,11 +230,9 @@ export default function App() {
         {currentPage === 'error-dl' && <ErrorPage title="Restricted Private Storage" />}
         {currentPage === 'xoeris' && <XoerisPage onNavigate={handleNavigate} />}
         {(currentPage === 'pricing' || currentPage === 'subscriptions') && <SubscriptionsPage onNavigate={handleNavigate} />}
-        {currentPage === 'digital-artifacts' && <DigitalArtifactsPage onNavigate={handleNavigate} />}
 
         {/* Product Details */}
         {currentPage === 'ariasphere-vocalis' && <VocalisProductPage onNavigate={handleNavigate} />}
-        {currentPage === 'zenith-corea' && <CoreAProductPage onNavigate={handleNavigate} />}
       </div>
 
       <style dangerouslySetInnerHTML={{__html: `
