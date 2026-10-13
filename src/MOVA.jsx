@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { 
   ArrowRight, Smile, Smartphone, Eye, Clock, Bell, 
   Brain, ShieldCheck, CheckCircle2, ExternalLink, Layers, 
-  Activity, BookOpen, Sparkles, Download, Loader2
+  Activity, BookOpen, Sparkles, Download, Loader2,
+  Scan, Lock, ChevronRight, Zap, Shield
 } from 'lucide-react';
 import SoftwareLayout from './components/SoftwareLayout';
 import FadeIn from './components/FadeIn';
@@ -99,6 +100,54 @@ export default function MOVA({ onNavigate }) {
     { name: "XIME.Persistence", desc: "Thread-safe data persistence layers built on Room" }
   ];
 
+  const pipelineStages = [
+    {
+      step: "01",
+      name: "Frame Capture",
+      sub: "CameraX Pipeline",
+      desc: "Instantaneous in-memory frame ingestion upon app launch. Streams directly into isolated volatile memory without file writes.",
+      icon: Scan,
+      badge: "In-Memory RAM",
+      meta: "30 FPS • YUV_420_888"
+    },
+    {
+      step: "02",
+      name: "Face Detection",
+      sub: "Google ML Kit",
+      desc: "Extracts 3D facial landmarks, Euler angles (pitch, yaw, roll), and ocular aperture probabilities in real time.",
+      icon: Eye,
+      badge: "On-Device Neural",
+      meta: "Latency < 12ms"
+    },
+    {
+      step: "03",
+      name: "Signal Fusion",
+      sub: "Temporal Heuristics",
+      desc: "Cross-correlates smile trajectories, blink fatigue intervals, and ocular fixation stability into an affective vector.",
+      icon: Activity,
+      badge: "Multi-Signal Core",
+      meta: "Sliding Window"
+    },
+    {
+      step: "04",
+      name: "Mood Calibration",
+      sub: "Affect Classifier",
+      desc: "Normalizes biometric signals into 5 discrete calibrated states: Focused, Energized, Neutral, Overwhelmed, or Fatigued.",
+      icon: Smile,
+      badge: "5 State Vectors",
+      meta: "Softmax Output"
+    },
+    {
+      step: "05",
+      name: "Adaptive UI",
+      sub: "Executive Scaffold",
+      desc: "Dynamically modulates task granularity, eliminates timer guilt, and scaffolds micro-actions tailored to current emotional bandwidth.",
+      icon: Sparkles,
+      badge: "Zero-Guilt UI",
+      meta: "Dynamic Scaffolding"
+    }
+  ];
+
   return (
     <SoftwareLayout
       title="MOVA"
@@ -171,19 +220,33 @@ export default function MOVA({ onNavigate }) {
       </section>
 
       {/* Core Paradigm: Executive Function & Mood Repair */}
-      <section className="py-16 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="p-8 sm:p-12 rounded-3xl bg-white/[0.03] border border-white/10 backdrop-blur-2xl">
-          <div className="text-xs font-black uppercase tracking-[0.25em] text-[#FDD935] mb-3">Scientific Foundation</div>
-          <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight mb-6">
+      <section className="py-20 px-6 md:px-12 max-w-7xl mx-auto">
+        <div className="p-8 sm:p-14 rounded-3xl bg-white/[0.02] border border-white/10 backdrop-blur-2xl relative overflow-hidden shadow-2xl">
+          <div className="absolute top-0 right-1/4 w-80 h-80 bg-[#FDD935]/10 rounded-full blur-[100px] pointer-events-none"></div>
+          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.25em] text-[#FDD935] mb-4">
+            <Brain size={16} />
+            <span>Scientific Foundation</span>
+          </div>
+          <h2 className="text-2xl sm:text-4xl font-black uppercase tracking-tight mb-8 max-w-4xl leading-tight">
             Procrastination is an Emotional Regulation Problem, Not a Calendar Failure.
           </h2>
           <div className="grid md:grid-cols-2 gap-8 text-gray-300 text-sm leading-relaxed">
-            <p>
-              Standard productivity apps treat procrastination as a lack of scheduling or discipline, enforcing streaks that cause guilt and abandonment upon a single failure. Barkley’s behavioral inhibition model explains that ADHD deficits in non-verbal working memory cause severe <strong>time blindness</strong>.
-            </p>
-            <p>
-              Sirois & Pychyl prove that task delay is an attempt at <strong>immediate mood repair</strong> to escape anxiety or fear of failure. MOVA short-circuits this avoidance loop by providing objective, biofeedback visibility into the user's emotional state before task initiation.
-            </p>
+            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-[#FDD935]/30 transition-all">
+              <div className="text-xs font-mono font-bold text-[#FDD935] mb-2 uppercase tracking-wider flex items-center gap-2">
+                <span>Barkley's Executive Function Model</span>
+              </div>
+              <p className="text-gray-300 leading-relaxed">
+                Standard productivity apps treat procrastination as a lack of discipline, enforcing streaks that trigger guilt upon failure. Barkley’s behavioral inhibition model demonstrates that ADHD deficits in non-verbal working memory cause severe <strong className="text-white">time blindness</strong>, requiring externalized affective scaffolds rather than punitive pressure.
+              </p>
+            </div>
+            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-[#FDD935]/30 transition-all">
+              <div className="text-xs font-mono font-bold text-[#FDD935] mb-2 uppercase tracking-wider flex items-center gap-2">
+                <span>Short-Term Mood Repair (Sirois & Pychyl)</span>
+              </div>
+              <p className="text-gray-300 leading-relaxed">
+                Sirois & Pychyl prove that task delay is an attempt at <strong className="text-white">immediate mood repair</strong> to escape anxiety or fear of failure. MOVA short-circuits this avoidance loop by providing objective, non-judgmental visibility into emotional state before task initiation, meeting the user at their real capacity.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -192,52 +255,129 @@ export default function MOVA({ onNavigate }) {
       <section className="py-20 px-6 md:px-12 max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="text-xs font-black uppercase tracking-[0.25em] text-[#FDD935] mb-3">Adaptive Intervention</div>
-          <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight">Features Engineered for Neurodiversity.</h2>
+          <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight mb-4">Features Engineered for Neurodiversity.</h2>
+          <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
+            Eliminating shame-based UX patterns in favor of calm, context-aware executive assistance.
+          </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          {coreFeatures.map((feat, i) => (
-            <FadeIn key={i} delay={i * 100}>
-              <div className="p-8 sm:p-10 rounded-3xl bg-white/[0.02] border border-white/10 hover:border-[#FDD935]/50 hover:bg-white/[0.04] transition-all duration-300 h-full flex flex-col justify-between group">
-                <div>
-                  <div className="inline-block px-3 py-1 rounded-lg bg-[#FDD935]/10 border border-[#FDD935]/20 text-[10px] font-bold text-[#FDD935] uppercase tracking-wider mb-6">
-                    {feat.badge}
+          {coreFeatures.map((feat, i) => {
+            const FeatIcon = feat.icon;
+            return (
+              <FadeIn key={i} delay={i * 100}>
+                <div className="p-8 sm:p-10 rounded-3xl bg-white/[0.02] border border-white/10 hover:border-[#FDD935]/50 hover:bg-white/[0.04] transition-all duration-300 h-full flex flex-col justify-between group relative overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                  <div>
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#FDD935] group-hover:scale-110 group-hover:bg-[#FDD935]/10 transition-all duration-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                        <FeatIcon size={22} />
+                      </div>
+                      <div className="px-3 py-1 rounded-lg bg-[#FDD935]/10 border border-[#FDD935]/20 text-[10px] font-bold text-[#FDD935] uppercase tracking-wider font-mono">
+                        {feat.badge}
+                      </div>
+                    </div>
+                    <h3 className="text-2xl font-bold tracking-tight mb-4 group-hover:text-[#FDD935] transition-colors">{feat.title}</h3>
+                    <p className="text-gray-400 leading-relaxed text-sm font-normal">{feat.desc}</p>
                   </div>
-                  <h3 className="text-2xl font-bold tracking-tight mb-4 group-hover:text-[#FDD935] transition-colors">{feat.title}</h3>
-                  <p className="text-gray-400 leading-relaxed text-sm font-normal">{feat.desc}</p>
+                  <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between text-xs text-gray-400 font-semibold font-mono">
+                    <span className="text-gray-300">Non-Punitive Interface</span>
+                    <CheckCircle2 size={16} className="text-[#FDD935]" />
+                  </div>
                 </div>
-                <div className="mt-8 pt-6 border-t border-white/10 flex items-center justify-between text-xs text-gray-400 font-semibold">
-                  <span>Non-Punitive Interface</span>
-                  <CheckCircle2 size={16} className="text-[#FDD935]" />
-                </div>
-              </div>
-            </FadeIn>
-          ))}
+              </FadeIn>
+            );
+          })}
         </div>
       </section>
 
       {/* On-Device ML Pipeline Flow */}
-      <section className="py-16 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <div className="text-xs font-black uppercase tracking-[0.25em] text-[#FDD935] mb-3">On-Device Privacy</div>
-          <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight">Zero-Server Vision Pipeline.</h2>
+      <section className="py-20 px-6 md:px-12 max-w-7xl mx-auto">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FDD935]/10 border border-[#FDD935]/30 text-xs font-mono font-bold text-[#FDD935] uppercase tracking-widest mb-4">
+            <Lock size={12} />
+            <span>On-Device Privacy</span>
+          </div>
+          <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight mb-4">Zero-Server Vision Pipeline.</h2>
+          <p className="text-gray-400 text-sm sm:text-base leading-relaxed">
+            All facial expression and affect analysis runs in local, volatile memory. Zero video frames or biometric vectors are ever stored or transmitted.
+          </p>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-black/50 p-6 sm:p-10 font-mono text-xs sm:text-sm text-gray-300 backdrop-blur-2xl overflow-x-auto leading-relaxed">
-{`User opens app ──▶ CameraX Frame Capture
-                         │
-                         ▼
-             Google ML Kit Face Detection (Landmarks + Head Pose + Eye Openness)
-                         │
-                         ▼
-             Heuristic Multi-Signal Fusion (Smile trend, blink fatigue, gaze volatility)
-                         │
-                         ▼
-             5-Mood Calibrated Distribution ──▶ Adaptive UI & Task Granularity Scaffolding`}
+        {/* 5-Stage Interactive Glass Pipeline */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative mb-8">
+          {pipelineStages.map((stage, idx) => {
+            const IconComponent = stage.icon;
+            return (
+              <div key={idx} className="relative group">
+                <div className="h-full p-6 rounded-3xl bg-white/[0.02] border border-white/10 hover:border-[#FDD935]/50 hover:bg-white/[0.04] transition-all duration-300 flex flex-col justify-between backdrop-blur-xl relative overflow-hidden group-hover:shadow-[0_0_30px_rgba(253,217,53,0.1)]">
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+                  
+                  <div>
+                    {/* Header */}
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-[10px] font-mono font-black text-[#FDD935] px-2 py-0.5 rounded-md bg-[#FDD935]/10 border border-[#FDD935]/20">
+                        {stage.step}
+                      </span>
+                      <span className="text-[10px] font-mono text-gray-500">
+                        {stage.meta}
+                      </span>
+                    </div>
+
+                    {/* Icon */}
+                    <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-4 text-[#FDD935] group-hover:scale-110 group-hover:bg-[#FDD935]/10 transition-all duration-300 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]">
+                      <IconComponent size={22} />
+                    </div>
+
+                    <h3 className="text-base font-bold text-white tracking-tight mb-1 group-hover:text-[#FDD935] transition-colors">
+                      {stage.name}
+                    </h3>
+                    <div className="text-[10px] font-mono text-gray-400 uppercase tracking-wider mb-3">
+                      {stage.sub}
+                    </div>
+                    <p className="text-xs text-gray-300 leading-relaxed font-normal">
+                      {stage.desc}
+                    </p>
+                  </div>
+
+                  <div className="mt-5 pt-4 border-t border-white/10 flex items-center justify-between text-[10px] font-mono">
+                    <span className="text-gray-300 font-semibold">{stage.badge}</span>
+                    <CheckCircle2 size={13} className="text-[#FDD935]" />
+                  </div>
+                </div>
+
+                {/* Flow Connector Arrow between cards */}
+                {idx < pipelineStages.length - 1 && (
+                  <div className="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-6 h-6 rounded-full bg-black border border-white/20 items-center justify-center text-gray-400 group-hover:text-[#FDD935] group-hover:border-[#FDD935]/50 transition-colors pointer-events-none shadow-md">
+                    <ChevronRight size={14} />
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
-        <p className="text-center text-xs text-gray-400 mt-4">
-          All image analysis executes completely on-device. Zero video frames or face biometric data are ever sent over network interfaces.
-        </p>
+
+        {/* Cryptographic Privacy Assurance Banner */}
+        <div className="rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-[#FDD935]/[0.06] via-white/[0.02] to-transparent border border-[#FDD935]/30 backdrop-blur-2xl flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_0_40px_rgba(253,217,53,0.06)]">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-[#FDD935]/10 border border-[#FDD935]/30 flex items-center justify-center text-[#FDD935] shrink-0 shadow-[0_0_20px_rgba(253,217,53,0.2)]">
+              <ShieldCheck size={28} />
+            </div>
+            <div className="text-left">
+              <div className="text-xs font-mono font-bold text-[#FDD935] uppercase tracking-wider mb-1 flex items-center gap-2">
+                <span>Cryptographic Process Sandbox</span>
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#FDD935] animate-ping"></span>
+              </div>
+              <p className="text-sm text-gray-200 font-medium leading-relaxed max-w-3xl">
+                All visual processing executes strictly in volatile RAM. No images, video frames, biometric models, or analytics logs are stored to disk or transmitted across network interfaces.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-xs font-mono text-gray-300 bg-white/5 border border-white/10 px-4 py-2.5 rounded-xl shrink-0">
+            <Lock size={14} className="text-[#FDD935]" />
+            <span>Zero Outbound Traffic</span>
+          </div>
+        </div>
       </section>
 
       {/* Tech Stack & XIME Library */}
