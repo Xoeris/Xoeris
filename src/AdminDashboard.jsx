@@ -167,9 +167,18 @@ export default function AdminDashboard({ onNavigate }) {
         try {
           localStorage.setItem('xoeris_admin_token', adminJwt);
         } catch {}
+      } else if (res) {
+        const errJson = await res.json().catch(() => null);
+        const serverMsg = errJson?.error || errJson?.message;
+        if (serverMsg) {
+          setLoginError(serverMsg);
+        } else if (res.status === 401 || res.status === 403) {
+          setLoginError('Invalid admin email or PIN.');
+        } else {
+          setLoginError(`Server error (${res.status}). Please check environment configuration.`);
+        }
       } else {
-        const errJson = res ? await res.json().catch(() => ({})) : {};
-        setLoginError(errJson.error || 'Authentication failed. Please verify your PIN.');
+        setLoginError('Unable to connect to authorization endpoint.');
       }
     } catch (err) {
       setLoginError(err.message || 'Unable to connect to authorization endpoint.');

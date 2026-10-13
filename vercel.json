@@ -79,6 +79,27 @@
       }
     },
     {
+      "src": "api/database1/admin/login.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 30
+      }
+    },
+    {
+      "src": "api/database1/admin/orders.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 30
+      }
+    },
+    {
+      "src": "api/database1/admin/approve-order.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 30
+      }
+    },
+    {
       "src": "package.json",
       "use": "@vercel/static-build"
     }
@@ -95,6 +116,18 @@
     {
       "source": "/api/search",
       "destination": "api/search.js"
+    },
+    {
+      "source": "/api/database1/admin/login",
+      "destination": "api/database1/admin/login.js"
+    },
+    {
+      "source": "/api/database1/admin/orders",
+      "destination": "api/database1/admin/orders.js"
+    },
+    {
+      "source": "/api/database1/admin/approve-order",
+      "destination": "api/database1/admin/approve-order.js"
     },
     {
       "source": "/api/database1/user/:username",
