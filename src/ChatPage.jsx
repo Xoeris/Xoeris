@@ -3,11 +3,20 @@ import {
   Send, ArrowLeft, RefreshCw, Plus, ChevronDown, User,
   Search, Folder, Layout, SlidersHorizontal, Mic,
   AudioWaveform, ArrowUp, PanelLeft, Sparkles, MessageSquare,
-  LogOut, ExternalLink, X, Trash2, Copy, Check, Terminal, Cpu, Code
+  LogOut, ExternalLink, X, Trash2, Copy, Check, Terminal, Cpu, Code,
+  ArrowRight, ShieldCheck, Lock, Loader2
 } from 'lucide-react';
 
 import AuthPage from './AuthPage';
-import { getStoredUser, getStoredToken, setSession, clearSession, syncUserFromDatabase } from './services/authService';
+import { 
+  getStoredUser, 
+  getStoredToken, 
+  setSession, 
+  clearSession, 
+  syncUserFromDatabase,
+  isUserAdmin,
+  isUserUltra 
+} from './services/authService';
 
 const PUBLIC_API_KEY = import.meta.env.VITE_XOERIS_PUBLIC_KEY || '';
 
@@ -32,6 +41,7 @@ export default function ChatPage({ onNavigate }) {
   });
 
   const [currentUser, setCurrentUser] = useState(() => getStoredUser());
+  const [syncing, setSyncing] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState('Xalme 3.5 Core');
@@ -81,7 +91,13 @@ export default function ChatPage({ onNavigate }) {
     if (urlToken) {
       setSession(urlToken, null);
       setIsAuthenticated(true);
-      syncUserFromDatabase().catch(() => null);
+      setSyncing(true);
+      syncUserFromDatabase()
+        .then((user) => {
+          if (user) setCurrentUser(user);
+        })
+        .catch(() => null)
+        .finally(() => setSyncing(false));
       params.delete('token');
       params.delete('auth');
       params.delete('state');
@@ -92,12 +108,20 @@ export default function ChatPage({ onNavigate }) {
       const token = getStoredToken();
       const authenticated = Boolean(token) || localStorage.getItem('xoeris_chat_auth') === 'true';
       setIsAuthenticated(authenticated);
-      syncUserFromDatabase().then((user) => {
-        if (user) {
-          setIsAuthenticated(true);
-          setCurrentUser(user);
-        }
-      }).catch(() => null);
+      if (authenticated) {
+        setSyncing(true);
+        syncUserFromDatabase()
+          .then((user) => {
+            if (user) {
+              setIsAuthenticated(true);
+              setCurrentUser(user);
+            }
+          })
+          .catch(() => null)
+          .finally(() => setSyncing(false));
+      } else {
+        setSyncing(false);
+      }
     }
     setCurrentUser(getStoredUser());
 
@@ -254,6 +278,120 @@ export default function ChatPage({ onNavigate }) {
     );
   }
 
+  const isAdmin = isUserAdmin(currentUser);
+  const isUltra = isUserUltra(currentUser);
+  const hasAccess = isAdmin || isUltra;
+
+  // Loading state while syncing database permissions
+  if (syncing && !hasAccess) {
+    return (
+      <div className="min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center font-sans p-6 relative overflow-hidden">
+        <div className="fixed inset-0 z-0 bg-[linear-gradient(rgba(253,217,53,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.02)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-40"></div>
+        <div className="relative z-10 flex flex-col items-center text-center space-y-4">
+          <Loader2 className="w-9 h-9 text-[#FDD935] animate-spin" />
+          <p className="text-sm font-mono text-gray-400 uppercase tracking-widest">Verifying Xoeris subscription...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Gate for Free and Pro users: Web version is exclusively available to Ultra users (Admin has all privileges)
+  if (!hasAccess) {
+    const currentTierLabel = (currentUser?.subscription_tier || 'free').toUpperCase();
+    return (
+      <div className="min-h-screen bg-[#050505] text-white flex flex-col items-center justify-center font-sans p-6 relative overflow-hidden selection:bg-[#FDD935] selection:text-black">
+        {/* Cyber Grid Background */}
+        <div className="fixed inset-0 z-0 bg-[linear-gradient(rgba(253,217,53,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.02)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-40"></div>
+
+        {/* Ambient Glow Blobs */}
+        <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden mix-blend-screen opacity-20">
+          <div className="absolute top-1/4 left-1/3 w-[50vw] h-[50vw] bg-[#FDD935]/15 rounded-full blur-[140px]" />
+        </div>
+
+        {/* Ultra Paywall Container */}
+        <div className="relative z-10 max-w-lg w-full bg-[#0b0b0b]/90 border border-white/10 rounded-3xl p-8 backdrop-blur-2xl shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-center animate-fade-in">
+          {/* Top Lock Badge */}
+          <div className="w-14 h-14 mx-auto mb-5 rounded-2xl bg-[#FDD935]/10 border border-[#FDD935]/30 flex items-center justify-center text-[#FDD935] shadow-[0_0_25px_rgba(253,217,53,0.25)]">
+            <Lock className="w-7 h-7 stroke-[2.5]" />
+          </div>
+
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FDD935]/10 border border-[#FDD935]/30 text-[#FDD935] text-[10px] font-black uppercase tracking-widest mb-3">
+            <Sparkles size={11} />
+            <span>Ultra Tier Exclusive</span>
+          </div>
+
+          <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight mb-3">
+            Xalme Chat Web Requires Ultra
+          </h1>
+
+          <p className="text-xs md:text-sm text-gray-400 leading-relaxed mb-6">
+            The browser version of Xalme Chat is exclusively available to Xoeris Ultra members. Free and Pro users can chat with Xalme via our desktop and mobile apps, or upgrade now for direct web access.
+          </p>
+
+          {/* User Account Badge */}
+          <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-between mb-6 text-left">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-8 h-8 rounded-full bg-[#FDD935] text-black font-black text-xs flex items-center justify-center shrink-0">
+                {(currentUser?.username || currentUser?.email || 'U')[0].toUpperCase()}
+              </div>
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-white truncate">{currentUser?.username || currentUser?.name || 'Xoeris Member'}</p>
+                <p className="text-[10px] text-gray-500 truncate">{currentUser?.email || 'No email attached'}</p>
+              </div>
+            </div>
+            <div className="shrink-0 text-right">
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-white/10 text-gray-300 border border-white/10 uppercase">
+                {currentTierLabel} PLAN
+              </span>
+            </div>
+          </div>
+
+          {/* What Ultra Includes */}
+          <div className="space-y-2 mb-6 text-left text-xs text-gray-300 bg-black/40 p-4 rounded-xl border border-white/5 font-mono">
+            <div className="flex items-center gap-2">
+              <Check size={13} className="text-[#FDD935] shrink-0" />
+              <span>Full Web, Desktop, & Android Xalme Chat</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check size={13} className="text-[#FDD935] shrink-0" />
+              <span>All 3.5 Core, Ultra & Reasoning Models</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check size={13} className="text-[#FDD935] shrink-0" />
+              <span>Dedicated High-Speed GPU Inference</span>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="space-y-3">
+            <button
+              onClick={() => onNavigate ? onNavigate('pricing') : window.location.href = '/pricing'}
+              className="w-full py-3.5 px-6 rounded-xl bg-[#FDD935] hover:bg-[#FFE066] text-black font-black uppercase text-xs tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer border-none shadow-[0_0_20px_rgba(253,217,53,0.35)] hover:shadow-[0_0_25px_rgba(253,217,53,0.55)] active:scale-[0.98]"
+            >
+              <span>Upgrade to Ultra</span>
+              <ArrowRight size={14} className="stroke-[3]" />
+            </button>
+
+            <div className="flex items-center justify-between pt-2">
+              <button
+                onClick={() => onNavigate ? onNavigate('home') : window.location.href = '/'}
+                className="text-xs text-gray-400 hover:text-white transition-colors cursor-pointer bg-transparent border-none p-0"
+              >
+                Return to Home
+              </button>
+              <button
+                onClick={handleLogout}
+                className="text-xs text-red-400 hover:text-red-300 transition-colors cursor-pointer bg-transparent border-none p-0"
+              >
+                Sign out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#050505] text-white flex font-sans selection:bg-[#FDD935] selection:text-black overflow-hidden relative">
       {/* Cyber Grid Background */}
@@ -374,8 +512,12 @@ export default function ChatPage({ onNavigate }) {
                 )}
                 <div className="flex items-center gap-1.5 min-w-0">
                   <span className="text-xs font-bold text-white truncate">{userName}</span>
-                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-white/10 text-gray-400">
-                    {currentUser?.subscription_tier === 'pro' ? 'PRO' : 'FREE'}
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider ${
+                    isAdmin
+                      ? 'bg-[#FDD935] text-black shadow-[0_0_8px_rgba(253,217,53,0.4)]'
+                      : 'bg-[#FDD935]/20 text-[#FDD935] border border-[#FDD935]/30'
+                  }`}>
+                    {isAdmin ? 'ADMIN' : 'ULTRA'}
                   </span>
                   <ChevronDown size={13} className="text-gray-400 shrink-0" />
                 </div>
@@ -387,14 +529,14 @@ export default function ChatPage({ onNavigate }) {
               <div className="absolute bottom-full left-3 right-3 mb-2 bg-[#111111] border border-white/15 rounded-2xl p-2 shadow-2xl z-50 text-left animate-fade-in backdrop-blur-xl">
                 <div className="px-3 py-2 border-b border-white/10 mb-1">
                   <p className="text-xs font-bold text-white truncate">{userName}</p>
-                  <p className="text-[10px] text-gray-400 truncate">{currentUser?.email || 'developer@xoeris.com'}</p>
+                  <p className="text-[10px] text-gray-400 truncate">{currentUser?.email || 'admin@xoeris.com'}</p>
                 </div>
                 <button
                   onClick={() => { setUserDropdownOpen(false); if (onNavigate) onNavigate('pricing'); }}
                   className="w-full px-3 py-2 text-xs text-gray-300 hover:text-white hover:bg-white/5 rounded-lg flex items-center justify-between cursor-pointer bg-transparent border-none text-left"
                 >
                   <span>Pricing & Plans</span>
-                  <span className="text-[10px] text-[#FDD935] font-black uppercase">PRO</span>
+                  <span className="text-[10px] text-[#FDD935] font-black uppercase">{isAdmin ? 'ADMIN' : 'ULTRA'}</span>
                 </button>
                 <button
                   onClick={() => { setUserDropdownOpen(false); handleLogout(); }}
@@ -440,12 +582,22 @@ export default function ChatPage({ onNavigate }) {
 
           {/* Center Plan Link */}
           <div className="text-xs text-gray-400 flex items-center gap-2 font-mono">
-            <span className="text-gray-500">Plan:</span>
+            <span className="text-gray-500">Access:</span>
             <button
               onClick={() => onNavigate ? onNavigate('pricing') : window.location.href = '/pricing'}
-              className="px-2.5 py-1 rounded-full bg-white/5 border border-white/10 hover:border-[#FDD935]/50 text-white hover:text-[#FDD935] font-semibold transition-all cursor-pointer text-xs"
+              className="px-2.5 py-1 rounded-full bg-white/5 border border-[#FDD935]/30 hover:border-[#FDD935] text-white hover:text-[#FDD935] font-semibold transition-all cursor-pointer text-xs flex items-center gap-1.5"
             >
-              {currentUser?.subscription_tier === 'pro' ? 'Pro Member' : 'Free Tier · Upgrade'}
+              {isAdmin ? (
+                <>
+                  <ShieldCheck size={12} className="text-[#FDD935]" />
+                  <span>Administrator (All Privileges)</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles size={12} className="text-[#FDD935]" />
+                  <span>Ultra Member</span>
+                </>
+              )}
             </button>
           </div>
 

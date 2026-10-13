@@ -196,18 +196,19 @@ export default function App() {
 
     const icons = {
       auth: '/xoeris_logo_color.png',
-      aurevia: '/xoeris_logo_color.png',
+      aurevia: '/aurevia_logo_icon.png',
       xoeris: '/xoeris_logo_color.png',
       'ariasphere-vocalis': '/xoeris_logo_color.png',
-      apex: '/xoeris_logo_color.png',
-      horizoneengine: '/xoeris_logo_color.png',
-      horizoneide: '/xoeris_logo_color.png',
-      mova: '/xoeris_logo_color.png',
-      musify: '/xoeris_logo_color.png',
+      apex: '/xoeris_apex_logo_icon.png',
+      horizoneengine: '/xoeris_horizone_engine_logo_icon_colored.png',
+      horizoneide: '/horizone_ide_icon.png',
+      mova: '/xoeris_mova_logo_icon.png',
+      musify: '/musify_logo_icon.png',
       xalme: '/xoeris_logo_color.png',
       xalmecode: '/xoeris_logo_color.png',
       pricing: '/xoeris_logo_color.png',
-      subscriptions: '/xoeris_logo_color.png'
+      subscriptions: '/xoeris_logo_color.png',
+      admin: '/xoeris_logo_color.png'
     };
 
     document.title = titles[currentPage] || 'Xoeris';

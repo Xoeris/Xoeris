@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Sparkles, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Sparkles, CheckCircle2, Shield, Cpu, Layers, Terminal } from 'lucide-react';
 import SoftwareLayout from './components/SoftwareLayout';
 import FadeIn from './components/FadeIn';
 
@@ -7,8 +7,8 @@ export default function Xalme({ onNavigate }) {
   const capabilities = [
     {
       title: "Multi-Model Reasoning Matrix",
-      desc: "Instant dynamic routing between Elarion, Nebula, Forge, and Atlas models tailored to the task complexity.",
-      tag: "Foundational AI"
+      desc: "Dynamic routing between Atlas 5, Forge 6, Nebula 7, and Elarion 7 models tailored to speed and task depth.",
+      tag: "Multi-Tier AI"
     },
     {
       title: "Interactive Web, Desktop & Mobile Sync",
@@ -16,22 +16,42 @@ export default function Xalme({ onNavigate }) {
       tag: "Ecosystem Sync"
     },
     {
-      title: "Agentic Autonomous Workflows",
-      desc: "Execute multi-step tasks, system queries, tool orchestration, and file transformations with real-time feedback.",
-      tag: "Autonomous Agent"
+      title: "Hierarchical Multi-Agent Coordination",
+      desc: "Nebula 7 coordinates Plan, Explore, Execution, and Critic subagents for autonomous large-scale engineering.",
+      tag: "Agentic Hierarchy"
     },
     {
-      title: "Private & End-to-End Encrypted Memory",
-      desc: "Your sessions, prompt history, and generated assets remain strictly confidential with biometric cryptographic keying.",
+      title: "High-Assurance Security Enclaves",
+      desc: "Elarion 7 operates in air-gapped confidential computing enclaves with Elarion Capability Gateway (ECG) and Merkle audit ledgers.",
       tag: "Zero-Knowledge"
     }
   ];
 
   const models = [
-    { name: "Elarion", speed: "Ultra-Fast", desc: "Low-latency reasoning and conversational flow for everyday queries." },
-    { name: "Nebula", speed: "Balanced", desc: "Broad-spectrum intelligence with strong mathematical analysis." },
-    { name: "Forge", speed: "Deep Logic", desc: "Specialized in software architecture, compilation, and debugging." },
-    { name: "Atlas", speed: "Enterprise Tier", desc: "Massive context retention for deep system analysis and research." }
+    { 
+      name: "Atlas 5", 
+      tier: "Entry-Level • Gen 5",
+      speed: "< 15ms TTFT • > 120 tok/s",
+      desc: "High-throughput draft engine built in C++20 with Grouped-Query Attention (GQA), zero-allocation rolling KV caches, and speculative decoding draft acceleration for local workstations and edge hardware."
+    },
+    { 
+      name: "Forge 6", 
+      tier: "Mid-Level • Gen 6",
+      speed: "1M Context • SWE-bench > 74.5%",
+      desc: "Autonomous software engineering flagship with 1,000,000 tokens context, RoPE SwiGLU decoder-only transformer, polyglot compilation, and surgical multi-file codebase refactoring."
+    },
+    { 
+      name: "Nebula 7", 
+      tier: "Top-Level • Gen 7",
+      speed: "2M+ Context • GPQA > 72.8%",
+      desc: "Frontier general intelligence summit with hierarchical L1/L2/L3 context caching, Monte Carlo Tree-of-Thought (ToT) reasoning, formal proofs, and master coordination of specialized subagents."
+    },
+    { 
+      name: "Elarion 7", 
+      tier: "Restricted • Gen 7",
+      speed: "Air-Gapped Confidential Enclave",
+      desc: "Privileged cybersecurity intelligence derived from Nebula 7, running within air-gapped confidential hardware enclaves (SEV-SNP/TDX) with Elarion Capability Gateway (ECG), dual-authorization, and append-only Merkle auditing."
+    }
   ];
 
   return (
@@ -43,6 +63,12 @@ export default function Xalme({ onNavigate }) {
       {/* Hero Section */}
       <section className="pt-20 pb-24 px-6 md:px-12 max-w-7xl mx-auto flex flex-col items-center text-center">
         <FadeIn className="max-w-4xl flex flex-col items-center">
+          <img 
+            src="/xoeris_logo_color.png" 
+            alt="Xalme Assistant" 
+            className="w-20 h-20 mb-6 object-contain drop-shadow-[0_0_25px_rgba(253,217,53,0.35)]" 
+          />
+
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-[#FDD935] uppercase tracking-widest mb-8 backdrop-blur-md">
             <Sparkles size={14} className="text-[#FDD935]" />
             Cognitive Intelligence & Conversational Core
@@ -78,6 +104,9 @@ export default function Xalme({ onNavigate }) {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="text-xs font-black uppercase tracking-[0.25em] text-[#FDD935] mb-3">Model Ecosystem</div>
           <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight">Four Distinct Reasoning Engines.</h2>
+          <p className="text-sm text-gray-400 mt-4">
+            From sub-15ms edge speculative drafting to air-gapped confidential cybersecurity enclaves.
+          </p>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -85,11 +114,12 @@ export default function Xalme({ onNavigate }) {
             <FadeIn key={i} delay={i * 80}>
               <div className="p-8 rounded-3xl bg-white/[0.03] border border-white/10 backdrop-blur-xl h-full flex flex-col justify-between hover:border-[#FDD935]/40 transition-colors">
                 <div>
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-[#FDD935] mb-2">{m.speed}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-[#FDD935] mb-1">{m.tier}</div>
+                  <div className="text-[11px] font-mono text-gray-400 mb-3">{m.speed}</div>
                   <h3 className="text-2xl font-bold text-white mb-4">{m.name}</h3>
                   <p className="text-gray-400 text-xs leading-relaxed">{m.desc}</p>
                 </div>
-                <div className="mt-8 pt-4 border-t border-white/5 flex items-center gap-2 text-[11px] text-gray-400 font-semibold">
+                <div className="mt-8 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] text-gray-400 font-semibold">
                   <span>Available in Pro</span>
                   <CheckCircle2 size={14} className="text-[#FDD935]" />
                 </div>

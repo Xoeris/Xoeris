@@ -521,38 +521,6 @@ function FeaturePill({ title, desc, icon }) {
 
 function AureviaLogoIcon({ className = "w-6 h-6" }) {
   return (
-    <svg viewBox="0 0 100 100" fill="none" className={className}>
-      <defs>
-        <linearGradient id="aur-grad-primary" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#FFDE00" />
-          <stop offset="100%" stopColor="#32F18A" />
-        </linearGradient>
-        <linearGradient id="aur-grad-secondary" x1="100%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#32F18A" />
-          <stop offset="100%" stopColor="#FFDE00" />
-        </linearGradient>
-      </defs>
-      {/* Outer Diamond / Compass */}
-      <polygon
-        points="50,6 94,50 50,94 6,50"
-        stroke="url(#aur-grad-primary)"
-        strokeWidth="5"
-        fill="rgba(14, 14, 21, 0.9)"
-      />
-      {/* Inner Inverted Diamond */}
-      <polygon
-        points="50,22 78,50 50,78 22,50"
-        stroke="url(#aur-grad-secondary)"
-        strokeWidth="3"
-        fill="rgba(255, 222, 0, 0.08)"
-      />
-      {/* Central Core Dot */}
-      <circle cx="50" cy="50" r="7" fill="url(#aur-grad-primary)" />
-      {/* Crosshairs */}
-      <line x1="50" y1="10" x2="50" y2="20" stroke="#FFDE00" strokeWidth="3" strokeLinecap="round" />
-      <line x1="50" y1="80" x2="50" y2="90" stroke="#FFDE00" strokeWidth="3" strokeLinecap="round" />
-      <line x1="10" y1="50" x2="20" y2="50" stroke="#32F18A" strokeWidth="3" strokeLinecap="round" />
-      <line x1="80" y1="50" x2="90" y2="50" stroke="#32F18A" strokeWidth="3" strokeLinecap="round" />
-    </svg>
+    <img src="/aurevia_logo_icon.png" alt="Aurevia" className={`${className} object-contain`} />
   );
 }

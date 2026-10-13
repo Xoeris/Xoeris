@@ -83,6 +83,12 @@ export default function APEX({ onNavigate }) {
       {/* Hero Section */}
       <section className="pt-16 pb-20 px-6 md:px-12 max-w-7xl mx-auto flex flex-col items-center text-center">
         <FadeIn className="max-w-4xl flex flex-col items-center">
+          <img 
+            src="/xoeris_apex_logo_icon.png" 
+            alt="Xoeris APEX" 
+            className="w-20 h-20 mb-6 object-contain drop-shadow-[0_0_25px_rgba(253,217,53,0.35)]" 
+          />
+
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-[#FDD935] uppercase tracking-widest mb-6 backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-[#FDD935] animate-ping"></span>
             Version 1.0.0 • Built with .NET 10
@@ -122,7 +128,7 @@ export default function APEX({ onNavigate }) {
         <FadeIn delay={150} className="w-full max-w-6xl mt-4">
           <div className="rounded-3xl border border-white/15 overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.8)] bg-black/60 relative group">
             <img 
-              src="https://github.com/user-attachments/assets/b1c78cd6-3e40-464a-8119-82955447a64e" 
+              src="/xoeris_apexpro_mockup.png" 
               alt="Xoeris APEX Mockup" 
               className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-[1.01]"
             />

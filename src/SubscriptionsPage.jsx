@@ -271,7 +271,7 @@ export default function SubscriptionsPage({ onNavigate }) {
             onAction={() => null}
             features={[
               "Basic Xoeris products",
-              "Chat with Xalme on Web for a limited usage",
+              "Access to public developer utilities",
               "Join Xoeris Community",
               "Being a contributor for Xoeris Development Programs"
             ]}
@@ -285,9 +285,9 @@ export default function SubscriptionsPage({ onNavigate }) {
             onAction={() => handleSwitchView('payment', 'Pro')}
             features={[
               "Pro Xoeris products",
-              "Chat with Xalme on web, Android, and desktop",
-              "Higher usage limits",
-              "Access to more Xalme models",
+              "Chat with Xalme on Android and desktop apps",
+              "Higher usage limits across tools",
+              "Access to advanced Xalme models",
               "Customer support from Xoeris Agent",
               "Early access to Beta Xoeris products and features"
             ]}
@@ -301,6 +301,7 @@ export default function SubscriptionsPage({ onNavigate }) {
             onAction={() => handleSwitchView('payment', 'Ultra')}
             features={[
               "All Xoeris products",
+              "Exclusive access to Xalme Chat Web version",
               "Access Xalme Code on web",
               "Up to 10x more usage than Pro*",
               "High priorities for customer support from Xoeris Agent",

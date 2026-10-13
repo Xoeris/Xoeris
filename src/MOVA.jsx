@@ -157,21 +157,20 @@ export default function MOVA({ onNavigate }) {
       {/* Hero Section */}
       <section className="pt-16 pb-20 px-6 md:px-12 max-w-7xl mx-auto flex flex-col items-center text-center">
         <FadeIn className="max-w-4xl flex flex-col items-center">
+          <img 
+            src="/xoeris_mova_logo_icon.png" 
+            alt="MOVA" 
+            className="w-20 h-20 mb-6 object-contain drop-shadow-[0_0_25px_rgba(253,217,53,0.35)]" 
+          />
+
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-[#FDD935] uppercase tracking-widest mb-6 backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-[#FDD935] animate-ping"></span>
             Status: Pre-Alpha Test • Native Android
           </div>
 
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <img 
-              src="https://github.com/user-attachments/assets/9ce832d3-28c5-49de-9165-d31900dae91f" 
-              alt="MOVA Icon" 
-              className="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-2xl shadow-xl"
-            />
-            <h1 className="text-5xl sm:text-7xl md:text-8xl font-black uppercase tracking-tighter leading-none">
-              MOVA<span className="text-[#FDD935]">.</span>
-            </h1>
-          </div>
+          <h1 className="text-5xl sm:text-7xl md:text-8xl font-black uppercase tracking-tighter leading-none mb-6">
+            MOVA<span className="text-[#FDD935]">.</span>
+          </h1>
 
           <h2 className="text-xl sm:text-2xl text-white font-bold max-w-3xl leading-snug mb-4">
             Mood Face Recognition Android App for Individuals with ADHD & Procrastination

@@ -131,6 +131,12 @@ export default function HorizoneIDE({ onNavigate }) {
       {/* Hero Section */}
       <section className="pt-16 pb-20 px-6 md:px-12 max-w-7xl mx-auto flex flex-col items-center text-center">
         <FadeIn className="max-w-4xl flex flex-col items-center">
+          <img 
+            src="/horizone_ide_icon.png" 
+            alt="Horizone IDE" 
+            className="w-20 h-20 mb-6 object-contain drop-shadow-[0_0_25px_rgba(253,217,53,0.35)]" 
+          />
+
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-[#FDD935] uppercase tracking-widest mb-6 backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-[#FDD935] animate-ping"></span>
             Status: 1.01.02 • Built on XIME (Xoeris Interactive Modular Ecosystem)

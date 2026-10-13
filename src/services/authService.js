@@ -43,6 +43,21 @@ export function getStoredUser() {
       try { localStorage.setItem('xoeris_user', JSON.stringify(parsed)); } catch {}
       return parsed;
     }
+
+    const adminToken = localStorage.getItem('xoeris_admin_token') || sessionStorage.getItem('xoeris_admin_token');
+    if (adminToken) {
+      return {
+        id: 'xoeris-admin',
+        username: 'admin',
+        email: 'admin@xoeris.com',
+        name: 'Administrator',
+        role: 'admin',
+        is_admin: true,
+        subscription_tier: 'ultra',
+        subscription_status: 'active'
+      };
+    }
+
     return null;
   } catch {
     return null;
@@ -53,12 +68,36 @@ export function getStoredToken() {
   const local = localStorage.getItem('xoeris_token');
   if (local) return local;
 
-  const fromCookie = getSharedCookie('xoeris_session_token');
+  const adminToken = localStorage.getItem('xoeris_admin_token') || sessionStorage.getItem('xoeris_admin_token');
+  if (adminToken) return adminToken;
+
+  const fromCookie = getSharedCookie('xoeris_session_token') || getSharedCookie('xoeris_admin_token');
   if (fromCookie) {
     try { localStorage.setItem('xoeris_token', fromCookie); } catch {}
     return fromCookie;
   }
   return '';
+}
+
+export function isUserAdmin(user = null) {
+  const u = user || getStoredUser();
+  if (u && (u.role === 'admin' || u.is_admin === true || (u.email && u.email.toLowerCase() === 'admin@xoeris.com'))) {
+    return true;
+  }
+  return Boolean(
+    localStorage.getItem('xoeris_admin_token') ||
+    sessionStorage.getItem('xoeris_admin_token') ||
+    getSharedCookie('xoeris_admin_token')
+  );
+}
+
+export function isUserUltra(user = null) {
+  const u = user || getStoredUser();
+  if (isUserAdmin(u)) return true; // Admin has all privileges
+  if (!u) return false;
+  const tier = (u.subscription_tier || '').toLowerCase();
+  const status = (u.subscription_status || '').toLowerCase();
+  return tier === 'ultra' && status !== 'expired';
 }
 
 export function setSession(token, user) {
@@ -80,10 +119,13 @@ export function clearSession(reload = true) {
   localStorage.removeItem('xoeris_token');
   localStorage.removeItem('xoeris_user');
   localStorage.removeItem('xoeris_chat_auth');
+  localStorage.removeItem('xoeris_admin_token');
+  sessionStorage.removeItem('xoeris_admin_token');
   deleteSharedCookie('xoeris_session_token');
   deleteSharedCookie('xoeris_session_user');
   deleteSharedCookie('xoeris_chat_auth');
   deleteSharedCookie('xoeris_token');
+  deleteSharedCookie('xoeris_admin_token');
   window.dispatchEvent(new Event('xoeris_auth_change'));
   if (reload && typeof window !== 'undefined') {
     window.location.reload();

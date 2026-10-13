@@ -43,6 +43,12 @@ export default function HorizoneEngine({ onNavigate }) {
       {/* Hero Section */}
       <section className="pt-20 pb-24 px-6 md:px-12 max-w-7xl mx-auto flex flex-col items-center text-center">
         <FadeIn className="max-w-4xl flex flex-col items-center">
+          <img 
+            src="/xoeris_horizone_engine_logo_icon_colored.png" 
+            alt="Horizone Engine" 
+            className="w-20 h-20 mb-6 object-contain drop-shadow-[0_0_25px_rgba(253,217,53,0.35)]" 
+          />
+
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-[#FDD935] uppercase tracking-widest mb-8 backdrop-blur-md">
             <Box size={14} className="text-[#FDD935]" />
             Real-Time Simulation & 3D Interactive Runtime
