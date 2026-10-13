@@ -39,7 +39,7 @@ export default async function handler(req, res) {
     const adminToken = jwt.sign(
       {
         sub: 'xoeris-admin',
-        email: adminEmail,
+        email: configuredAdminEmail,
         role: 'admin',
       },
       jwtSecret,
@@ -51,7 +51,7 @@ export default async function handler(req, res) {
       message: 'Admin authorization granted.',
       token: adminToken,
       admin: {
-        email: adminEmail,
+        email: configuredAdminEmail,
         role: 'admin',
         authenticatedAt: new Date().toISOString()
       }

@@ -150,7 +150,7 @@ export default function AdminDashboard({ onNavigate }) {
         body: JSON.stringify({ email: adminEmail.trim(), pin: adminPin.trim() })
       }).catch(() => null);
 
-      if (!res || !res.ok) {
+      if (!res) {
         if (apiUrl !== 'https://api.xoeris.com/api/database1/admin/login') {
           res = await fetch('https://api.xoeris.com/api/database1/admin/login', {
             method: 'POST',
