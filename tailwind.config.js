@@ -55,7 +55,7 @@ export default {
           'toggle-track':  '#282834',
           'toggle-border': '#3C3C4C',
 
-          // Chart (categorical — Resources Explorer only)
+          // Chart (categorical - Resources Explorer only)
           'chart-1': '#4ECDC4',
           'chart-2': '#FF8C42',
           'chart-3': '#9B6BFF',

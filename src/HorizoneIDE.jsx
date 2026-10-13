@@ -141,7 +141,7 @@ export default function HorizoneIDE({ onNavigate }) {
           </h1>
 
           <p className="text-xl sm:text-2xl text-white font-bold max-w-3xl leading-snug mb-4">
-            A fast, native-feeling code editor and AI-assisted development suite — pair a custom C++ Direct2D editor engine with an agentic AI assistant and built-in developer tools, all under your control.
+            A fast, native-feeling code editor and AI-assisted development suite. Pair a custom C++ Direct2D editor engine with an agentic AI assistant and built-in developer tools, all under your control.
           </p>
 
           <p className="text-sm sm:text-base text-gray-400 max-w-2xl font-normal leading-relaxed mb-10">
@@ -156,7 +156,7 @@ export default function HorizoneIDE({ onNavigate }) {
               className="px-8 py-4 bg-[#FDD935] text-black text-xs font-black uppercase tracking-widest rounded-xl hover:bg-[#FFE066] hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(253,217,53,0.4)] flex items-center gap-2 cursor-pointer border-none no-underline"
             >
               <Download size={16} /> 
-              {loadingAsset ? 'Resolving Asset...' : `Download ${platformInfo.label}${fileSizeLabel} — Free`}
+              {loadingAsset ? 'Resolving Asset...' : `Download ${platformInfo.label}${fileSizeLabel} (Free)`}
             </a>
             <a 
               href={releaseMeta?.htmlUrl || "https://github.com/Xoeris/Horizone-IDE/releases"} 
@@ -482,7 +482,7 @@ export default function HorizoneIDE({ onNavigate }) {
               rel="noreferrer"
               className="px-10 py-4 bg-[#FDD935] text-black text-xs font-black uppercase tracking-widest rounded-xl hover:bg-[#FFE066] transition-all cursor-pointer border-none shadow-[0_0_25px_rgba(253,217,53,0.35)] flex items-center gap-2 no-underline"
             >
-              <Download size={16} /> Download for {platformInfo.label}{fileSizeLabel} — Free
+              <Download size={16} /> Download for {platformInfo.label}{fileSizeLabel} (Free)
             </a>
             <a 
               href={releaseMeta?.htmlUrl || "https://github.com/Xoeris/Horizone-IDE/releases"}

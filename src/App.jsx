@@ -8,6 +8,7 @@ import XoerisPage from './XoerisPage';
 import SubscriptionsPage from './SubscriptionsPage';
 import AureviaPage from './AureviaPage';
 import AuthPage from './AuthPage';
+import AdminDashboard from './AdminDashboard';
 import { setSession, syncUserFromDatabase } from './services/authService';
 
 // Product Deep-Dive Pages
@@ -31,7 +32,7 @@ const PlaceholderProduct = ({ title, onNavigate }) => (
   </div>
 );
 
-/* Xoeris Cyber Design System brand colors — used for background blobs */
+/* Xoeris Cyber Design System brand colors - used for background blobs */
 const colors = {
   bg: '#050505',
   amber: '#FDD935',         // Cyber Yellow
@@ -69,6 +70,7 @@ export default function App() {
     if (path === '/about') return 'about';
     if (path === '/chat') return 'chat';
     if (path === '/login' || path === '/auth') return 'auth';
+    if (path === '/admin' || path.startsWith('/admin')) return 'admin';
 
     if (path === '/pricing' || path === '/subscription' || path === '/subscriptions' || path === '/payment') return 'pricing';
 
@@ -159,6 +161,7 @@ export default function App() {
       else if (path === '/about') setCurrentPage('about');
       else if (path === '/chat') setCurrentPage('chat');
       else if (path === '/login' || path === '/auth') setCurrentPage('auth');
+      else if (path === '/admin' || path.startsWith('/admin')) setCurrentPage('admin');
       else if (path === '/pricing' || path === '/subscription' || path === '/subscriptions' || path === '/payment') setCurrentPage('pricing');
       else if (path.startsWith('/aurevia') || path.startsWith('/search')) setCurrentPage('aurevia');
       else setCurrentPage('xoeris');
@@ -186,6 +189,7 @@ export default function App() {
       musify: 'Musify | Xoeris',
       xalme: 'Xalme | Xoeris',
       xalmecode: 'Xalme Code | Xoeris',
+      admin: 'Admin Dashboard | Xoeris',
       pricing: 'Pricing | Xoeris',
       subscriptions: 'Pricing | Xoeris'
     };
@@ -245,6 +249,7 @@ export default function App() {
       musify: '/musify',
       xalme: '/xalme',
       xalmecode: '/xalmecode',
+      admin: '/admin',
       pricing: '/pricing',
       subscriptions: '/pricing',
       payment: '/payment'
@@ -260,7 +265,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen font-ui relative z-0 overflow-x-hidden bg-[#050505] text-white selection:bg-[#FDD935] selection:text-black">
-      {!['xoeris', 'subscriptions', 'samudra-showcase', 'aurevia', 'auth', 'apex', 'under-construction', 'horizoneide', 'mova', 'musify', 'xalme', 'xalmecode'].includes(currentPage) && (
+      {!['xoeris', 'subscriptions', 'samudra-showcase', 'aurevia', 'auth', 'apex', 'under-construction', 'admin', 'horizoneide', 'mova', 'musify', 'xalme', 'xalmecode'].includes(currentPage) && (
         <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden opacity-30 mix-blend-screen">
           {/* Xoeris Cyber ambient blobs */}
           <div className="blob blob-1 will-change-transform" style={{ backgroundColor: colors.amber }}></div>
@@ -280,6 +285,7 @@ export default function App() {
         {currentPage === 'error-api' && <ErrorPage title="Restricted API Endpoint" />}
         {currentPage === 'error-dl' && <ErrorPage title="Restricted Private Storage" />}
         {currentPage === 'xoeris' && <XoerisPage onNavigate={handleNavigate} />}
+        {currentPage === 'admin' && <AdminDashboard onNavigate={handleNavigate} />}
         {(currentPage === 'pricing' || currentPage === 'subscriptions') && <SubscriptionsPage onNavigate={handleNavigate} />}
 
         {/* Product Details */}

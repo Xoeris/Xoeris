@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Check, Zap, ShieldCheck, Info, ArrowLeft, ArrowRight, CreditCard, 
-  Lock, CheckCircle2, AlertCircle, Edit3, X, Calendar, Sparkles, ExternalLink
+  Check, Zap, ShieldCheck, Info, ArrowLeft, ArrowRight,
+  Lock, CheckCircle2, AlertCircle, Sparkles, ExternalLink, User, Mail, ShieldAlert
 } from 'lucide-react';
 import FadeIn from './components/FadeIn';
 import { getStoredUser, getStoredToken, syncUserFromDatabase } from './services/authService';
@@ -10,41 +10,22 @@ export default function SubscriptionsPage({ onNavigate }) {
   const [view, setView] = useState(() => {
     return window.location.pathname === '/payment' ? 'payment' : 'pricing';
   });
+  const [selectedPlan, setSelectedPlan] = useState('Pro');
   const [billingCycle, setBillingCycle] = useState('yearly');
-  const [termsAgreed, setTermsAgreed] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState('');
   const [successReceipt, setSuccessReceipt] = useState(null);
 
-  // Payment method state (null by default; no hardcoded dummy card placeholders)
-  const [paymentCard, setPaymentCard] = useState(() => {
-    try {
-      const saved = localStorage.getItem('xoeris_saved_payment_card');
-      return saved ? JSON.parse(saved) : null;
-    } catch {
-      return null;
-    }
+  // Manual payment authorization state
+  const [fullName, setFullName] = useState(() => {
+    const user = getStoredUser();
+    return user?.name || '';
   });
-
-  // Modal for changing/adding card
-  const [showCardModal, setShowCardModal] = useState(false);
-  const [cardForm, setCardForm] = useState({
-    number: '',
-    cardholder: '',
-    exp: '',
-    cvc: '',
-    postal: ''
+  const [email, setEmail] = useState(() => {
+    const user = getStoredUser();
+    return user?.email || '';
   });
-  const [cardFormError, setCardFormError] = useState('');
-
-  const getCardBrand = (num) => {
-    const clean = (num || '').replace(/\D/g, '');
-    if (clean.startsWith('4')) return 'Visa';
-    if (clean.startsWith('5') || clean.startsWith('2')) return 'Mastercard';
-    if (clean.startsWith('34') || clean.startsWith('37')) return 'Amex';
-    if (clean.startsWith('6')) return 'Discover';
-    return 'Card';
-  };
+  const [agreeText, setAgreeText] = useState('');
 
   useEffect(() => {
     const handlePopState = () => {
@@ -54,103 +35,43 @@ export default function SubscriptionsPage({ onNavigate }) {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  const handleSwitchView = (newView) => {
+  const handleSwitchView = (newView, planName = 'Pro') => {
+    if (planName) setSelectedPlan(planName);
     const path = newView === 'payment' ? '/payment' : '/pricing';
     window.history.pushState({}, '', path);
     setView(newView);
     window.scrollTo(0, 0);
   };
 
-  // Card input formatters
-  const handleCardNumberChange = (e) => {
-    const raw = e.target.value.replace(/\D/g, '').slice(0, 16);
-    const formatted = raw.replace(/(\d{4})/g, '$1 ').trim();
-    setCardForm((prev) => ({ ...prev, number: formatted }));
-    if (cardFormError) setCardFormError('');
-  };
-
-  const handleExpChange = (e) => {
-    let raw = e.target.value.replace(/\D/g, '').slice(0, 4);
-    if (raw.length >= 2) {
-      raw = raw.slice(0, 2) + '/' + raw.slice(2);
-    }
-    setCardForm((prev) => ({ ...prev, exp: raw }));
-    if (cardFormError) setCardFormError('');
-  };
-
-  const handleSaveCard = (e) => {
+  const handleSubscribe = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
-    setCardFormError('');
-    const rawNumber = cardForm.number.replace(/\s/g, '');
-    if (rawNumber.length < 15) {
-      setCardFormError('Please enter a valid 16-digit card number.');
-      return false;
-    }
-    const [month, year] = cardForm.exp.split('/');
-    if (!month || !year || Number(month) < 1 || Number(month) > 12) {
-      setCardFormError('Please enter a valid expiration date (MM/YY).');
-      return false;
-    }
-    if (cardForm.cvc.length < 3) {
-      setCardFormError('Please enter a valid CVC code.');
-      return false;
-    }
+    setPaymentError('');
 
-    const detectedBrand = getCardBrand(rawNumber);
-    const newCard = {
-      brand: detectedBrand,
-      last4: rawNumber.slice(-4),
-      expMonth: month,
-      expYear: year,
-      cardholder: cardForm.cardholder || 'Cardholder'
-    };
-
-    setPaymentCard(newCard);
-    try {
-      localStorage.setItem('xoeris_saved_payment_card', JSON.stringify(newCard));
-    } catch {}
-    setShowCardModal(false);
-    return true;
-  };
-
-  // Real payment processing handler
-  const handleSubscribe = async () => {
-    if (!termsAgreed) {
-      setPaymentError('Please agree to the recurring subscription terms before proceeding.');
+    if (!fullName || fullName.trim().length < 2) {
+      setPaymentError('Please enter your full name (e.g. Chris Juan).');
       return;
     }
 
-    let activeCard = paymentCard;
-    if (!activeCard) {
-      const valid = handleSaveCard();
-      if (!valid) {
-        setPaymentError('Please enter valid payment card details before subscribing.');
-        return;
-      }
-      const rawNumber = cardForm.number.replace(/\s/g, '');
-      const [month, year] = cardForm.exp.split('/');
-      activeCard = {
-        brand: getCardBrand(rawNumber),
-        last4: rawNumber.slice(-4),
-        expMonth: month,
-        expYear: year,
-        cardholder: cardForm.cardholder || 'Cardholder'
-      };
+    if (!email || !email.includes('@')) {
+      setPaymentError('Please enter a valid email address (e.g. chris.juan@example.com).');
+      return;
     }
 
-    setPaymentError('');
+    if (agreeText.trim() !== 'I AGREE') {
+      setPaymentError('You must type exactly "I AGREE" to confirm your subscription request.');
+      return;
+    }
+
     setIsProcessing(true);
 
     try {
-      const user = getStoredUser();
       const token = getStoredToken();
-
       const payload = {
-        plan: 'pro',
+        fullName: fullName.trim(),
+        email: email.trim().toLowerCase(),
+        plan: selectedPlan.toLowerCase(),
         billingCycle,
-        cardLast4: activeCard.last4,
-        cardBrand: activeCard.brand,
-        email: user?.email || undefined
+        agreeText: agreeText.trim()
       };
 
       const apiUrl = window.location.hostname.includes('xoeris.com')
@@ -181,98 +102,97 @@ export default function SubscriptionsPage({ onNavigate }) {
 
       if (response && response.ok) {
         const data = await response.json();
-        // Sync user state from database
         await syncUserFromDatabase().catch(() => null);
-        setSuccessReceipt(data);
-      } else {
-        const errData = response ? await response.json().catch(() => ({})) : {};
-        // Fallback for offline or client preview mode
-        const mockTransactionRef = `XOERIS-PRO-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
-        const renewalDate = new Date();
-        if (billingCycle === 'yearly') renewalDate.setFullYear(renewalDate.getFullYear() + 1);
-        else renewalDate.setMonth(renewalDate.getMonth() + 1);
-
         setSuccessReceipt({
-          transactionRef: mockTransactionRef,
-          plan: 'pro',
+          transactionRef: data.transactionRef || `XOERIS-REQ-${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
+          fullName: fullName.trim(),
+          email: email.trim().toLowerCase(),
+          plan: selectedPlan,
           billingCycle,
-          amount: billingCycle === 'yearly' ? 420 : 50,
-          currency: 'USD',
-          cardBrand: paymentCard.brand,
-          cardLast4: paymentCard.last4,
-          expiresAt: renewalDate.toISOString()
+          amount: data.amount || (selectedPlan === 'Ultra' ? (billingCycle === 'yearly' ? 1440 : 150) : (billingCycle === 'yearly' ? 420 : 50))
         });
+      } else {
+        const errJson = response ? await response.json().catch(() => ({})) : {};
+        if (errJson && errJson.error) {
+          setPaymentError(errJson.error);
+        } else {
+          // Local / offline fallback record
+          const fallbackRef = `XOERIS-REQ-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+          setSuccessReceipt({
+            transactionRef: fallbackRef,
+            fullName: fullName.trim(),
+            email: email.trim().toLowerCase(),
+            plan: selectedPlan,
+            billingCycle,
+            amount: selectedPlan === 'Ultra' ? (billingCycle === 'yearly' ? 1440 : 150) : (billingCycle === 'yearly' ? 420 : 50)
+          });
+        }
       }
     } catch (err) {
-      setPaymentError(err.message || 'Payment transaction failed. Please check your card information.');
+      setPaymentError(err.message || 'An unexpected error occurred while processing your request.');
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const renewalDateString = (() => {
-    const d = new Date();
-    if (billingCycle === 'yearly') {
-      d.setFullYear(d.getFullYear() + 1);
-    } else {
-      d.setMonth(d.getMonth() + 1);
-    }
-    return d.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
-  })();
-
-  const PricingCard = ({ title, description, price, features, buttonText, highlighted, icon: Icon }) => (
-    <div className={`relative flex flex-col p-8 rounded-3xl border transition-all duration-300 overflow-hidden ${
-      highlighted
-        ? 'liquid-glass-panel border-white/25 ring-1 ring-[#FDD935]/40 shadow-[0_0_35px_rgba(253,217,53,0.15)] bg-white/[0.04]'
-        : 'liquid-glass-panel border-white/10 hover:border-white/20 bg-white/[0.02]'
-    }`} style={{ backdropFilter: 'blur(28px) saturate(180%)', WebkitBackdropFilter: 'blur(28px) saturate(180%)' }}>
+  const PricingCard = ({ 
+    title, 
+    description, 
+    price, 
+    buttonText, 
+    highlighted = false, 
+    features = [],
+    onAction
+  }) => (
+    <div className={`rounded-3xl p-8 relative flex flex-col justify-between transition-all duration-300 ${
+      highlighted 
+        ? 'bg-gradient-to-b from-[#FDD935]/15 via-white/[0.03] to-transparent border border-[#FDD935]/50 shadow-[0_0_40px_rgba(253,217,53,0.15)] ring-1 ring-[#FDD935]/30' 
+        : 'bg-white/[0.02] border border-white/10 hover:border-white/20'
+    }`}>
       {highlighted && (
-        <div className="absolute -top-10 left-1/4 w-40 h-20 bg-[#FDD935]/10 rounded-full blur-2xl pointer-events-none"></div>
+        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[#FDD935] text-black text-[11px] font-black uppercase tracking-widest shadow-md">
+          Most Popular
+        </div>
       )}
-      <div className="mb-6 relative z-10">
-        <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center mb-4 ${
-          highlighted ? 'bg-[#FDD935]/15 border-[#FDD935]/30 text-[#FDD935]' : 'bg-white/5 border-white/10 text-white'
-        }`}>
-          <Icon size={24} />
+      <div>
+        <div className="flex justify-between items-start mb-4">
+          <h3 className="text-xl font-bold text-white tracking-tight">{title}</h3>
+          {title === 'Pro' && <span className="text-[10px] font-mono text-[#FDD935] px-2 py-0.5 rounded bg-[#FDD935]/10 border border-[#FDD935]/20 font-bold uppercase">Developer</span>}
+          {title === 'Ultra' && <span className="text-[10px] font-mono text-[#FEF08A] px-2 py-0.5 rounded bg-white/10 border border-white/20 font-bold uppercase">Enterprise</span>}
         </div>
-        <h3 className="text-2xl font-bold text-white mb-2">{title}</h3>
-        <p className="text-gray-400 text-sm">{description}</p>
-      </div>
-      <div className="mb-8 relative z-10">
-        <div className="flex items-baseline gap-1">
-          <span className="text-4xl font-black text-white">{price === '0' ? '$0' : `$${price}`}</span>
-          {price !== '0' && <span className="text-gray-400 text-sm font-medium">USD / month</span>}
+        <p className="text-gray-400 text-xs leading-relaxed mb-6 h-10">{description}</p>
+        <div className="flex items-baseline gap-1 mb-1">
+          <span className="text-4xl sm:text-5xl font-black text-white tracking-tight">${price}</span>
+          <span className="text-gray-400 text-xs font-semibold">/month</span>
         </div>
-        <div className="h-5">
-          {price !== '0' && (billingCycle === 'yearly' || title === 'Ultra') && (
-            <div className="text-gray-400 text-xs mt-1">billed annually</div>
+        <div className="h-5 mb-6">
+          {price !== '0' && (
+            <div className="text-gray-400 text-xs">
+              {billingCycle === 'yearly' ? 'billed annually' : 'billed monthly'}
+            </div>
           )}
         </div>
-      </div>
-      <button 
-        onClick={() => title === 'Pro' ? handleSwitchView('payment') : null}
-        className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all duration-200 mb-8 cursor-pointer relative z-10 ${
-          highlighted
-            ? 'bg-[#FDD935] text-black hover:bg-[#FFE066] shadow-[0_0_20px_rgba(253,217,53,0.3)] border-none'
-            : 'bg-white/5 border border-white/15 text-white hover:bg-white/10'
-        }`}
-      >
-        {buttonText}
-      </button>
-      <div className="space-y-4 relative z-10">
-        <div className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
-          {title === 'Free' ? 'Features' : `Everything in ${title === 'Pro' ? 'Free' : 'Pro'} and:`}
-        </div>
-        {features.map((feature, idx) => (
-          <div key={idx} className="flex gap-3 text-sm text-gray-300">
-            <Check size={18} className="text-[#FDD935] shrink-0" />
-            <span>{feature}</span>
+        <button 
+          onClick={onAction}
+          className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all duration-200 mb-8 cursor-pointer relative z-10 ${
+            highlighted
+              ? 'bg-[#FDD935] text-black hover:bg-[#FFE066] shadow-[0_0_20px_rgba(253,217,53,0.3)] border-none'
+              : 'bg-white/5 border border-white/15 text-white hover:bg-white/10'
+          }`}
+        >
+          {buttonText}
+        </button>
+        <div className="space-y-3 relative z-10">
+          <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3">
+            {title === 'Free' ? 'Included Features' : `Everything in ${title === 'Pro' ? 'Free' : 'Pro'} and:`}
           </div>
-        ))}
+          {features.map((feature, idx) => (
+            <div key={idx} className="flex gap-2.5 text-xs text-gray-300">
+              <Check size={16} className="text-[#FDD935] shrink-0 mt-0.5" />
+              <span>{feature}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -300,10 +220,9 @@ export default function SubscriptionsPage({ onNavigate }) {
 
           <button 
             onClick={() => { window.location.href = 'https://xoeris.com'; }}
-            className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer"
+            className="flex items-center group bg-transparent border-none p-0 cursor-pointer"
           >
-            <img src="/xoeris_logo_emblem.png" alt="Xoeris Logo" className="w-6 h-6 object-contain" />
-            <span>Xoeris</span>
+            <img src="/xoeris_logo_emblem.png" alt="Xoeris Logo Emblem" className="h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
           </button>
         </div>
 
@@ -324,7 +243,7 @@ export default function SubscriptionsPage({ onNavigate }) {
               <button 
                 onClick={() => setBillingCycle('monthly')}
                 className={`px-5 py-2 rounded-xl text-xs font-bold transition-all ${
-                  billingCycle === 'monthly' ? 'bg-[#FDD935] text-black shadow-[0_0_15px_rgba(253,217,53,0.3)]' : 'text-gray-400 hover:text-white bg-transparent border-none'
+                  billingCycle === 'monthly' ? 'bg-[#FDD935] text-black shadow-[0_0_15px_rgba(253,217,53,0.3)]' : 'text-gray-400 hover:text-white bg-transparent border-none cursor-pointer'
                 }`}
               >
                 Monthly
@@ -332,7 +251,7 @@ export default function SubscriptionsPage({ onNavigate }) {
               <button 
                 onClick={() => setBillingCycle('yearly')}
                 className={`px-5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
-                  billingCycle === 'yearly' ? 'bg-[#FDD935] text-black shadow-[0_0_15px_rgba(253,217,53,0.3)]' : 'text-gray-400 hover:text-white bg-transparent border-none'
+                  billingCycle === 'yearly' ? 'bg-[#FDD935] text-black shadow-[0_0_15px_rgba(253,217,53,0.3)]' : 'text-gray-400 hover:text-white bg-transparent border-none cursor-pointer'
                 }`}
               >
                 <span>Yearly</span>
@@ -349,7 +268,7 @@ export default function SubscriptionsPage({ onNavigate }) {
             price="0"
             buttonText="Current Plan"
             highlighted={false}
-            icon={ShieldCheck}
+            onAction={() => null}
             features={[
               "Basic Xoeris products",
               "Chat with Xalme on Web for a limited usage",
@@ -363,7 +282,7 @@ export default function SubscriptionsPage({ onNavigate }) {
             price={billingCycle === 'yearly' ? '35' : '50'}
             buttonText="Get Pro"
             highlighted={true}
-            icon={Zap}
+            onAction={() => handleSwitchView('payment', 'Pro')}
             features={[
               "Pro Xoeris products",
               "Chat with Xalme on web, Android, and desktop",
@@ -379,7 +298,7 @@ export default function SubscriptionsPage({ onNavigate }) {
             price={billingCycle === 'yearly' ? '120' : '150'}
             buttonText="Upgrade to Ultra"
             highlighted={false}
-            icon={Zap}
+            onAction={() => handleSwitchView('payment', 'Ultra')}
             features={[
               "All Xoeris products",
               "Access Xalme Code on web",
@@ -395,22 +314,63 @@ export default function SubscriptionsPage({ onNavigate }) {
 
   const PaymentView = () => {
     const isYearly = billingCycle === 'yearly';
-    const amountDue = isYearly ? '420' : '50';
-    const monthlyRate = isYearly ? '$35.00' : '$50.00';
+    const isUltra = selectedPlan === 'Ultra';
+    
+    // Amount calculations
+    let amountDue = '420';
+    let monthlyRate = '$35.00';
+    if (isUltra) {
+      amountDue = isYearly ? '1440' : '150';
+      monthlyRate = isYearly ? '$120.00' : '$150.00';
+    } else {
+      amountDue = isYearly ? '420' : '50';
+      monthlyRate = isYearly ? '$35.00' : '$50.00';
+    }
+
+    const renewalDate = new Date();
+    if (isYearly) renewalDate.setFullYear(renewalDate.getFullYear() + 1);
+    else renewalDate.setMonth(renewalDate.getMonth() + 1);
+    const renewalDateString = renewalDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
     return (
       <div className="max-w-2xl mx-auto px-6 py-12 md:py-16 text-white relative">
-        {/* Back Link */}
-        <button 
-          onClick={() => handleSwitchView('pricing')}
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-[#FDD935] transition-colors mb-8 cursor-pointer bg-transparent border-none p-0 group"
-        >
-          <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-          <span className="text-xs font-bold uppercase tracking-wider">Back to plans</span>
-        </button>
+        <div className="mb-6 flex items-center justify-between">
+          <button 
+            onClick={() => handleSwitchView('pricing')}
+            className="inline-flex items-center gap-2 text-gray-400 hover:text-[#FDD935] transition-colors cursor-pointer bg-transparent border-none p-0 group"
+          >
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            <span className="text-xs font-bold uppercase tracking-wider">Back to plans</span>
+          </button>
 
-        <div className="mb-8">
-          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">Pro plan</h1>
+          <button 
+            onClick={() => { window.location.href = 'https://xoeris.com'; }}
+            className="flex items-center group bg-transparent border-none p-0 cursor-pointer"
+          >
+            <img src="/xoeris_logo_emblem.png" alt="Xoeris Logo Emblem" className="h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
+          </button>
+        </div>
+
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">{selectedPlan} plan</h1>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setSelectedPlan('Pro')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors ${
+                selectedPlan === 'Pro' ? 'bg-[#FDD935] text-black' : 'bg-white/5 text-gray-400 hover:text-white'
+              }`}
+            >
+              Pro
+            </button>
+            <button
+              onClick={() => setSelectedPlan('Ultra')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors ${
+                selectedPlan === 'Ultra' ? 'bg-[#FDD935] text-black' : 'bg-white/5 text-gray-400 hover:text-white'
+              }`}
+            >
+              Ultra
+            </button>
+          </div>
         </div>
 
         {/* Payment Cycle Switcher */}
@@ -432,7 +392,7 @@ export default function SubscriptionsPage({ onNavigate }) {
               </div>
             </div>
             <div className="text-white font-bold text-base mb-1">Monthly</div>
-            <div className="text-gray-400 text-sm">$50.00/month + tax</div>
+            <div className="text-gray-400 text-sm">{isUltra ? '$150.00/month + tax' : '$50.00/month + tax'}</div>
           </button>
 
           <button 
@@ -455,7 +415,7 @@ export default function SubscriptionsPage({ onNavigate }) {
               </span>
             </div>
             <div className="text-white font-bold text-base mb-1">Yearly</div>
-            <div className="text-gray-400 text-sm">$35.00/month + tax</div>
+            <div className="text-gray-400 text-sm">{isUltra ? '$120.00/month + tax' : '$35.00/month + tax'}</div>
           </button>
         </div>
 
@@ -467,7 +427,7 @@ export default function SubscriptionsPage({ onNavigate }) {
           <div className="space-y-5">
             <div className="flex justify-between items-center">
               <div>
-                <div className="text-white font-bold text-base">Pro plan</div>
+                <div className="text-white font-bold text-base">{selectedPlan} plan</div>
                 <div className="text-gray-400 text-xs mt-0.5">{isYearly ? 'Billed Annually' : 'Monthly'}</div>
               </div>
               <div className="text-white font-bold text-lg">${amountDue}</div>
@@ -491,106 +451,80 @@ export default function SubscriptionsPage({ onNavigate }) {
         <div className="flex gap-4 p-5 bg-white/[0.02] border border-white/10 rounded-2xl mb-8 items-start backdrop-blur-sm">
           <Info size={18} className="text-gray-400 shrink-0 mt-0.5" />
           <p className="text-xs text-gray-300 leading-relaxed">
-            Your subscription will auto renew on {renewalDateString}. You will be charged {isYearly ? '$420.00/year' : '$50.00/month'} + tax.
+            Your subscription will renew on {renewalDateString}. You will be charged ${amountDue}.00 {isYearly ? '/year' : '/month'} + tax upon admin confirmation.
           </p>
         </div>
 
-        {/* PAYMENT METHOD Section */}
+        {/* USER INFORMATION & AGREEMENT METHOD Section */}
         <div className="mb-8">
           <h3 className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-widest flex items-center justify-between">
-            <span>Payment Method</span>
+            <span>Payment Authorization</span>
             <span className="text-[11px] text-gray-500 font-normal normal-case flex items-center gap-1">
               <Lock size={12} className="text-[#FDD935]" /> 256-bit encrypted
             </span>
           </h3>
 
-          {paymentCard ? (
-            <div 
-              onClick={() => setShowCardModal(true)}
-              className="flex items-center justify-between p-5 bg-white/[0.02] border border-white/10 rounded-2xl hover:border-[#FDD935]/40 hover:bg-white/[0.04] transition-all cursor-pointer group shadow-sm"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-[#FDD935]/30 transition-colors">
-                  <CreditCard size={20} className="text-[#FDD935]" />
-                </div>
-                <div>
-                  <div className="text-white font-bold text-sm tracking-wide">
-                    {paymentCard.brand} •••• {paymentCard.last4}
-                  </div>
-                  <div className="text-gray-400 text-xs mt-0.5">
-                    Expires {paymentCard.expMonth}/{paymentCard.expYear} · {paymentCard.cardholder}
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 text-gray-400 group-hover:text-white transition-colors">
-                <span className="text-xs font-semibold">Change</span>
-                <ArrowRight size={18} className="text-gray-400 group-hover:text-[#FDD935] group-hover:translate-x-0.5 transition-all" />
-              </div>
-            </div>
-          ) : (
-            <div className="p-6 bg-white/[0.02] border border-white/10 rounded-2xl space-y-4 backdrop-blur-md">
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider">Card Number</label>
-                  {cardForm.number && (
-                    <span className="text-[10px] font-mono font-bold text-[#FDD935] uppercase px-1.5 py-0.5 rounded bg-[#FDD935]/10 border border-[#FDD935]/20">
-                      {getCardBrand(cardForm.number)}
-                    </span>
-                  )}
-                </div>
-                <div className="relative">
-                  <input 
-                    type="text"
-                    placeholder="1234 5678 9012 3456"
-                    value={cardForm.number}
-                    onChange={handleCardNumberChange}
-                    maxLength={19}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
-                  />
-                  <CreditCard size={18} className="absolute right-3.5 top-3.5 text-gray-500" />
-                </div>
-              </div>
+          <div className="p-6 sm:p-8 bg-white/[0.02] border border-white/10 rounded-2xl space-y-5 backdrop-blur-md relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FDD935]/30 to-transparent"></div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Cardholder Name</label>
-                <input 
-                  type="text"
-                  placeholder="Full name on card"
-                  value={cardForm.cardholder}
-                  onChange={(e) => setCardForm(prev => ({ ...prev, cardholder: e.target.value }))}
-                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Expiration</label>
-                  <input 
-                    type="text"
-                    placeholder="MM/YY"
-                    value={cardForm.exp}
-                    onChange={handleExpChange}
-                    maxLength={5}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">CVC</label>
-                  <input 
-                    type="password"
-                    placeholder="CVC"
-                    value={cardForm.cvc}
-                    onChange={(e) => setCardForm(prev => ({ ...prev, cvc: e.target.value.replace(/\D/g, '').slice(0, 4) }))}
-                    maxLength={4}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
-                  />
-                </div>
-              </div>
-              {cardFormError && (
-                <p className="text-red-400 text-xs mt-1">{cardFormError}</p>
-              )}
+            {/* Full Name */}
+            <div>
+              <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                <User size={14} className="text-[#FDD935]" />
+                <span>Full Name</span>
+              </label>
+              <input 
+                type="text"
+                placeholder="example Chris Juan"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
+                required
+              />
             </div>
-          )}
+
+            {/* Email */}
+            <div>
+              <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                <Mail size={14} className="text-[#FDD935]" />
+                <span>Email</span>
+              </label>
+              <input 
+                type="email"
+                placeholder="example chris.juan@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
+                required
+              />
+            </div>
+
+            {/* Agree to pay */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                  <ShieldCheck size={14} className="text-[#FDD935]" />
+                  <span>Agree to pay</span>
+                </label>
+                <span className="text-[10px] font-mono text-[#FDD935]">type exactly "I AGREE"</span>
+              </div>
+              <input 
+                type="text"
+                placeholder='type exactly "I AGREE"'
+                value={agreeText}
+                onChange={(e) => setAgreeText(e.target.value)}
+                className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white text-sm font-mono placeholder-gray-600 focus:outline-none transition-colors ${
+                  agreeText.trim() === 'I AGREE' 
+                    ? 'border-[#FDD935] bg-[#FDD935]/5 shadow-[0_0_15px_rgba(253,217,53,0.1)]' 
+                    : 'border-white/10 focus:border-[#FDD935]'
+                }`}
+                required
+              />
+              <p className="text-[11px] text-gray-500 mt-1.5 leading-relaxed">
+                By entering "I AGREE", you authorize the subscription order transmission to the Administrator Dashboard for payment validation.
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Error message */}
@@ -601,25 +535,8 @@ export default function SubscriptionsPage({ onNavigate }) {
           </div>
         )}
 
-        {/* Terms and Subscribe */}
-        <div className="space-y-6">
-          <label className="flex gap-3.5 items-start cursor-pointer select-none group">
-            <input 
-              type="checkbox" 
-              checked={termsAgreed}
-              onChange={(e) => setTermsAgreed(e.target.checked)}
-              className="sr-only"
-            />
-            <div className={`w-5 h-5 rounded-md border flex items-center justify-center mt-0.5 shrink-0 transition-colors ${
-              termsAgreed ? 'bg-[#FDD935] border-[#FDD935]' : 'border-gray-500 bg-white/5 group-hover:border-gray-400'
-            }`}>
-              {termsAgreed && <Check size={14} className="text-black stroke-[3]" />}
-            </div>
-            <p className="text-xs text-gray-400 leading-relaxed">
-              You agree that Xoeris will charge your card in the amount above now and on a recurring {isYearly ? 'annual' : 'monthly'} basis until you cancel in accordance with our <a href="#" className="text-gray-300 hover:text-white underline">terms</a>. You can cancel at any time in your account settings.
-            </p>
-          </label>
-
+        {/* Subscribe Action */}
+        <div className="space-y-4">
           <button 
             type="button"
             disabled={isProcessing}
@@ -633,112 +550,13 @@ export default function SubscriptionsPage({ onNavigate }) {
             {isProcessing ? (
               <>
                 <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                <span>Processing Order…</span>
+                <span>Transmitting Order…</span>
               </>
             ) : (
               <span>Subscribe</span>
             )}
           </button>
         </div>
-
-        {/* Card Entry / Edit Modal */}
-        {showCardModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-            <div className="w-full max-w-md bg-[#111111] border border-white/15 rounded-3xl p-6 sm:p-8 shadow-2xl relative">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-[#FDD935]/15 border border-[#FDD935]/30 flex items-center justify-center text-[#FDD935]">
-                    <CreditCard size={18} />
-                  </div>
-                  <h3 className="text-lg font-bold text-white">Payment Method</h3>
-                </div>
-                <button 
-                  onClick={() => setShowCardModal(false)}
-                  className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-colors bg-transparent border-none cursor-pointer"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              <form onSubmit={handleSaveCard} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Card Number</label>
-                  <div className="relative">
-                    <input 
-                      type="text"
-                      placeholder="1234 5678 9012 3456"
-                      value={cardForm.number}
-                      onChange={handleCardNumberChange}
-                      maxLength={19}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
-                      required
-                    />
-                    <CreditCard size={18} className="absolute right-3.5 top-3.5 text-gray-500" />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Cardholder Name</label>
-                  <input 
-                    type="text"
-                    placeholder="Full name on card"
-                    value={cardForm.cardholder}
-                    onChange={(e) => setCardForm(prev => ({ ...prev, cardholder: e.target.value }))}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
-                    required
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Expiration</label>
-                    <input 
-                      type="text"
-                      placeholder="MM/YY"
-                      value={cardForm.exp}
-                      onChange={handleExpChange}
-                      maxLength={5}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">CVC</label>
-                    <input 
-                      type="password"
-                      placeholder="•••"
-                      value={cardForm.cvc}
-                      onChange={(e) => setCardForm(prev => ({ ...prev, cvc: e.target.value.replace(/\D/g, '').slice(0, 4) }))}
-                      maxLength={4}
-                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm font-mono placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
-                      required
-                    />
-                  </div>
-                </div>
-
-                {cardFormError && (
-                  <p className="text-red-400 text-xs mt-2">{cardFormError}</p>
-                )}
-
-                <div className="pt-2 flex gap-3">
-                  <button 
-                    type="button" 
-                    onClick={() => setShowCardModal(false)}
-                    className="flex-1 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold rounded-xl text-xs transition-colors border-none cursor-pointer"
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    type="submit"
-                    className="flex-1 py-3 bg-[#FDD935] hover:bg-[#FFE066] text-black font-black uppercase tracking-wider rounded-xl text-xs transition-colors border-none cursor-pointer shadow-[0_0_15px_rgba(253,217,53,0.3)]"
-                  >
-                    Save Card
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
 
         {/* Success Confirmation Modal */}
         {successReceipt && (
@@ -747,38 +565,45 @@ export default function SubscriptionsPage({ onNavigate }) {
               <div className="w-16 h-16 rounded-full bg-[#FDD935]/15 border border-[#FDD935]/40 flex items-center justify-center mx-auto mb-6 text-[#FDD935]">
                 <CheckCircle2 size={32} />
               </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">Subscription Confirmed</h2>
-              <p className="text-gray-400 text-sm mb-6 max-w-sm mx-auto">
-                Your Pro account is now active. All advanced models and ecosystem features have been unlocked.
+              <h2 className="text-2xl sm:text-3xl font-black text-white mb-2">Order Transmitted to Admin</h2>
+              <p className="text-gray-400 text-xs sm:text-sm mb-6 max-w-sm mx-auto leading-relaxed">
+                Your subscription order has been sent to the Admin Dashboard for verification. Once the administrator confirms receipt of payment, your account will be unlocked for {successReceipt.plan}.
               </p>
 
               {/* Receipt card */}
               <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 text-left space-y-3 mb-8 text-xs font-mono">
                 <div className="flex justify-between text-gray-400">
-                  <span>Reference</span>
+                  <span>Reference ID</span>
                   <span className="text-white font-bold">{successReceipt.transactionRef}</span>
                 </div>
                 <div className="flex justify-between text-gray-400">
-                  <span>Plan</span>
-                  <span className="text-white uppercase font-bold">Xoeris Pro ({successReceipt.billingCycle})</span>
+                  <span>Customer Name</span>
+                  <span className="text-white font-bold">{successReceipt.fullName}</span>
                 </div>
                 <div className="flex justify-between text-gray-400">
-                  <span>Payment</span>
-                  <span className="text-white font-bold">{successReceipt.cardBrand} •••• {successReceipt.cardLast4}</span>
+                  <span>Email</span>
+                  <span className="text-white font-bold">{successReceipt.email}</span>
                 </div>
                 <div className="flex justify-between text-gray-400">
-                  <span>Total Paid</span>
-                  <span className="text-[#FDD935] font-black">${successReceipt.amount}.00 USD</span>
+                  <span>Requested Plan</span>
+                  <span className="text-[#FDD935] uppercase font-bold">{successReceipt.plan} ({successReceipt.billingCycle})</span>
+                </div>
+                <div className="flex justify-between text-gray-400">
+                  <span>Verification Status</span>
+                  <span className="text-yellow-400 font-bold">Pending Admin Approval</span>
+                </div>
+                <div className="flex justify-between text-gray-400">
+                  <span>Total Amount</span>
+                  <span className="text-white font-bold">${successReceipt.amount}.00 USD</span>
                 </div>
               </div>
 
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
-                  onClick={() => onNavigate ? onNavigate('chat') : window.location.href = 'https://xalme.xoeris.com/chat'}
-                  className="flex-1 py-3.5 bg-[#FDD935] hover:bg-[#FFE066] text-black font-black uppercase tracking-widest rounded-xl text-xs transition-colors border-none cursor-pointer shadow-[0_0_20px_rgba(253,217,53,0.4)] flex items-center justify-center gap-2"
+                  onClick={() => onNavigate ? onNavigate('xoeris') : window.location.href = '/'}
+                  className="flex-1 py-3.5 bg-[#FDD935] hover:bg-[#FFE066] text-black font-black uppercase tracking-widest rounded-xl text-xs transition-colors border-none cursor-pointer shadow-[0_0_20px_rgba(253,217,53,0.4)]"
                 >
-                  <span>Launch Xalme Chat</span>
-                  <ExternalLink size={14} />
+                  Return to Main Site
                 </button>
                 <button
                   onClick={() => {
@@ -802,7 +627,7 @@ export default function SubscriptionsPage({ onNavigate }) {
       {/* Cyber Grid Background */}
       <div className="fixed inset-0 z-0 bg-[linear-gradient(rgba(253,217,53,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-50"></div>
 
-      {/* Background blobs for depth — Xoeris cyber yellow palette */}
+      {/* Background blobs for depth - Xoeris cyber yellow palette */}
       <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden mix-blend-screen gpu-accel">
         <div className="blob blob-1 will-change-transform" style={{ backgroundColor: '#FDD935' }}></div>
         <div className="blob blob-2 will-change-transform" style={{ backgroundColor: '#FFC94A' }}></div>
@@ -810,19 +635,9 @@ export default function SubscriptionsPage({ onNavigate }) {
         <div className="absolute inset-0 bg-black/65 backdrop-blur-[60px]"></div>
       </div>
 
-      <FadeIn className="relative z-10 w-full">
+      <div className="relative z-10 w-full">
         {view === 'pricing' ? <PricingView /> : <PaymentView />}
-      </FadeIn>
-
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes pageSlideIn {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-page-slide-in {
-          animation: pageSlideIn 0.5s ease-out forwards;
-        }
-      `}} />
+      </div>
     </div>
   );
 }

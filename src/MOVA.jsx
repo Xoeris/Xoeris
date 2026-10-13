@@ -189,7 +189,7 @@ export default function MOVA({ onNavigate }) {
               className="px-8 py-4 bg-[#FDD935] text-black text-xs font-black uppercase tracking-widest rounded-xl hover:bg-[#FFE066] hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(253,217,53,0.4)] flex items-center gap-2 cursor-pointer border-none no-underline"
             >
               <Download size={16} /> 
-              {loadingAsset ? 'Resolving APK...' : `Download APK${fileSizeLabel} — Free`}
+              {loadingAsset ? 'Resolving APK...' : `Download APK${fileSizeLabel} (Free)`}
             </a>
             <a 
               href={releaseMeta?.htmlUrl || "https://github.com/Xoeris/MOVA/releases"} 
@@ -436,7 +436,7 @@ export default function MOVA({ onNavigate }) {
               rel="noreferrer"
               className="px-10 py-4 bg-[#FDD935] text-black text-xs font-black uppercase tracking-widest rounded-xl hover:bg-[#FFE066] transition-all cursor-pointer border-none shadow-[0_0_25px_rgba(253,217,53,0.35)] flex items-center gap-2 no-underline"
             >
-              <Download size={16} /> Download APK{fileSizeLabel} — Free
+              <Download size={16} /> Download APK{fileSizeLabel} (Free)
             </a>
             <a 
               href={releaseMeta?.htmlUrl || "https://github.com/Xoeris/MOVA/releases"}

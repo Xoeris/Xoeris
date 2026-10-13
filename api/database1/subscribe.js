@@ -2,7 +2,7 @@ import { neon } from '@neondatabase/serverless';
 import { verifySessionToken, normalizeEmail, setCorsHeaders } from '../_lib/auth.js';
 
 export default async function handler(req, res) {
-  setCorsHeaders(res, 'POST, OPTIONS');
+  setCorsHeaders(res, 'POST, OPTIONS', req);
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   if (req.method !== 'POST') {
@@ -20,128 +20,96 @@ export default async function handler(req, res) {
       try { body = JSON.parse(body); } catch { body = {}; }
     }
 
-    const { plan = 'pro', billingCycle = 'yearly', cardLast4 = '', cardBrand = '', email: clientEmail } = body || {};
+    const { 
+      fullName = '', 
+      email: rawEmail = '', 
+      plan = 'pro', 
+      billingCycle = 'yearly', 
+      agreeText = '' 
+    } = body || {};
 
-    const authHeader = req.headers.authorization || '';
-    const token = authHeader.replace(/^Bearer\s+/i, '');
+    const normalizedPlan = plan.toLowerCase() === 'ultra' ? 'ultra' : 'pro';
+    const normalizedCycle = billingCycle.toLowerCase() === 'monthly' ? 'monthly' : 'yearly';
+    const email = normalizeEmail(rawEmail);
+    const cleanFullName = String(fullName || '').trim();
 
-    let userEmail = clientEmail ? normalizeEmail(clientEmail) : '';
-    let userId = null;
+    if (!cleanFullName) {
+      return res.status(400).json({ error: 'Full name is required.' });
+    }
 
-    if (token) {
-      try {
-        const payload = verifySessionToken(token);
-        if (payload?.email) userEmail = normalizeEmail(payload.email);
-        if (payload?.sub) userId = payload.sub;
-      } catch (e) {
-        console.warn('Invalid token in subscribe endpoint:', e.message);
-      }
+    if (!email || !email.includes('@')) {
+      return res.status(400).json({ error: 'A valid email address is required.' });
+    }
+
+    if (String(agreeText || '').trim() !== 'I AGREE') {
+      return res.status(400).json({ error: 'You must type exactly "I AGREE" to confirm payment authorization.' });
     }
 
     const sql = neon(postgresUrl);
 
-    // Ensure subscription columns exist
+    // Ensure required tables & columns exist
     try {
       await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_tier TEXT DEFAULT 'free'`;
       await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_status TEXT DEFAULT 'active'`;
       await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_cycle TEXT DEFAULT 'monthly'`;
       await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_expires_at TIMESTAMP WITH TIME ZONE`;
+      
       await sql`
-        CREATE TABLE IF NOT EXISTS Subscriptions (
+        CREATE TABLE IF NOT EXISTS SubscriptionOrders (
           id SERIAL PRIMARY KEY,
-          user_id INT,
-          email TEXT,
-          plan TEXT NOT NULL,
-          billing_cycle TEXT NOT NULL,
-          amount_cents INT NOT NULL,
-          card_brand TEXT,
-          card_last4 TEXT,
-          status TEXT NOT NULL DEFAULT 'active',
+          full_name TEXT NOT NULL,
+          email TEXT NOT NULL,
+          plan TEXT NOT NULL DEFAULT 'pro',
+          billing_cycle TEXT NOT NULL DEFAULT 'yearly',
+          amount_dollars INT NOT NULL,
+          agree_text TEXT NOT NULL,
+          status TEXT NOT NULL DEFAULT 'pending',
           transaction_ref TEXT UNIQUE NOT NULL,
           created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-          expires_at TIMESTAMP WITH TIME ZONE NOT NULL
+          updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         )
       `;
     } catch (e) {
-      console.warn('Subscription migration notice:', e.message);
+      console.warn('Subscription table initialization notice:', e.message);
     }
 
-    // Calculate dates and amounts
-    const now = new Date();
-    const expiresAt = new Date(now);
+    // Determine amount
     let amountDollars = 50;
-
-    if (billingCycle === 'yearly') {
-      expiresAt.setFullYear(now.getFullYear() + 1);
-      amountDollars = 420;
+    if (normalizedPlan === 'ultra') {
+      amountDollars = normalizedCycle === 'yearly' ? 1200 : 120;
     } else {
-      expiresAt.setMonth(now.getMonth() + 1);
-      amountDollars = 50;
+      amountDollars = normalizedCycle === 'yearly' ? 420 : 50;
     }
 
-    const transactionRef = `XOERIS-SUB-${Math.random().toString(36).substring(2, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
+    const transactionRef = `XOERIS-REQ-${Math.random().toString(36).substring(2, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
 
-    let updatedUser = null;
+    // Insert pending subscription order for admin verification
+    const inserted = await sql`
+      INSERT INTO SubscriptionOrders (
+        full_name, email, plan, billing_cycle, amount_dollars, agree_text, status, transaction_ref, created_at, updated_at
+      )
+      VALUES (
+        ${cleanFullName}, ${email}, ${normalizedPlan}, ${normalizedCycle}, ${amountDollars}, ${agreeText.trim()}, 'pending', ${transactionRef}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+      )
+      RETURNING id, full_name, email, plan, billing_cycle, amount_dollars, status, transaction_ref, created_at
+    `;
 
-    if (userEmail || userId) {
-      const userRows = await sql`
-        SELECT * FROM users
-        WHERE email = ${userEmail} OR username = ${String(userId)} OR id::text = ${String(userId)}
-        LIMIT 1
-      `;
-
-      if (userRows.length > 0) {
-        const existing = userRows[0];
-        const updateRows = await sql`
-          UPDATE users
-          SET subscription_tier = ${plan},
-              subscription_status = 'active',
-              subscription_cycle = ${billingCycle},
-              subscription_expires_at = ${expiresAt.toISOString()}
-          WHERE id = ${existing.id}
-          RETURNING id, username, email, name, avatar_url, auth_provider, email_verified, subscription_tier, subscription_status, subscription_cycle, subscription_expires_at
-        `;
-        updatedUser = updateRows[0];
-
-        await sql`
-          INSERT INTO Subscriptions (user_id, email, plan, billing_cycle, amount_cents, card_brand, card_last4, status, transaction_ref, expires_at)
-          VALUES (${existing.id}, ${existing.email}, ${plan}, ${billingCycle}, ${amountDollars * 100}, ${cardBrand}, ${cardLast4}, 'active', ${transactionRef}, ${expiresAt.toISOString()})
-        `;
-      }
-    }
-
-    if (!updatedUser) {
-      // Guest or direct checkout record
-      await sql`
-        INSERT INTO Subscriptions (email, plan, billing_cycle, amount_cents, card_brand, card_last4, status, transaction_ref, expires_at)
-        VALUES (${userEmail || 'guest@xoeris.com'}, ${plan}, ${billingCycle}, ${amountDollars * 100}, ${cardBrand}, ${cardLast4}, 'active', ${transactionRef}, ${expiresAt.toISOString()})
-      `;
-      updatedUser = {
-        email: userEmail || 'guest@xoeris.com',
-        subscription_tier: plan,
-        subscription_status: 'active',
-        subscription_cycle: billingCycle,
-        subscription_expires_at: expiresAt.toISOString(),
-      };
-    }
+    const order = inserted[0];
 
     return res.status(200).json({
       success: true,
-      message: 'Subscription successfully activated',
+      message: 'Subscription request sent to Admin Dashboard for verification.',
       transactionRef,
-      plan,
-      billingCycle,
+      order,
+      plan: normalizedPlan,
+      billingCycle: normalizedCycle,
       amount: amountDollars,
-      currency: 'USD',
-      cardBrand,
-      cardLast4,
-      expiresAt: expiresAt.toISOString(),
-      user: updatedUser,
+      currency: 'USD'
     });
   } catch (error) {
-    console.error('Subscription charge error:', error);
+    console.error('Subscription order creation error:', error);
     return res.status(500).json({
-      error: 'Payment processing error',
+      error: 'Error creating subscription request',
       details: error.message,
     });
   }
