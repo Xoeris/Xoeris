@@ -163,6 +163,9 @@ export default function AdminDashboard({ onNavigate }) {
       if (res && res.ok) {
         const data = await res.json();
         const adminJwt = data.token;
+        if (data.admin?.email) {
+          setAdminEmail(data.admin.email);
+        }
         setToken(adminJwt);
         try {
           localStorage.setItem('xoeris_admin_token', adminJwt);
@@ -372,7 +375,7 @@ export default function AdminDashboard({ onNavigate }) {
             <div className="flex items-center gap-2">
               <span className="text-xs font-mono font-bold uppercase tracking-wider text-white">Admin Dashboard</span>
               <span className="px-2 py-0.5 rounded-full bg-[#FDD935]/10 border border-[#FDD935]/30 text-[#FDD935] text-[10px] font-mono">
-                {ADMIN_EMAIL}
+                {adminEmail || 'Admin'}
               </span>
             </div>
           </div>
