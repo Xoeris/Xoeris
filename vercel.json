@@ -64,13 +64,7 @@
         "maxDuration": 30
       }
     },
-    {
-      "src": "api/database1/verify-otp.js",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
-    },
+
     {
       "src": "api/auth/flow.js",
       "use": "@vercel/node",
@@ -79,28 +73,7 @@
       }
     },
     {
-      "src": "api/database1/admin/login.js",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
-    },
-    {
-      "src": "api/database1/admin/orders.js",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
-    },
-    {
-      "src": "api/database1/admin/approve-order.js",
-      "use": "@vercel/node",
-      "config": {
-        "maxDuration": 30
-      }
-    },
-    {
-      "src": "api/database1/admin/delete-user.js",
+      "src": "api/database1/admin/admin-router.js",
       "use": "@vercel/node",
       "config": {
         "maxDuration": 30
@@ -137,20 +110,12 @@
       "destination": "api/search.js"
     },
     {
-      "source": "/api/database1/admin/login",
-      "destination": "api/database1/admin/login.js"
+      "source": "/api/database1/admin/(.*)",
+      "destination": "api/database1/admin/admin-router.js"
     },
     {
-      "source": "/api/database1/admin/orders",
-      "destination": "api/database1/admin/orders.js"
-    },
-    {
-      "source": "/api/database1/admin/approve-order",
-      "destination": "api/database1/admin/approve-order.js"
-    },
-    {
-      "source": "/api/database1/admin/delete-user",
-      "destination": "api/database1/admin/delete-user.js"
+      "source": "/api/database1/admin",
+      "destination": "api/database1/admin/admin-router.js"
     },
     {
       "source": "/api/database1/user/:username",
@@ -186,7 +151,7 @@
     },
     {
       "source": "/api/database1/verify-otp",
-      "destination": "api/database1/verify-otp.js"
+      "destination": "api/database1/login.js"
     },
     {
       "source": "/api/auth/:action",

@@ -32,16 +32,41 @@ export default async function handler(req, res) {
 
   try {
     const sql = neon(postgresUrl);
-    const resend = new Resend(resendApiKey);
 
     let body = req.body;
     if (typeof body === 'string') {
-      body = JSON.parse(body);
+      try { body = JSON.parse(body); } catch {}
     }
 
     if (!body) {
       return res.status(400).json({ error: 'Request body is required' });
     }
+
+    const url = (req.url || '').toLowerCase();
+    const isVerifyOtpRoute = url.includes('/verify-otp') || body.action === 'verify-otp';
+
+    // Handle standalone verify-otp request (e.g. from Google/Github or custom flow)
+    if (isVerifyOtpRoute && body.otp && (body.email || body.identifier)) {
+      const email = normalizeEmail(body.email || body.identifier);
+      const otpRows = await sql`SELECT code, expires_at FROM OTPs WHERE email = ${email} LIMIT 1`;
+      if (otpRows.length === 0 || otpRows[0].code !== body.otp || new Date(otpRows[0].expires_at) < new Date()) {
+        return res.status(400).json({ error: 'Invalid or expired OTP' });
+      }
+      await sql`DELETE FROM OTPs WHERE email = ${email}`;
+      const existing = await sql`SELECT * FROM users WHERE email = ${email} LIMIT 1`;
+      if (existing.length > 0) {
+        let user = existing[0];
+        if (body.remember_device && body.device_id) {
+          await sql`INSERT INTO TrustedDevices (username, device_id) VALUES (${user.username}, ${body.device_id}) ON CONFLICT DO NOTHING`;
+        }
+        const token = issueSessionToken(user);
+        res.setHeader('Set-Cookie', `xoeris_token=${token}; Path=/; Domain=.xoeris.com; Max-Age=${30*24*60*60}; HttpOnly; Secure; SameSite=Lax`);
+        return res.status(200).json({ token, user, message: 'OTP verified successfully' });
+      }
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const resend = new Resend(resendApiKey);
 
     const { identifier, password, device_id, otp, remember_device, mode, email: rawEmail, username: rawUsername } = body;
     const inputId = identifier || rawEmail;
