@@ -83,7 +83,6 @@ export default function SoftwareLayout({
       >
         <div
           className="absolute inset-0 pointer-events-none liquid-glass-panel border-b border-white/10"
-          style={{ backdropFilter: 'blur(28px) saturate(190%)', WebkitBackdropFilter: 'blur(28px) saturate(190%)' }}
         ></div>
 
         <div className="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center relative z-10">
@@ -98,8 +97,8 @@ export default function SoftwareLayout({
           </button>
 
           {/* Desktop Nav Items */}
-          <div className="hidden lg:flex items-center gap-7" onMouseLeave={handleMouseLeave}>
-            {/* Products Mega Menu */}
+          <div className="hidden lg:flex items-center gap-7">
+            {/* Products Mega Menu Button */}
             <div
               className="relative py-2"
               onMouseEnter={() => handleMouseEnter('products')}
@@ -116,75 +115,6 @@ export default function SoftwareLayout({
                 <span>Products</span>
                 <span className={`text-[10px] transition-transform duration-200 ${activeDropdown === 'products' ? 'rotate-180' : ''}`}>▼</span>
               </button>
-
-              {activeDropdown === 'products' && (
-                <div
-                  className="absolute top-full -left-12 pt-3 z-50 w-[540px] animate-fade-in"
-                  onMouseEnter={() => handleMouseEnter('products')}
-                  onMouseLeave={handleMouseLeave}
-                >
-                  <div
-                    className="liquid-glass-panel rounded-3xl p-7 text-left border border-white/20 ring-1 ring-white/10 shadow-2xl relative overflow-hidden"
-                    style={{ backdropFilter: 'blur(32px) saturate(190%)', WebkitBackdropFilter: 'blur(32px) saturate(190%)' }}
-                  >
-                    <div className="grid grid-cols-2 gap-8 relative z-10">
-                      {/* Column 1: Products */}
-                      <div className="border-r border-white/10 pr-6">
-                        <div className="text-xs font-semibold text-gray-400 mb-3 tracking-wide">Products</div>
-                        <ul className="space-y-2.5">
-                          {productList.map((item) => (
-                            <li key={item.label}>
-                              <button
-                                onClick={() => { setActiveDropdown(null); onNavigate(item.route); }}
-                                className={`text-sm font-semibold transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full ${
-                                  title === item.label ? 'text-[#FDD935]' : 'text-white hover:text-[#FDD935]'
-                                }`}
-                              >
-                                {item.label}
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      {/* Column 2: Models */}
-                      <div>
-                        <div className="text-xs font-semibold text-gray-400 mb-3 tracking-wide">Models</div>
-                        <ul className="space-y-2.5">
-                          {modelList.map((model) => (
-                            <li key={model}>
-                              <button
-                                onClick={() => { setActiveDropdown(null); onNavigate('chat'); }}
-                                className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors flex items-center justify-between group bg-transparent border-none p-0 cursor-pointer w-full text-left"
-                              >
-                                <span>{model}</span>
-                                <ArrowUpRight size={14} className="text-gray-400 group-hover:text-[#FDD935] transition-colors" />
-                              </button>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-
-                    {/* Bottom Bar */}
-                    <div className="border-t border-white/10 mt-7 pt-4 flex justify-between items-center text-xs relative z-10">
-                      <button
-                        onClick={() => { setActiveDropdown(null); onNavigate('pricing'); }}
-                        className="font-semibold text-white underline hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer"
-                      >
-                        Explore Subscriptions
-                      </button>
-                      <button
-                        onClick={() => { setActiveDropdown(null); onNavigate('chat'); }}
-                        className="px-3.5 py-1.5 rounded-lg border border-white/20 hover:border-white/40 text-white font-medium flex items-center gap-1.5 transition-colors bg-white/10 hover:bg-white/15 backdrop-blur-md cursor-pointer"
-                      >
-                        <span>Try Xalme</span>
-                        <ArrowUpRight size={13} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Pricing Tab */}
@@ -219,68 +149,144 @@ export default function SoftwareLayout({
                     </div>
                   )}
                 </button>
-
-                {userDropdownOpen && (
-                  <div
-                    className="absolute right-0 top-full mt-2 w-56 rounded-2xl p-3 liquid-glass-panel border border-white/20 ring-1 ring-white/10 shadow-2xl z-50 animate-fade-in text-left"
-                    style={{ backdropFilter: 'blur(32px) saturate(190%)', WebkitBackdropFilter: 'blur(32px) saturate(190%)' }}
-                  >
-                    <div className="px-3 py-2 border-b border-white/10 mb-2">
-                      <p className="text-xs font-bold text-white truncate">{currentUser.name || currentUser.username || 'Xoeris Member'}</p>
-                      <p className="text-[11px] text-gray-400 truncate">{currentUser.email}</p>
-                    </div>
-                    <button
-                      onClick={() => { setUserDropdownOpen(false); onNavigate('chat'); }}
-                      className="w-full px-3 py-2 text-xs font-semibold text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 cursor-pointer bg-transparent border-none text-left"
-                    >
-                      <span>Xalme Chat</span>
-                    </button>
-                    <button
-                      onClick={() => { setUserDropdownOpen(false); onNavigate('pricing'); }}
-                      className="w-full px-3 py-2 text-xs font-semibold text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 cursor-pointer bg-transparent border-none text-left"
-                    >
-                      <span>Pricing & Plans</span>
-                    </button>
-                    <div className="h-px bg-white/10 my-1"></div>
-                    <button
-                      onClick={() => {
-                        clearSession();
-                        setUserDropdownOpen(false);
-                        setCurrentUser(null);
-                      }}
-                      className="w-full px-3 py-2 text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors flex items-center gap-2 cursor-pointer bg-transparent border-none text-left"
-                    >
-                      <span>Log out</span>
-                    </button>
-                  </div>
-                )}
               </div>
             ) : (
-              <button
-                onClick={() => onNavigate('auth')}
-                className="text-sm font-semibold text-gray-300 hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer"
-              >
-                Login
-              </button>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => onNavigate('login')}
+                  className="text-sm font-semibold text-gray-300 hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer"
+                >
+                  Login
+                </button>
+                <button
+                  onClick={() => onNavigate('chat')}
+                  className="px-5 py-2.5 rounded-xl bg-white text-black text-xs font-black uppercase tracking-wider hover:bg-[#FDD935] transition-all cursor-pointer border-none shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+                >
+                  Try Xalme
+                </button>
+              </div>
             )}
-            <button
-              onClick={() => onNavigate('chat')}
-              className="px-4 py-2 text-sm font-semibold text-black bg-white rounded-lg hover:bg-gray-100 transition-all cursor-pointer shadow-sm"
-            >
-              Try Xalme
-            </button>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile Menu Toggle Button */}
           <button
-            className="lg:hidden text-[#FDD935] transition-transform duration-300 active:scale-90 bg-transparent border-none p-0"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden p-2 text-gray-300 hover:text-white bg-transparent border-none cursor-pointer"
           >
-            {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
+      </nav>
 
-        {/* Mobile Navigation Drawer */}
+      {/* Floating Mega Menu Dropdown (Outside <nav> to allow true backdrop blur through underlying page) */}
+      {activeDropdown === 'products' && (
+        <div
+          className={`fixed left-1/2 -translate-x-[180px] z-[60] w-[540px] pointer-events-auto transition-all duration-300 ${isScrolled ? 'top-16' : 'top-20'}`}
+          onMouseEnter={() => handleMouseEnter('products')}
+          onMouseLeave={handleMouseLeave}
+        >
+          <div
+            className="liquid-glass-panel rounded-3xl p-7 text-left border border-white/20 ring-1 ring-white/10 shadow-2xl relative overflow-hidden"
+          >
+            {/* Specular Sheen */}
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent pointer-events-none"></div>
+            <div className="absolute -top-12 left-1/3 w-72 h-28 bg-[#FDD935]/[0.08] rounded-full blur-3xl pointer-events-none"></div>
+
+            <div className="grid grid-cols-2 gap-8 relative z-10">
+              {/* Column 1: Products */}
+              <div className="border-r border-white/10 pr-6">
+                <div className="text-xs font-semibold text-gray-400 mb-3 tracking-wide">Products</div>
+                <ul className="space-y-2.5">
+                  {productList.map((item) => (
+                    <li key={item.label}>
+                      <button
+                        onClick={() => { setActiveDropdown(null); onNavigate(item.route); }}
+                        className={`text-sm font-semibold transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full ${
+                          title === item.label ? 'text-[#FDD935]' : 'text-white hover:text-[#FDD935]'
+                        }`}
+                      >
+                        {item.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Column 2: Models */}
+              <div>
+                <div className="text-xs font-semibold text-gray-400 mb-3 tracking-wide">Models</div>
+                <ul className="space-y-2.5">
+                  {modelList.map((model) => (
+                    <li key={model}>
+                      <button
+                        onClick={() => { setActiveDropdown(null); onNavigate('chat'); }}
+                        className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors flex items-center justify-between group bg-transparent border-none p-0 cursor-pointer w-full text-left"
+                      >
+                        <span>{model}</span>
+                        <ArrowUpRight size={14} className="text-gray-400 group-hover:text-[#FDD935] transition-colors" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Bottom Bar */}
+            <div className="border-t border-white/10 mt-7 pt-4 flex justify-between items-center text-xs relative z-10">
+              <button
+                onClick={() => { setActiveDropdown(null); onNavigate('pricing'); }}
+                className="font-semibold text-white underline hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer"
+              >
+                Explore Subscriptions
+              </button>
+              <button
+                onClick={() => { setActiveDropdown(null); onNavigate('chat'); }}
+                className="px-3.5 py-1.5 rounded-lg border border-white/20 hover:border-white/40 text-white font-medium flex items-center gap-1.5 transition-colors bg-white/10 hover:bg-white/15 backdrop-blur-md cursor-pointer"
+              >
+                <span>Try Xalme</span>
+                <ArrowUpRight size={13} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Floating User Dropdown */}
+      {userDropdownOpen && currentUser && (
+        <div
+          className={`fixed right-6 md:right-12 z-[60] w-56 rounded-2xl p-3 liquid-glass-panel border border-white/20 ring-1 ring-white/10 shadow-2xl text-left pointer-events-auto transition-all duration-300 ${isScrolled ? 'top-16' : 'top-20'}`}
+        >
+          <div className="px-3 py-2 border-b border-white/10 mb-2">
+            <p className="text-xs font-bold text-white truncate">{currentUser.name || currentUser.username || 'Xoeris Member'}</p>
+            <p className="text-[11px] text-gray-400 truncate">{currentUser.email}</p>
+          </div>
+          <button
+            onClick={() => { setUserDropdownOpen(false); onNavigate('chat'); }}
+            className="w-full px-3 py-2 text-xs font-semibold text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 cursor-pointer bg-transparent border-none text-left"
+          >
+            <span>Xalme Chat</span>
+          </button>
+          <button
+            onClick={() => { setUserDropdownOpen(false); onNavigate('pricing'); }}
+            className="w-full px-3 py-2 text-xs font-semibold text-gray-300 hover:text-white hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 cursor-pointer bg-transparent border-none text-left"
+          >
+            <span>Pricing & Plans</span>
+          </button>
+          <div className="h-px bg-white/10 my-1"></div>
+          <button
+            onClick={() => {
+              clearSession();
+              setUserDropdownOpen(false);
+              setCurrentUser(null);
+            }}
+            className="w-full px-3 py-2 text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-white/10 rounded-lg transition-colors flex items-center gap-2 cursor-pointer bg-transparent border-none text-left"
+          >
+            <span>Sign Out</span>
+          </button>
+        </div>
+      )}
+
+      {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
           <div className="lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-2xl border-t border-white/10 shadow-2xl py-6 px-6 flex flex-col gap-5 text-white max-h-[85vh] overflow-y-auto">
             <div className="space-y-3">

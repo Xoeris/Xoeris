@@ -252,7 +252,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen font-ui relative z-0 overflow-x-hidden bg-[#050505] text-white selection:bg-[#FDD935] selection:text-black">
-      {!['xoeris', 'subscriptions', 'samudra-showcase', 'aurevia', 'auth'].includes(currentPage) && (
+      {!['xoeris', 'subscriptions', 'samudra-showcase', 'aurevia', 'auth', 'apex', 'horizoneengine', 'horizoneide', 'mova', 'musify', 'xalme', 'xalmecode'].includes(currentPage) && (
         <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden opacity-30 mix-blend-screen">
           {/* Xoeris Cyber ambient blobs */}
           <div className="blob blob-1 will-change-transform" style={{ backgroundColor: colors.amber }}></div>
