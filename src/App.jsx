@@ -12,6 +12,13 @@ import { setSession, syncUserFromDatabase } from './services/authService';
 
 // Product Deep-Dive Pages
 import VocalisProductPage from './VocalisProductPage';
+import APEX from './APEX';
+import HorizoneEngine from './HorizoneEngine';
+import HorizoneIDE from './HorizoneIDE';
+import MOVA from './MOVA';
+import Musify from './Musify';
+import Xalme from './Xalme';
+import XalmeCode from './XalmeCode';
 
 const PlaceholderProduct = ({ title, onNavigate }) => (
   <div className="min-h-screen bg-hide-canvas text-hide-text-primary flex flex-col items-center justify-center p-10 text-center">
@@ -66,6 +73,14 @@ export default function App() {
     if (path === '/pricing' || path === '/subscription' || path === '/subscriptions' || path === '/payment') return 'pricing';
 
     if (path.startsWith('/ariasphere/vocalis')) return 'ariasphere-vocalis';
+
+    if (path === '/apex' || path.startsWith('/apex')) return 'apex';
+    if (path === '/horizoneengine' || path === '/horizone-engine' || path.startsWith('/horizoneengine')) return 'horizoneengine';
+    if (path === '/horizoneide' || path === '/horizone-ide' || path.startsWith('/horizoneide')) return 'horizoneide';
+    if (path === '/mova' || path.startsWith('/mova')) return 'mova';
+    if (path === '/musify' || path.startsWith('/musify')) return 'musify';
+    if (path === '/xalme' || path.startsWith('/xalme/about')) return 'xalme';
+    if (path === '/xalmecode' || path === '/xalme-code' || path.startsWith('/xalmecode')) return 'xalmecode';
 
     return 'xoeris';
   });
@@ -132,6 +147,13 @@ export default function App() {
         setCurrentPage('xoeris');
       }
       else if (path.includes('/ariasphere/vocalis')) setCurrentPage('ariasphere-vocalis');
+      else if (path === '/apex' || path.startsWith('/apex')) setCurrentPage('apex');
+      else if (path === '/horizoneengine' || path === '/horizone-engine' || path.startsWith('/horizoneengine')) setCurrentPage('horizoneengine');
+      else if (path === '/horizoneide' || path === '/horizone-ide' || path.startsWith('/horizoneide')) setCurrentPage('horizoneide');
+      else if (path === '/mova' || path.startsWith('/mova')) setCurrentPage('mova');
+      else if (path === '/musify' || path.startsWith('/musify')) setCurrentPage('musify');
+      else if (path === '/xalme' || path.startsWith('/xalme/about')) setCurrentPage('xalme');
+      else if (path === '/xalmecode' || path === '/xalme-code' || path.startsWith('/xalmecode')) setCurrentPage('xalmecode');
       else if (path === '/xoeris') setCurrentPage('xoeris');
       else if (path === '/about') setCurrentPage('about');
       else if (path === '/chat') setCurrentPage('chat');
@@ -156,6 +178,13 @@ export default function App() {
       'error-api': 'Restricted Endpoint | Xoeris',
       'error-dl': 'Restricted Storage | Xoeris',
       'ariasphere-vocalis': 'Xoeris Vocalis',
+      apex: 'APEX | Xoeris',
+      horizoneengine: 'Horizone Engine | Xoeris',
+      horizoneide: 'Horizone IDE | Xoeris',
+      mova: 'MOVA | Xoeris',
+      musify: 'Musify | Xoeris',
+      xalme: 'Xalme | Xoeris',
+      xalmecode: 'Xalme Code | Xoeris',
       pricing: 'Pricing | Xoeris',
       subscriptions: 'Pricing | Xoeris'
     };
@@ -165,6 +194,13 @@ export default function App() {
       aurevia: '/xoeris_logo_color.png',
       xoeris: '/xoeris_logo_color.png',
       'ariasphere-vocalis': '/xoeris_logo_color.png',
+      apex: '/xoeris_logo_color.png',
+      horizoneengine: '/xoeris_logo_color.png',
+      horizoneide: '/xoeris_logo_color.png',
+      mova: '/xoeris_logo_color.png',
+      musify: '/xoeris_logo_color.png',
+      xalme: '/xoeris_logo_color.png',
+      xalmecode: '/xoeris_logo_color.png',
       pricing: '/xoeris_logo_color.png',
       subscriptions: '/xoeris_logo_color.png'
     };
@@ -194,6 +230,13 @@ export default function App() {
       developers: '/',
       tartaruga: '/',
       'ariasphere-vocalis': '/ariasphere/vocalis',
+      apex: '/apex',
+      horizoneengine: '/horizoneengine',
+      horizoneide: '/horizoneide',
+      mova: '/mova',
+      musify: '/musify',
+      xalme: '/xalme',
+      xalmecode: '/xalmecode',
       pricing: '/pricing',
       subscriptions: '/pricing',
       payment: '/payment'
@@ -233,6 +276,13 @@ export default function App() {
 
         {/* Product Details */}
         {currentPage === 'ariasphere-vocalis' && <VocalisProductPage onNavigate={handleNavigate} />}
+        {currentPage === 'apex' && <APEX onNavigate={handleNavigate} />}
+        {currentPage === 'horizoneengine' && <HorizoneEngine onNavigate={handleNavigate} />}
+        {currentPage === 'horizoneide' && <HorizoneIDE onNavigate={handleNavigate} />}
+        {currentPage === 'mova' && <MOVA onNavigate={handleNavigate} />}
+        {currentPage === 'musify' && <Musify onNavigate={handleNavigate} />}
+        {currentPage === 'xalme' && <Xalme onNavigate={handleNavigate} />}
+        {currentPage === 'xalmecode' && <XalmeCode onNavigate={handleNavigate} />}
       </div>
 
       <style dangerouslySetInnerHTML={{__html: `

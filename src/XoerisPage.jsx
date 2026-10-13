@@ -209,13 +209,13 @@ export default function XoerisPage({ onNavigate }) {
                         <div className="border-r border-white/10 pr-6">
                           <div className="text-xs font-semibold text-gray-400 mb-3 tracking-wide">Product</div>
                           <ul className="space-y-2.5">
-                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">APEX</button></li>
-                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Horizone Engine</button></li>
-                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Horizone IDE</button></li>
-                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">MOVA</button></li>
-                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Musify</button></li>
-                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Xalme</button></li>
-                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Xalme Code</button></li>
+                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('apex'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">APEX</button></li>
+                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('horizoneengine'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Horizone Engine</button></li>
+                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('horizoneide'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Horizone IDE</button></li>
+                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('mova'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">MOVA</button></li>
+                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('musify'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Musify</button></li>
+                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('xalme'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Xalme</button></li>
+                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('xalmecode'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Xalme Code</button></li>
                           </ul>
                         </div>
 
@@ -382,13 +382,21 @@ export default function XoerisPage({ onNavigate }) {
               <div className="space-y-3">
                 <div className="text-xs font-bold uppercase tracking-wider text-[#FDD935]">Products</div>
                 <div className="grid grid-cols-2 gap-2 pl-2">
-                  {['APEX', 'Horizone Engine', 'Horizone IDE', 'MOVA', 'Musify', 'Xalme', 'Xalme Code'].map((item) => (
+                  {[
+                    { label: 'APEX', route: 'apex' },
+                    { label: 'Horizone Engine', route: 'horizoneengine' },
+                    { label: 'Horizone IDE', route: 'horizoneide' },
+                    { label: 'MOVA', route: 'mova' },
+                    { label: 'Musify', route: 'musify' },
+                    { label: 'Xalme', route: 'xalme' },
+                    { label: 'Xalme Code', route: 'xalmecode' }
+                  ].map((item) => (
                     <button
-                      key={item}
-                      onClick={() => { onNavigate('chat'); setMobileMenuOpen(false); }}
+                      key={item.label}
+                      onClick={() => { onNavigate(item.route); setMobileMenuOpen(false); }}
                       className="text-left text-sm font-semibold text-gray-300 hover:text-white bg-transparent border-none p-1 cursor-pointer"
                     >
-                      {item}
+                      {item.label}
                     </button>
                   ))}
                 </div>
@@ -640,10 +648,18 @@ export default function XoerisPage({ onNavigate }) {
             <div className="md:col-span-3">
               <h4 className="text-xs font-black text-[#FDD935] uppercase tracking-[0.2em] mb-6 drop-shadow-[0_0_5px_rgba(253,217,53,0.5)]">Products</h4>
               <ul className="space-y-3 text-gray-400 font-medium text-sm">
-                {['APEX', 'Horizone Engine', 'Horizone IDE', 'MOVA', 'Musify', 'Xalme', 'Xalme Code'].map((item) => (
-                  <li key={item}>
-                    <button onClick={() => onNavigate('chat')} className="hover:text-white transition-colors duration-200 bg-transparent border-none p-0 cursor-pointer text-left">
-                      {item}
+                {[
+                  { label: 'APEX', route: 'apex' },
+                  { label: 'Horizone Engine', route: 'horizoneengine' },
+                  { label: 'Horizone IDE', route: 'horizoneide' },
+                  { label: 'MOVA', route: 'mova' },
+                  { label: 'Musify', route: 'musify' },
+                  { label: 'Xalme', route: 'xalme' },
+                  { label: 'Xalme Code', route: 'xalmecode' }
+                ].map((item) => (
+                  <li key={item.label}>
+                    <button onClick={() => onNavigate(item.route)} className="hover:text-white transition-colors duration-200 bg-transparent border-none p-0 cursor-pointer text-left">
+                      {item.label}
                     </button>
                   </li>
                 ))}
