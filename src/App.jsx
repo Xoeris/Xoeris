@@ -74,8 +74,9 @@ export default function App() {
 
     if (path.startsWith('/ariasphere/vocalis')) return 'ariasphere-vocalis';
 
+    if (path === '/under-construction' || path === '/horizoneengine' || path === '/horizone-engine' || path.startsWith('/horizoneengine') || path.startsWith('/models/') || path === '/elarion' || path === '/nebula' || path === '/forge' || path === '/atlas') return 'under-construction';
+
     if (path === '/apex' || path.startsWith('/apex')) return 'apex';
-    if (path === '/horizoneengine' || path === '/horizone-engine' || path.startsWith('/horizoneengine')) return 'horizoneengine';
     if (path === '/horizoneide' || path === '/horizone-ide' || path.startsWith('/horizoneide')) return 'horizoneide';
     if (path === '/mova' || path.startsWith('/mova')) return 'mova';
     if (path === '/musify' || path.startsWith('/musify')) return 'musify';
@@ -147,8 +148,8 @@ export default function App() {
         setCurrentPage('xoeris');
       }
       else if (path.includes('/ariasphere/vocalis')) setCurrentPage('ariasphere-vocalis');
+      else if (path === '/under-construction' || path === '/horizoneengine' || path === '/horizone-engine' || path.startsWith('/horizoneengine') || path.startsWith('/models/') || path === '/elarion' || path === '/nebula' || path === '/forge' || path === '/atlas') setCurrentPage('under-construction');
       else if (path === '/apex' || path.startsWith('/apex')) setCurrentPage('apex');
-      else if (path === '/horizoneengine' || path === '/horizone-engine' || path.startsWith('/horizoneengine')) setCurrentPage('horizoneengine');
       else if (path === '/horizoneide' || path === '/horizone-ide' || path.startsWith('/horizoneide')) setCurrentPage('horizoneide');
       else if (path === '/mova' || path.startsWith('/mova')) setCurrentPage('mova');
       else if (path === '/musify' || path.startsWith('/musify')) setCurrentPage('musify');
@@ -219,6 +220,14 @@ export default function App() {
       window.location.href = 'https://xalme.xoeris.com/chat';
       return;
     }
+
+    if (['under-construction', 'horizoneengine', 'elarion', 'nebula', 'forge', 'atlas'].includes(page.toLowerCase())) {
+      window.history.pushState({}, '', '/under-construction');
+      setCurrentPage('under-construction');
+      window.scrollTo(0, 0);
+      return;
+    }
+
     const pathMap = {
       aurevia: '/aurevia',
       about: '/about',
@@ -231,7 +240,6 @@ export default function App() {
       tartaruga: '/',
       'ariasphere-vocalis': '/ariasphere/vocalis',
       apex: '/apex',
-      horizoneengine: '/horizoneengine',
       horizoneide: '/horizoneide',
       mova: '/mova',
       musify: '/musify',
@@ -252,7 +260,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen font-ui relative z-0 overflow-x-hidden bg-[#050505] text-white selection:bg-[#FDD935] selection:text-black">
-      {!['xoeris', 'subscriptions', 'samudra-showcase', 'aurevia', 'auth', 'apex', 'horizoneengine', 'horizoneide', 'mova', 'musify', 'xalme', 'xalmecode'].includes(currentPage) && (
+      {!['xoeris', 'subscriptions', 'samudra-showcase', 'aurevia', 'auth', 'apex', 'under-construction', 'horizoneide', 'mova', 'musify', 'xalme', 'xalmecode'].includes(currentPage) && (
         <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden opacity-30 mix-blend-screen">
           {/* Xoeris Cyber ambient blobs */}
           <div className="blob blob-1 will-change-transform" style={{ backgroundColor: colors.amber }}></div>
@@ -268,7 +276,7 @@ export default function App() {
         {currentPage === 'about' && <AboutPage onNavigate={handleNavigate} />}
         {currentPage === 'chat' && <ChatPage onNavigate={handleNavigate} />}
         {currentPage === 'xalme-main' && <XalmeMainPage onNavigate={handleNavigate} />}
-        {currentPage === 'under-construction' && <UnderConstructionPage />}
+        {currentPage === 'under-construction' && <UnderConstructionPage onNavigate={handleNavigate} />}
         {currentPage === 'error-api' && <ErrorPage title="Restricted API Endpoint" />}
         {currentPage === 'error-dl' && <ErrorPage title="Restricted Private Storage" />}
         {currentPage === 'xoeris' && <XoerisPage onNavigate={handleNavigate} />}
@@ -277,7 +285,6 @@ export default function App() {
         {/* Product Details */}
         {currentPage === 'ariasphere-vocalis' && <VocalisProductPage onNavigate={handleNavigate} />}
         {currentPage === 'apex' && <APEX onNavigate={handleNavigate} />}
-        {currentPage === 'horizoneengine' && <HorizoneEngine onNavigate={handleNavigate} />}
         {currentPage === 'horizoneide' && <HorizoneIDE onNavigate={handleNavigate} />}
         {currentPage === 'mova' && <MOVA onNavigate={handleNavigate} />}
         {currentPage === 'musify' && <Musify onNavigate={handleNavigate} />}

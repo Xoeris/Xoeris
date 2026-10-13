@@ -67,7 +67,7 @@ export default function XalmeMainPage({ onNavigate }) {
 
       {/* Footer */}
       <footer className="text-center text-[10px] font-black text-gray-600 uppercase tracking-widest py-8 z-10">
-        © 2026 Xoeris. All rights reserved.
+        © 2018-2026 Xoeris. All rights reserved.
       </footer>
     </div>
   );

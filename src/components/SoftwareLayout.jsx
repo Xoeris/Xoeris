@@ -52,7 +52,7 @@ export default function SoftwareLayout({
 
   const productList = [
     { label: 'APEX', route: 'apex' },
-    { label: 'Horizone Engine', route: 'horizoneengine' },
+    { label: 'Horizone Engine', route: 'under-construction' },
     { label: 'Horizone IDE', route: 'horizoneide' },
     { label: 'MOVA', route: 'mova' },
     { label: 'Musify', route: 'musify' },
@@ -203,7 +203,7 @@ export default function SoftwareLayout({
                 {modelList.map((model) => (
                   <button
                     key={model}
-                    onClick={() => { onNavigate('chat'); setMobileMenuOpen(false); }}
+                    onClick={() => { onNavigate('under-construction'); setMobileMenuOpen(false); }}
                     className="text-left text-sm font-semibold text-gray-300 hover:text-white bg-transparent border-none p-1 cursor-pointer"
                   >
                     {model}
@@ -280,7 +280,7 @@ export default function SoftwareLayout({
                   {modelList.map((model) => (
                     <li key={model}>
                       <button
-                        onClick={() => { setActiveDropdown(null); onNavigate('chat'); }}
+                        onClick={() => { setActiveDropdown(null); onNavigate('under-construction'); }}
                         className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors flex items-center justify-between group bg-transparent border-none p-0 cursor-pointer w-full text-left"
                       >
                         <span>{model}</span>
@@ -384,7 +384,7 @@ export default function SoftwareLayout({
             <ul className="space-y-3 text-gray-400 font-medium text-sm">
               {modelList.map((model) => (
                 <li key={model}>
-                  <button onClick={() => onNavigate('chat')} className="hover:text-white transition-colors duration-200 bg-transparent border-none p-0 cursor-pointer text-left flex items-center justify-between group w-full">
+                  <button onClick={() => onNavigate('under-construction')} className="hover:text-white transition-colors duration-200 bg-transparent border-none p-0 cursor-pointer text-left flex items-center justify-between group w-full">
                     <span>{model}</span>
                     <ArrowUpRight size={12} className="text-gray-500 group-hover:text-[#FDD935] transition-colors" />
                   </button>
@@ -406,7 +406,7 @@ export default function SoftwareLayout({
         </div>
 
         <div className="max-w-7xl mx-auto px-6 md:px-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm font-medium relative z-10">
-          <p>© 2020-2026 Xoeris. All rights reserved.</p>
+          <p>© 2018-2026 Xoeris. All rights reserved.</p>
           <div className="flex gap-8 mt-4 md:mt-0 text-xs font-bold uppercase tracking-widest">
             <a href="#" className="hover:text-[#FDD935] transition-colors">Privacy</a>
             <a href="#" className="hover:text-[#FDD935] transition-colors">Terms</a>

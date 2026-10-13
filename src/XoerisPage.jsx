@@ -210,7 +210,7 @@ export default function XoerisPage({ onNavigate }) {
                           <div className="text-xs font-semibold text-gray-400 mb-3 tracking-wide">Product</div>
                           <ul className="space-y-2.5">
                             <li><button onClick={() => { setActiveDropdown(null); onNavigate('apex'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">APEX</button></li>
-                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('horizoneengine'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Horizone Engine</button></li>
+                            <li><button onClick={() => { setActiveDropdown(null); onNavigate('under-construction'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Horizone Engine</button></li>
                             <li><button onClick={() => { setActiveDropdown(null); onNavigate('horizoneide'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Horizone IDE</button></li>
                             <li><button onClick={() => { setActiveDropdown(null); onNavigate('mova'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">MOVA</button></li>
                             <li><button onClick={() => { setActiveDropdown(null); onNavigate('musify'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer text-left w-full">Musify</button></li>
@@ -224,25 +224,25 @@ export default function XoerisPage({ onNavigate }) {
                           <div className="text-xs font-semibold text-gray-400 mb-3 tracking-wide">Models</div>
                           <ul className="space-y-2.5">
                             <li>
-                              <button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors flex items-center justify-between group bg-transparent border-none p-0 cursor-pointer w-full text-left">
+                              <button onClick={() => { setActiveDropdown(null); onNavigate('under-construction'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors flex items-center justify-between group bg-transparent border-none p-0 cursor-pointer w-full text-left">
                                 <span>Elarion</span>
                                 <ArrowUpRight size={14} className="text-gray-400 group-hover:text-[#FDD935] transition-colors" />
                               </button>
                             </li>
                             <li>
-                              <button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors flex items-center justify-between group bg-transparent border-none p-0 cursor-pointer w-full text-left">
+                              <button onClick={() => { setActiveDropdown(null); onNavigate('under-construction'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors flex items-center justify-between group bg-transparent border-none p-0 cursor-pointer w-full text-left">
                                 <span>Nebula</span>
                                 <ArrowUpRight size={14} className="text-gray-400 group-hover:text-[#FDD935] transition-colors" />
                               </button>
                             </li>
                             <li>
-                              <button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors flex items-center justify-between group bg-transparent border-none p-0 cursor-pointer w-full text-left">
+                              <button onClick={() => { setActiveDropdown(null); onNavigate('under-construction'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors flex items-center justify-between group bg-transparent border-none p-0 cursor-pointer w-full text-left">
                                 <span>Forge</span>
                                 <ArrowUpRight size={14} className="text-gray-400 group-hover:text-[#FDD935] transition-colors" />
                               </button>
                             </li>
                             <li>
-                              <button onClick={() => { setActiveDropdown(null); onNavigate('chat'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors flex items-center justify-between group bg-transparent border-none p-0 cursor-pointer w-full text-left">
+                              <button onClick={() => { setActiveDropdown(null); onNavigate('under-construction'); }} className="text-sm font-semibold text-white hover:text-[#FDD935] transition-colors flex items-center justify-between group bg-transparent border-none p-0 cursor-pointer w-full text-left">
                                 <span>Atlas</span>
                                 <ArrowUpRight size={14} className="text-gray-400 group-hover:text-[#FDD935] transition-colors" />
                               </button>
@@ -384,7 +384,7 @@ export default function XoerisPage({ onNavigate }) {
                 <div className="grid grid-cols-2 gap-2 pl-2">
                   {[
                     { label: 'APEX', route: 'apex' },
-                    { label: 'Horizone Engine', route: 'horizoneengine' },
+                    { label: 'Horizone Engine', route: 'under-construction' },
                     { label: 'Horizone IDE', route: 'horizoneide' },
                     { label: 'MOVA', route: 'mova' },
                     { label: 'Musify', route: 'musify' },
@@ -409,7 +409,7 @@ export default function XoerisPage({ onNavigate }) {
                   {['Elarion', 'Nebula', 'Forge', 'Atlas'].map((model) => (
                     <button
                       key={model}
-                      onClick={() => { onNavigate('chat'); setMobileMenuOpen(false); }}
+                      onClick={() => { onNavigate('under-construction'); setMobileMenuOpen(false); }}
                       className="text-left text-sm font-semibold text-gray-300 hover:text-white bg-transparent border-none p-1 cursor-pointer flex items-center justify-between"
                     >
                       <span>{model}</span>
@@ -650,7 +650,7 @@ export default function XoerisPage({ onNavigate }) {
               <ul className="space-y-3 text-gray-400 font-medium text-sm">
                 {[
                   { label: 'APEX', route: 'apex' },
-                  { label: 'Horizone Engine', route: 'horizoneengine' },
+                  { label: 'Horizone Engine', route: 'under-construction' },
                   { label: 'Horizone IDE', route: 'horizoneide' },
                   { label: 'MOVA', route: 'mova' },
                   { label: 'Musify', route: 'musify' },
@@ -671,7 +671,7 @@ export default function XoerisPage({ onNavigate }) {
               <ul className="space-y-3 text-gray-400 font-medium text-sm">
                 {['Elarion', 'Nebula', 'Forge', 'Atlas'].map((model) => (
                   <li key={model}>
-                    <button onClick={() => onNavigate('chat')} className="hover:text-white transition-colors duration-200 bg-transparent border-none p-0 cursor-pointer text-left flex items-center justify-between group w-full">
+                    <button onClick={() => onNavigate('under-construction')} className="hover:text-white transition-colors duration-200 bg-transparent border-none p-0 cursor-pointer text-left flex items-center justify-between group w-full">
                       <span>{model}</span>
                       <ArrowUpRight size={12} className="text-gray-500 group-hover:text-[#FDD935] transition-colors" />
                     </button>
@@ -693,7 +693,7 @@ export default function XoerisPage({ onNavigate }) {
           </div>
 
           <div className="max-w-7xl mx-auto px-6 md:px-12 pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center text-gray-500 text-sm font-medium relative z-10">
-            <p>© 2020-2026 Xoeris. All rights reserved.</p>
+            <p>© 2018-2026 Xoeris. All rights reserved.</p>
             <div className="flex gap-8 mt-4 md:mt-0 text-xs font-bold uppercase tracking-widest">
               <a href="#" className="hover:text-[#FDD935] transition-colors">Privacy</a>
               <a href="#" className="hover:text-[#FDD935] transition-colors">Terms</a>

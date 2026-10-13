@@ -168,24 +168,84 @@ export default function APEX({ onNavigate }) {
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="text-xs font-black uppercase tracking-[0.25em] text-[#FDD935] mb-3">Architectural Workflow</div>
           <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight">How APEX Operates.</h2>
+          <p className="text-gray-400 text-sm mt-3 font-normal">
+            Partitions are extracted sequentially with internal parallelism to avoid thrashing storage controllers and sustain maximum write throughput.
+          </p>
         </div>
 
-        <div className="rounded-3xl border border-white/10 bg-black/50 p-6 sm:p-10 font-mono text-xs sm:text-sm text-gray-300 backdrop-blur-2xl overflow-x-auto leading-relaxed">
-{`firmware zip ──hard-link──▶ Source/
-                                │
-              ┌─────────────────┴─────────────────┐
-              ▼                                   ▼
-     super.img (raw or sparse)             other images (boot, vbmeta, …)
-              │  built-in sparse + LP readers
-              ▼
-   system / vendor / product / odm …  (ext4 or EROFS)
-              │  built-in EROFS / ext4 readers
-              ▼
-   parallel extractor  ──▶  parallel streaming writes ──▶ project tree`}
+        {/* Visual Pipeline Flow */}
+        <div className="p-8 sm:p-12 rounded-3xl bg-black/60 border border-white/10 relative overflow-hidden backdrop-blur-3xl shadow-2xl">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+            {/* Stage 1 */}
+            <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col justify-between relative group hover:border-[#FDD935]/50 transition-all">
+              <div>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FDD935]/10 text-[#FDD935] mb-3 inline-block">
+                  Stage 01 • Ingest
+                </span>
+                <h4 className="text-base font-bold text-white mb-2">Firmware Zip</h4>
+                <p className="text-xs text-gray-400 leading-relaxed font-mono">
+                  Hard-link directly into Source/ staging without redundant disk duplication.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 text-[11px] text-gray-400 font-mono">
+                → Source/ directory
+              </div>
+            </div>
+
+            {/* Stage 2 */}
+            <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col justify-between relative group hover:border-[#FDD935]/50 transition-all">
+              <div>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FDD935]/10 text-[#FDD935] mb-3 inline-block">
+                  Stage 02 • Demux
+                </span>
+                <h4 className="text-base font-bold text-white mb-2">Super & Images</h4>
+                <p className="text-xs text-gray-400 leading-relaxed font-mono">
+                  Built-in sparse + LP readers extract raw super.img, boot, vbmeta, and recovery images.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 text-[11px] text-[#FDD935] font-mono">
+                Built-in Sparse & LP
+              </div>
+            </div>
+
+            {/* Stage 3 */}
+            <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col justify-between relative group hover:border-[#FDD935]/50 transition-all">
+              <div>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FDD935]/10 text-[#FDD935] mb-3 inline-block">
+                  Stage 03 • Filesystems
+                </span>
+                <h4 className="text-base font-bold text-white mb-2">System / Vendor</h4>
+                <p className="text-xs text-gray-400 leading-relaxed font-mono">
+                  Managed C# readers walk ext4 and EROFS (plain, inline, chunk, and LZ4 compressed).
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 text-[11px] text-[#FDD935] font-mono">
+                ext4 & EROFS Engines
+              </div>
+            </div>
+
+            {/* Stage 4 */}
+            <div className="p-6 rounded-2xl bg-white/[0.03] border border-white/10 flex flex-col justify-between relative group hover:border-[#FDD935]/50 transition-all">
+              <div>
+                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FDD935]/10 text-[#FDD935] mb-3 inline-block">
+                  Stage 04 • Output
+                </span>
+                <h4 className="text-base font-bold text-white mb-2">Streaming Writes</h4>
+                <p className="text-xs text-gray-400 leading-relaxed font-mono">
+                  Parallel file writers stream extracted contents directly into your project tree.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 text-[11px] text-[#FDD935] font-mono">
+                → Project Workspace
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-400">
+            <span>Direct managed pipeline written in pure .NET 10</span>
+            <span className="text-[#FDD935] font-semibold mt-2 sm:mt-0">Zero WSL or Linux VM required</span>
+          </div>
         </div>
-        <p className="text-center text-xs text-gray-400 mt-4">
-          Partitions are extracted sequentially with internal parallelism to avoid thrashing storage controllers and sustain maximum write throughput.
-        </p>
       </section>
 
       {/* RBK Workshop Modules */}

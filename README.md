@@ -16,7 +16,7 @@ This repository hosts the front-end codebase for the official Xoeris portal. It 
 ## Proprietary & Private Codebase
 
 ### License Notice
-Copyright (c) 2020-2026 Xoeris. All rights reserved.
+© 2018-2026 Xoeris. All rights reserved.
 
 **CONFIDENTIAL AND PROPRIETARY**
 
