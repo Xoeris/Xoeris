@@ -176,6 +176,67 @@ export default function SoftwareLayout({
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
+
+        {/* Mobile Navigation Drawer */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-2xl border-t border-white/10 shadow-2xl py-6 px-6 flex flex-col gap-5 text-white max-h-[85vh] overflow-y-auto">
+            <div className="space-y-3">
+              <div className="text-xs font-bold uppercase tracking-wider text-[#FDD935]">Products</div>
+              <div className="grid grid-cols-2 gap-2 pl-2">
+                {productList.map((item) => (
+                  <button
+                    key={item.label}
+                    onClick={() => { onNavigate(item.route); setMobileMenuOpen(false); }}
+                    className={`text-left text-sm font-semibold bg-transparent border-none p-1 cursor-pointer ${
+                      title === item.label ? 'text-[#FDD935]' : 'text-gray-300 hover:text-white'
+                    }`}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-3 pt-2 border-t border-white/10">
+              <div className="text-xs font-bold uppercase tracking-wider text-[#FDD935]">Models</div>
+              <div className="grid grid-cols-2 gap-2 pl-2">
+                {modelList.map((model) => (
+                  <button
+                    key={model}
+                    onClick={() => { onNavigate('chat'); setMobileMenuOpen(false); }}
+                    className="text-left text-sm font-semibold text-gray-300 hover:text-white bg-transparent border-none p-1 cursor-pointer"
+                  >
+                    {model}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-white/10 flex flex-col gap-3">
+              <button
+                onClick={() => { onNavigate('pricing'); setMobileMenuOpen(false); }}
+                className="text-left text-sm font-semibold text-gray-300 hover:text-white bg-transparent border-none p-1 cursor-pointer"
+              >
+                Pricing
+              </button>
+              {currentUser ? (
+                <button
+                  onClick={() => { clearSession(); setMobileMenuOpen(false); setCurrentUser(null); }}
+                  className="text-left text-sm font-semibold text-red-400 bg-transparent border-none p-1 cursor-pointer"
+                >
+                  Log out ({currentUser.name || currentUser.username})
+                </button>
+              ) : (
+                <button
+                  onClick={() => { onNavigate('auth'); setMobileMenuOpen(false); }}
+                  className="text-left text-sm font-semibold text-[#FDD935] bg-transparent border-none p-1 cursor-pointer"
+                >
+                  Login
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Floating Mega Menu Dropdown (Outside <nav> to allow true backdrop blur through underlying page) */}
@@ -285,68 +346,6 @@ export default function SoftwareLayout({
           </button>
         </div>
       )}
-
-      {/* Mobile Navigation Drawer */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 w-full bg-black/95 backdrop-blur-2xl border-t border-white/10 shadow-2xl py-6 px-6 flex flex-col gap-5 text-white max-h-[85vh] overflow-y-auto">
-            <div className="space-y-3">
-              <div className="text-xs font-bold uppercase tracking-wider text-[#FDD935]">Products</div>
-              <div className="grid grid-cols-2 gap-2 pl-2">
-                {productList.map((item) => (
-                  <button
-                    key={item.label}
-                    onClick={() => { onNavigate(item.route); setMobileMenuOpen(false); }}
-                    className={`text-left text-sm font-semibold bg-transparent border-none p-1 cursor-pointer ${
-                      title === item.label ? 'text-[#FDD935]' : 'text-gray-300 hover:text-white'
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-3 pt-2 border-t border-white/10">
-              <div className="text-xs font-bold uppercase tracking-wider text-[#FDD935]">Models</div>
-              <div className="grid grid-cols-2 gap-2 pl-2">
-                {modelList.map((model) => (
-                  <button
-                    key={model}
-                    onClick={() => { onNavigate('chat'); setMobileMenuOpen(false); }}
-                    className="text-left text-sm font-semibold text-gray-300 hover:text-white bg-transparent border-none p-1 cursor-pointer"
-                  >
-                    {model}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="pt-2 border-t border-white/10 flex flex-col gap-3">
-              <button
-                onClick={() => { onNavigate('pricing'); setMobileMenuOpen(false); }}
-                className="text-left text-sm font-semibold text-gray-300 hover:text-white bg-transparent border-none p-1 cursor-pointer"
-              >
-                Pricing
-              </button>
-              {currentUser ? (
-                <button
-                  onClick={() => { clearSession(); setMobileMenuOpen(false); setCurrentUser(null); }}
-                  className="text-left text-sm font-semibold text-red-400 bg-transparent border-none p-1 cursor-pointer"
-                >
-                  Log out ({currentUser.name || currentUser.username})
-                </button>
-              ) : (
-                <button
-                  onClick={() => { onNavigate('auth'); setMobileMenuOpen(false); }}
-                  className="text-left text-sm font-semibold text-[#FDD935] bg-transparent border-none p-1 cursor-pointer"
-                >
-                  Login
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-      </nav>
 
       {/* Main Page Content */}
       <main className="relative z-10 pt-28">
