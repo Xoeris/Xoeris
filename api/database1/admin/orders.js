@@ -22,12 +22,8 @@ function verifyAdmin(req) {
 }
 
 export default async function handler(req, res) {
-  setCorsHeaders(res, 'GET, OPTIONS', req);
+  setCorsHeaders(res, 'GET, POST, DELETE, OPTIONS', req);
   if (req.method === 'OPTIONS') return res.status(200).end();
-
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
 
   if (!verifyAdmin(req)) {
     return res.status(401).json({ error: 'Unauthorized: Valid Admin session required.' });
@@ -36,6 +32,33 @@ export default async function handler(req, res) {
   const postgresUrl = process.env.POSTGRES_URL || process.env.DATABASE_URL;
   if (!postgresUrl) {
     return res.status(500).json({ error: 'Database configuration missing' });
+  }
+
+  const sql = neon(postgresUrl);
+
+  // Handle DELETE / Clear requests
+  if (req.method === 'DELETE' || (req.method === 'POST' && (req.body?.action === 'clear' || req.body?.action === 'delete'))) {
+    try {
+      let body = req.body;
+      if (typeof body === 'string') {
+        try { body = JSON.parse(body); } catch { body = {}; }
+      }
+      const orderId = body?.orderId;
+      if (orderId) {
+        await sql`DELETE FROM SubscriptionOrders WHERE id = ${Number(orderId)}`;
+        return res.status(200).json({ success: true, message: `Order #${orderId} deleted.` });
+      } else {
+        await sql`DELETE FROM SubscriptionOrders`;
+        return res.status(200).json({ success: true, message: 'All subscription orders cleared.' });
+      }
+    } catch (err) {
+      console.error('Delete order error:', err);
+      return res.status(500).json({ error: 'Failed to delete orders', details: err.message });
+    }
+  }
+
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {

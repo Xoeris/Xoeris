@@ -132,6 +132,17 @@ export default async function handler(req, res) {
 
     const expiresAtIso = expiresAt ? expiresAt.toISOString() : null;
 
+    // Check if this is a delete/remove request
+    if (normalizedStatus === 'delete' || normalizedStatus === 'remove' || normalizedPlan === 'delete') {
+      await sql`DELETE FROM users WHERE email = ${targetEmail}`;
+      return res.status(200).json({
+        success: true,
+        message: `Account ${targetEmail} removed successfully.`,
+        deleted: true,
+        targetEmail
+      });
+    }
+
     // Update or Insert into users table
     const existingUsers = await sql`
       SELECT id, email, username FROM users WHERE email = ${targetEmail} LIMIT 1

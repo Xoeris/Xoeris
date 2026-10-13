@@ -100,6 +100,13 @@
       }
     },
     {
+      "src": "api/database1/admin/delete-user.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 30
+      }
+    },
+    {
       "src": "package.json",
       "use": "@vercel/static-build"
     }
@@ -140,6 +147,10 @@
     {
       "source": "/api/database1/admin/approve-order",
       "destination": "api/database1/admin/approve-order.js"
+    },
+    {
+      "source": "/api/database1/admin/delete-user",
+      "destination": "api/database1/admin/delete-user.js"
     },
     {
       "source": "/api/database1/user/:username",
