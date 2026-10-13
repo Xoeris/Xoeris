@@ -7,7 +7,7 @@ export default function Xalme({ onNavigate }) {
   const capabilities = [
     {
       title: "Multi-Model Reasoning Matrix",
-      desc: "Dynamic routing between Atlas 5, Forge 6, Nebula 7, and Elarion 7 models tailored to speed and task depth.",
+      desc: "Dynamic routing between Atlas 5, Forge 6, and Nebula 7 models tailored to speed and task depth.",
       tag: "Multi-Tier AI"
     },
     {
@@ -22,7 +22,7 @@ export default function Xalme({ onNavigate }) {
     },
     {
       title: "High-Assurance Security Enclaves",
-      desc: "Elarion 7 operates in air-gapped confidential computing enclaves with Elarion Capability Gateway (ECG) and Merkle audit ledgers.",
+      desc: "Elarion 7 operates in air-gapped confidential computing enclaves with Elarion Capability Gateway (ECG) and Merkle audit ledgers (Not for Public).",
       tag: "Zero-Knowledge"
     }
   ];
@@ -32,25 +32,29 @@ export default function Xalme({ onNavigate }) {
       name: "Atlas 5", 
       tier: "Entry-Level • Gen 5",
       speed: "< 15ms TTFT • > 120 tok/s",
-      desc: "High-throughput draft engine built in C++20 with Grouped-Query Attention (GQA), zero-allocation rolling KV caches, and speculative decoding draft acceleration for local workstations and edge hardware."
+      desc: "High-throughput draft engine built in C++20 with Grouped-Query Attention (GQA), zero-allocation rolling KV caches, and speculative decoding draft acceleration for local workstations and edge hardware.",
+      isPublic: true
     },
     { 
       name: "Forge 6", 
       tier: "Mid-Level • Gen 6",
       speed: "1M Context • SWE-bench > 74.5%",
-      desc: "Autonomous software engineering flagship with 1,000,000 tokens context, RoPE SwiGLU decoder-only transformer, polyglot compilation, and surgical multi-file codebase refactoring."
+      desc: "Autonomous software engineering flagship with 1,000,000 tokens context, RoPE SwiGLU decoder-only transformer, polyglot compilation, and surgical multi-file codebase refactoring.",
+      isPublic: true
     },
     { 
       name: "Nebula 7", 
       tier: "Top-Level • Gen 7",
       speed: "2M+ Context • GPQA > 72.8%",
-      desc: "Frontier general intelligence summit with hierarchical L1/L2/L3 context caching, Monte Carlo Tree-of-Thought (ToT) reasoning, formal proofs, and master coordination of specialized subagents."
+      desc: "Frontier general intelligence summit with hierarchical L1/L2/L3 context caching, Monte Carlo Tree-of-Thought (ToT) reasoning, formal proofs, and master coordination of specialized subagents.",
+      isPublic: true
     },
     { 
       name: "Elarion 7", 
       tier: "Restricted • Gen 7",
       speed: "Air-Gapped Confidential Enclave",
-      desc: "Privileged cybersecurity intelligence derived from Nebula 7, running within air-gapped confidential hardware enclaves (SEV-SNP/TDX) with Elarion Capability Gateway (ECG), dual-authorization, and append-only Merkle auditing."
+      desc: "Privileged cybersecurity intelligence derived from Nebula 7, running within air-gapped confidential hardware enclaves (SEV-SNP/TDX) with Elarion Capability Gateway (ECG), dual-authorization, and append-only Merkle auditing.",
+      isPublic: false
     }
   ];
 
@@ -119,9 +123,18 @@ export default function Xalme({ onNavigate }) {
                   <h3 className="text-2xl font-bold text-white mb-4">{m.name}</h3>
                   <p className="text-gray-400 text-xs leading-relaxed">{m.desc}</p>
                 </div>
-                <div className="mt-8 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] text-gray-400 font-semibold">
-                  <span>Available in Pro</span>
-                  <CheckCircle2 size={14} className="text-[#FDD935]" />
+                <div className="mt-8 pt-4 border-t border-white/5 flex items-center justify-between text-[11px] font-semibold">
+                  {m.isPublic ? (
+                    <>
+                      <span className="text-gray-300">Available in <strong className="text-[#FDD935]">Ultra</strong></span>
+                      <CheckCircle2 size={14} className="text-[#FDD935]" />
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-red-400 font-bold uppercase tracking-wider">Not for Public</span>
+                      <Shield size={14} className="text-red-400" />
+                    </>
+                  )}
                 </div>
               </div>
             </FadeIn>
@@ -163,7 +176,7 @@ export default function Xalme({ onNavigate }) {
           <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#FDD935]/10 rounded-full blur-[100px] pointer-events-none"></div>
           <h2 className="text-4xl sm:text-6xl font-black uppercase tracking-tight mb-6">Start Your Session with Xalme.</h2>
           <p className="text-gray-300 max-w-xl mx-auto text-base mb-10 font-normal">
-            Accessible on Web for Free, with higher limits, mobile app support, and multi-model access on Pro and Ultra.
+            Web version accessible exclusively to Ultra members and Administrators, with desktop and Android app access available across tiers.
           </p>
           <div className="flex flex-wrap gap-4 justify-center">
             <button 

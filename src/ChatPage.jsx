@@ -44,7 +44,7 @@ export default function ChatPage({ onNavigate }) {
   const [syncing, setSyncing] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
-  const [selectedModel, setSelectedModel] = useState('Xalme 3.5 Core');
+  const [selectedModel, setSelectedModel] = useState('Atlas 5');
   const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
 
   // Chat conversation state
@@ -354,7 +354,7 @@ export default function ChatPage({ onNavigate }) {
             </div>
             <div className="flex items-center gap-2">
               <Check size={13} className="text-[#FDD935] shrink-0" />
-              <span>All 3.5 Core, Ultra & Reasoning Models</span>
+              <span>All Atlas 5, Forge 6 & Nebula 7 Models</span>
             </div>
             <div className="flex items-center gap-2">
               <Check size={13} className="text-[#FDD935] shrink-0" />
@@ -670,7 +670,7 @@ export default function ChatPage({ onNavigate }) {
 
                       {modelDropdownOpen && (
                         <div className="absolute left-4 bottom-14 bg-[#141414] border border-white/15 rounded-xl p-1.5 shadow-2xl z-50 text-left min-w-[170px] backdrop-blur-2xl">
-                          {['Xalme 3.5 Core', 'Xalme Opus', 'Elarion 1.1', 'Nebula Code'].map((m) => (
+                          {['Atlas 5', 'Forge 6', 'Nebula 7'].map((m) => (
                             <button
                               key={m}
                               type="button"
