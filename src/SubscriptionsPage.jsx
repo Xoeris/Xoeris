@@ -463,10 +463,10 @@ export default function SubscriptionsPage({ onNavigate }) {
           </button>
         </div>
 
-        {/* Header with pay.xoeris.com emblem */}
+        {/* Header emblem */}
         <div className="mb-8">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FDD935]/10 border border-[#FDD935]/25 text-[#FDD935] text-[11px] font-mono font-bold uppercase tracking-widest mb-3">
-            <Lock size={12} /> pay.xoeris.com • Secure Checkout
+            <Lock size={12} /> Secure Checkout
           </div>
           <div className="flex items-center justify-between">
             <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">{selectedPlan} plan</h1>
@@ -539,9 +539,8 @@ export default function SubscriptionsPage({ onNavigate }) {
 
         {/* Payment Method Selector: Gumroad vs Contact Sales */}
         <div className="mb-8">
-          <h3 className="text-xs font-bold text-gray-400 mb-3 uppercase tracking-widest flex items-center justify-between">
-            <span>Select Payment Option</span>
-            <span className="text-[11px] text-[#FDD935] font-normal normal-case">pay.xoeris.com</span>
+          <h3 className="text-xs font-bold text-gray-400 mb-3 uppercase tracking-widest">
+            Select Payment Option
           </h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
