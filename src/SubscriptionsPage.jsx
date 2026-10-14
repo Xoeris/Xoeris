@@ -1,20 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Check, Zap, ShieldCheck, Info, ArrowLeft, ArrowRight,
-  Lock, CheckCircle2, AlertCircle, Sparkles, ExternalLink, User, Mail, ShieldAlert
+  Lock, CheckCircle2, AlertCircle, Sparkles, ExternalLink, User, Mail, ShieldAlert,
+  CreditCard, Headphones
 } from 'lucide-react';
 import FadeIn from './components/FadeIn';
 import { getStoredUser, getStoredToken, syncUserFromDatabase } from './services/authService';
 
 export default function SubscriptionsPage({ onNavigate }) {
   const [view, setView] = useState(() => {
-    return window.location.pathname === '/payment' ? 'payment' : 'pricing';
+    const path = window.location.pathname.toLowerCase();
+    const host = window.location.hostname.toLowerCase();
+    if (host.includes('pay.xoeris.com') || host.startsWith('pay.')) return 'payment';
+    return (path === '/payment' || path === '/pay' || path.startsWith('/l/')) ? 'payment' : 'pricing';
   });
-  const [selectedPlan, setSelectedPlan] = useState('Pro');
-  const [billingCycle, setBillingCycle] = useState('yearly');
+  const [currentUser, setCurrentUser] = useState(() => getStoredUser());
+  const [selectedPlan, setSelectedPlan] = useState(() => {
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes('ultra')) return 'Ultra';
+    return 'Pro';
+  });
+  const [billingCycle, setBillingCycle] = useState(() => {
+    const path = window.location.pathname.toLowerCase();
+    if (path.includes('annual') || path.includes('yearly')) return 'yearly';
+    if (path.includes('monthly')) return 'monthly';
+    return 'yearly';
+  });
+  const [paymentMethod, setPaymentMethod] = useState('gumroad'); // 'gumroad' | 'contact_sales'
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentError, setPaymentError] = useState('');
   const [successReceipt, setSuccessReceipt] = useState(null);
+
+  // Sync user state and listen for auth updates
+  useEffect(() => {
+    const updateUser = () => {
+      const u = getStoredUser();
+      setCurrentUser(u);
+      if (u?.name) setFullName(u.name);
+      if (u?.email) setEmail(u.email);
+    };
+
+    updateUser();
+    syncUserFromDatabase().then((u) => {
+      if (u) setCurrentUser(u);
+    }).catch(() => null);
+
+    window.addEventListener('xoeris_auth_change', updateUser);
+    window.addEventListener('storage', updateUser);
+    return () => {
+      window.removeEventListener('xoeris_auth_change', updateUser);
+      window.removeEventListener('storage', updateUser);
+    };
+  }, []);
 
   // Manual payment authorization state
   const [fullName, setFullName] = useState(() => {
@@ -29,7 +66,13 @@ export default function SubscriptionsPage({ onNavigate }) {
 
   useEffect(() => {
     const handlePopState = () => {
-      setView(window.location.pathname === '/payment' ? 'payment' : 'pricing');
+      const path = window.location.pathname.toLowerCase();
+      const host = window.location.hostname.toLowerCase();
+      if (host.includes('pay.xoeris.com') || host.startsWith('pay.')) {
+        setView('payment');
+        return;
+      }
+      setView((path === '/payment' || path === '/pay' || path.startsWith('/l/')) ? 'payment' : 'pricing');
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -37,7 +80,9 @@ export default function SubscriptionsPage({ onNavigate }) {
 
   const handleSwitchView = (newView, planName = 'Pro') => {
     if (planName) setSelectedPlan(planName);
-    const path = newView === 'payment' ? '/payment' : '/pricing';
+    const host = window.location.hostname.toLowerCase();
+    const isPayHost = host.includes('pay.xoeris.com') || host.startsWith('pay.');
+    const path = newView === 'payment' ? (isPayHost ? '/' : '/payment') : '/pricing';
     window.history.pushState({}, '', path);
     setView(newView);
     window.scrollTo(0, 0);
@@ -141,22 +186,39 @@ export default function SubscriptionsPage({ onNavigate }) {
     price, 
     buttonText, 
     highlighted = false, 
+    badge = null,
+    isCurrentPlan = false,
+    disabled = false,
     features = [],
     onAction
   }) => (
     <div className={`rounded-3xl p-8 relative flex flex-col justify-between transition-all duration-300 ${
-      highlighted 
-        ? 'bg-gradient-to-b from-[#FDD935]/15 via-white/[0.03] to-transparent border border-[#FDD935]/50 shadow-[0_0_40px_rgba(253,217,53,0.15)] ring-1 ring-[#FDD935]/30' 
-        : 'bg-white/[0.02] border border-white/10 hover:border-white/20'
+      isCurrentPlan
+        ? 'bg-gradient-to-b from-[#FDD935]/20 via-[#FDD935]/[0.05] to-transparent border-2 border-[#FDD935] shadow-[0_0_50px_rgba(253,217,53,0.25)] ring-1 ring-[#FDD935]'
+        : highlighted 
+          ? 'bg-gradient-to-b from-[#FDD935]/15 via-white/[0.03] to-transparent border border-[#FDD935]/50 shadow-[0_0_40px_rgba(253,217,53,0.15)] ring-1 ring-[#FDD935]/30' 
+          : 'bg-white/[0.02] border border-white/10 hover:border-white/20'
     }`}>
-      {highlighted && (
-        <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-[#FDD935] text-black text-[11px] font-black uppercase tracking-widest shadow-md">
-          Most Popular
+      {badge && (
+        <div className={`absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[11px] font-black uppercase tracking-widest shadow-md flex items-center gap-1.5 ${
+          isCurrentPlan 
+            ? 'bg-[#FDD935] text-black shadow-[0_0_20px_rgba(253,217,53,0.5)]'
+            : 'bg-[#FDD935] text-black'
+        }`}>
+          {isCurrentPlan && <CheckCircle2 size={13} className="text-black" />}
+          <span>{badge}</span>
         </div>
       )}
       <div>
         <div className="flex justify-between items-start mb-4">
-          <h3 className="text-xl font-bold text-white tracking-tight">{title}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-xl font-bold text-white tracking-tight">{title}</h3>
+            {isCurrentPlan && (
+              <span className="text-[10px] font-mono font-bold text-[#FDD935] px-2 py-0.5 rounded bg-[#FDD935]/15 border border-[#FDD935]/30 uppercase">
+                Active
+              </span>
+            )}
+          </div>
           {title === 'Pro' && <span className="text-[10px] font-mono text-[#FDD935] px-2 py-0.5 rounded bg-[#FDD935]/10 border border-[#FDD935]/20 font-bold uppercase">Developer</span>}
           {title === 'Ultra' && <span className="text-[10px] font-mono text-[#FEF08A] px-2 py-0.5 rounded bg-white/10 border border-white/20 font-bold uppercase">Enterprise</span>}
         </div>
@@ -173,14 +235,18 @@ export default function SubscriptionsPage({ onNavigate }) {
           )}
         </div>
         <button 
-          onClick={onAction}
-          className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all duration-200 mb-8 cursor-pointer relative z-10 ${
-            highlighted
-              ? 'bg-[#FDD935] text-black hover:bg-[#FFE066] shadow-[0_0_20px_rgba(253,217,53,0.3)] border-none'
-              : 'bg-white/5 border border-white/15 text-white hover:bg-white/10'
+          onClick={disabled ? undefined : onAction}
+          disabled={disabled}
+          className={`w-full py-3.5 rounded-xl font-bold text-sm transition-all duration-200 mb-8 relative z-10 flex items-center justify-center gap-2 ${
+            disabled
+              ? 'bg-white/5 border border-white/10 text-gray-400 cursor-default opacity-85'
+              : highlighted || isCurrentPlan
+                ? 'bg-[#FDD935] text-black hover:bg-[#FFE066] shadow-[0_0_20px_rgba(253,217,53,0.3)] border-none cursor-pointer'
+                : 'bg-white/5 border border-white/15 text-white hover:bg-white/10 cursor-pointer'
           }`}
         >
-          {buttonText}
+          {isCurrentPlan && <Check size={16} className="text-black" />}
+          <span>{buttonText}</span>
         </button>
         <div className="space-y-3 relative z-10">
           <div className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3">
@@ -237,6 +303,18 @@ export default function SubscriptionsPage({ onNavigate }) {
             Choose the plan that fits your workflow. From lightweight personal exploration to mission-critical infrastructure automation.
           </p>
 
+          {currentUser && (currentUser.subscription_tier || 'free').toLowerCase() !== 'free' && (
+            <div className="mt-6 inline-flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-[#FDD935]/10 border border-[#FDD935]/30 shadow-[0_0_20px_rgba(253,217,53,0.1)]">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#FDD935] animate-pulse"></span>
+              <span className="text-xs text-gray-300">
+                Logged in as <strong className="text-white font-mono">{currentUser.email || currentUser.username}</strong>
+              </span>
+              <span className="text-[11px] font-black uppercase tracking-wider text-black bg-[#FDD935] px-2.5 py-0.5 rounded-full">
+                {(currentUser.subscription_tier || '').toUpperCase()} ACTIVE
+              </span>
+            </div>
+          )}
+
           {/* Billing Switcher */}
           <div className="flex items-center justify-center gap-4 mt-8">
             <div className="bg-white/5 border border-white/10 p-1.5 rounded-2xl flex items-center gap-1 backdrop-blur-md">
@@ -261,54 +339,79 @@ export default function SubscriptionsPage({ onNavigate }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <PricingCard 
-            title="Free"
-            description="Essential toolset for casual users and platform discovery."
-            price="0"
-            buttonText="Current Plan"
-            highlighted={false}
-            onAction={() => null}
-            features={[
-              "Basic Xoeris products",
-              "Access to public developer utilities",
-              "Join Xoeris Community",
-              "Being a contributor for Xoeris Development Programs"
-            ]}
-          />
-          <PricingCard 
-            title="Pro"
-            description="Advanced intelligence and full runtime support for developers."
-            price={billingCycle === 'yearly' ? '10.50' : '15'}
-            buttonText="Get Pro"
-            highlighted={true}
-            onAction={() => handleSwitchView('payment', 'Pro')}
-            features={[
-              "Pro Xoeris products",
-              "Chat with Xalme on Android and desktop apps",
-              "Higher usage limits across tools",
-              "Access to advanced Xalme models",
-              "Customer support from Xoeris Agent",
-              "Early access to Beta Xoeris products and features"
-            ]}
-          />
-          <PricingCard 
-            title="Ultra"
-            description="Dedicated compute, limitless bandwidth, and enterprise automation."
-            price={billingCycle === 'yearly' ? '35' : '50'}
-            buttonText="Upgrade to Ultra"
-            highlighted={false}
-            onAction={() => handleSwitchView('payment', 'Ultra')}
-            features={[
-              "All Xoeris products",
-              "Exclusive access to Xalme Chat Web version",
-              "Access Xalme Code on web",
-              "Up to 10x more usage than Pro*",
-              "High priorities for customer support from Xoeris Agent",
-              "Early access to Alpha, Beta, and Dev Xoeris products and advanced features"
-            ]}
-          />
-        </div>
+        {(() => {
+          const rawTier = (currentUser?.subscription_tier || 'free').toLowerCase();
+          const userStatus = (currentUser?.subscription_status || 'active').toLowerCase();
+          const isExpired = userStatus === 'expired';
+          const activeTier = isExpired ? 'free' : rawTier;
+          const userCycle = (currentUser?.subscription_cycle || '').toLowerCase();
+          const expiresAt = currentUser?.subscription_expires_at ? new Date(currentUser.subscription_expires_at) : null;
+          const expiresDateStr = expiresAt && !isNaN(expiresAt) ? expiresAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : null;
+
+          const isFree = activeTier === 'free';
+          const isPro = activeTier === 'pro';
+          const isUltra = activeTier === 'ultra';
+
+          return (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <PricingCard 
+                title="Free"
+                description="Essential toolset for casual users and platform discovery."
+                price="0"
+                buttonText={isFree ? "Current Plan" : "Downgrade"}
+                isCurrentPlan={isFree}
+                disabled={isFree}
+                highlighted={false}
+                badge={isFree ? "Current Plan" : null}
+                onAction={() => null}
+                features={[
+                  "Basic Xoeris products",
+                  "Access to public developer utilities",
+                  "Join Xoeris Community",
+                  "Being a contributor for Xoeris Development Programs"
+                ]}
+              />
+              <PricingCard 
+                title="Pro"
+                description="Advanced intelligence and full runtime support for developers."
+                price={billingCycle === 'yearly' ? '10.50' : '15'}
+                buttonText={isPro ? "Current Plan" : isUltra ? "Included in Ultra" : "Get Pro"}
+                isCurrentPlan={isPro}
+                disabled={isPro || isUltra}
+                highlighted={isPro || (!isUltra && !isPro)}
+                badge={isPro ? "Active Plan" : (!isUltra ? "Most Popular" : null)}
+                onAction={() => handleSwitchView('payment', 'Pro')}
+                features={[
+                  "Pro Xoeris products",
+                  "Chat with Xalme on Android and desktop apps",
+                  "Higher usage limits across tools",
+                  "Access to advanced Xalme models",
+                  "Customer support from Xoeris Agent",
+                  "Early access to Beta Xoeris products and features"
+                ]}
+              />
+              <PricingCard 
+                title="Ultra"
+                description="Dedicated compute, limitless bandwidth, and enterprise automation."
+                price={billingCycle === 'yearly' ? '35' : '50'}
+                buttonText={isUltra ? "Current Plan" : isPro ? "Upgrade to Ultra" : "Upgrade to Ultra"}
+                isCurrentPlan={isUltra}
+                disabled={isUltra}
+                highlighted={isUltra}
+                badge={isUltra ? "Active Plan" : null}
+                onAction={() => handleSwitchView('payment', 'Ultra')}
+                features={[
+                  "All Xoeris products",
+                  "Exclusive access to Xalme Chat Web version",
+                  "Access Xalme Code on web",
+                  "Up to 10x more usage than Pro*",
+                  "High priorities for customer support from Xoeris Agent",
+                  "Early access to Alpha, Beta, and Dev Xoeris products and advanced features"
+                ]}
+              />
+            </div>
+          );
+        })()}
       </div>
     );
   };
@@ -326,6 +429,14 @@ export default function SubscriptionsPage({ onNavigate }) {
     } else {
       amountDue = isYearly ? '126' : '15';
       monthlyRate = isYearly ? '$10.50' : '$15.00';
+    }
+
+    // Gumroad product checkout URLs requested by user
+    let gumroadUrl = 'https://pay.xoeris.com/l/pro-annual';
+    if (isUltra) {
+      gumroadUrl = 'https://pay.xoeris.com/l/ultra-monthly';
+    } else {
+      gumroadUrl = isYearly ? 'https://pay.xoeris.com/l/pro-annual' : 'https://pay.xoeris.com/l/pro-monthly';
     }
 
     const renewalDate = new Date();
@@ -352,25 +463,31 @@ export default function SubscriptionsPage({ onNavigate }) {
           </button>
         </div>
 
-        <div className="mb-8 flex items-center justify-between">
-          <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">{selectedPlan} plan</h1>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setSelectedPlan('Pro')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors ${
-                selectedPlan === 'Pro' ? 'bg-[#FDD935] text-black' : 'bg-white/5 text-gray-400 hover:text-white'
-              }`}
-            >
-              Pro
-            </button>
-            <button
-              onClick={() => setSelectedPlan('Ultra')}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors ${
-                selectedPlan === 'Ultra' ? 'bg-[#FDD935] text-black' : 'bg-white/5 text-gray-400 hover:text-white'
-              }`}
-            >
-              Ultra
-            </button>
+        {/* Header with pay.xoeris.com emblem */}
+        <div className="mb-8">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#FDD935]/10 border border-[#FDD935]/25 text-[#FDD935] text-[11px] font-mono font-bold uppercase tracking-widest mb-3">
+            <Lock size={12} /> pay.xoeris.com • Secure Checkout
+          </div>
+          <div className="flex items-center justify-between">
+            <h1 className="text-4xl md:text-5xl font-black text-white tracking-tight">{selectedPlan} plan</h1>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setSelectedPlan('Pro')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors ${
+                  selectedPlan === 'Pro' ? 'bg-[#FDD935] text-black shadow-[0_0_15px_rgba(253,217,53,0.3)]' : 'bg-white/5 text-gray-400 hover:text-white'
+                }`}
+              >
+                Pro
+              </button>
+              <button
+                onClick={() => setSelectedPlan('Ultra')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold cursor-pointer transition-colors ${
+                  selectedPlan === 'Ultra' ? 'bg-[#FDD935] text-black shadow-[0_0_15px_rgba(253,217,53,0.3)]' : 'bg-white/5 text-gray-400 hover:text-white'
+                }`}
+              >
+                Ultra
+              </button>
+            </div>
           </div>
         </div>
 
@@ -393,7 +510,7 @@ export default function SubscriptionsPage({ onNavigate }) {
               </div>
             </div>
             <div className="text-white font-bold text-base mb-1">Monthly</div>
-            <div className="text-gray-400 text-sm">{isUltra ? '$150.00/month + tax' : '$50.00/month + tax'}</div>
+            <div className="text-gray-400 text-sm">{isUltra ? '$50.00/month' : '$15.00/month'}</div>
           </button>
 
           <button 
@@ -416,14 +533,98 @@ export default function SubscriptionsPage({ onNavigate }) {
               </span>
             </div>
             <div className="text-white font-bold text-base mb-1">Yearly</div>
-            <div className="text-gray-400 text-sm">{isUltra ? '$120.00/month + tax' : '$35.00/month + tax'}</div>
+            <div className="text-gray-400 text-sm">{isUltra ? '$35.00/month ($420/yr)' : '$10.50/month ($126/yr)'}</div>
           </button>
+        </div>
+
+        {/* Payment Method Selector: Gumroad vs Contact Sales */}
+        <div className="mb-8">
+          <h3 className="text-xs font-bold text-gray-400 mb-3 uppercase tracking-widest flex items-center justify-between">
+            <span>Select Payment Option</span>
+            <span className="text-[11px] text-[#FDD935] font-normal normal-case">pay.xoeris.com</span>
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Gumroad Option */}
+            <button
+              type="button"
+              onClick={() => setPaymentMethod('gumroad')}
+              className={`p-5 rounded-2xl border text-left transition-all duration-200 cursor-pointer relative flex flex-col justify-between ${
+                paymentMethod === 'gumroad'
+                  ? 'bg-gradient-to-b from-[#FDD935]/15 to-white/[0.02] border-[#FDD935] ring-1 ring-[#FDD935]/50 shadow-[0_0_25px_rgba(253,217,53,0.18)]'
+                  : 'bg-white/[0.02] border-white/10 hover:border-white/20'
+              }`}
+            >
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-[#FDD935]/15 border border-[#FDD935]/30 flex items-center justify-center text-[#FDD935]">
+                      <CreditCard size={18} />
+                    </div>
+                    <div>
+                      <div className="text-white font-bold text-sm">Gumroad</div>
+                      <div className="text-gray-400 text-[11px]">Instant Card & PayPal</div>
+                    </div>
+                  </div>
+                  <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                    paymentMethod === 'gumroad' ? 'border-[#FDD935]' : 'border-gray-500'
+                  }`}>
+                    {paymentMethod === 'gumroad' && <div className="w-2 h-2 bg-[#FDD935] rounded-full" />}
+                  </div>
+                </div>
+                <p className="text-gray-300 text-xs leading-relaxed">
+                  Fast automatic checkout via Gumroad with instant activation on your account.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[11px] font-mono text-gray-400">
+                <span>Direct link</span>
+                <span className="text-[#FDD935] flex items-center gap-1 font-bold">pay.xoeris.com/l/... <ExternalLink size={11} /></span>
+              </div>
+            </button>
+
+            {/* Contact Sales Option */}
+            <button
+              type="button"
+              onClick={() => setPaymentMethod('contact_sales')}
+              className={`p-5 rounded-2xl border text-left transition-all duration-200 cursor-pointer relative flex flex-col justify-between ${
+                paymentMethod === 'contact_sales'
+                  ? 'bg-gradient-to-b from-[#FDD935]/15 to-white/[0.02] border-[#FDD935] ring-1 ring-[#FDD935]/50 shadow-[0_0_25px_rgba(253,217,53,0.18)]'
+                  : 'bg-white/[0.02] border-white/10 hover:border-white/20'
+              }`}
+            >
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center text-white">
+                      <Headphones size={18} />
+                    </div>
+                    <div>
+                      <div className="text-white font-bold text-sm">Contact Sales</div>
+                      <div className="text-gray-400 text-[11px]">Invoice & Admin Verification</div>
+                    </div>
+                  </div>
+                  <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                    paymentMethod === 'contact_sales' ? 'border-[#FDD935]' : 'border-gray-500'
+                  }`}>
+                    {paymentMethod === 'contact_sales' && <div className="w-2 h-2 bg-[#FDD935] rounded-full" />}
+                  </div>
+                </div>
+                <p className="text-gray-300 text-xs leading-relaxed">
+                  Submit an authorized subscription request directly to the Admin Dashboard.
+                </p>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[11px] font-mono text-gray-400">
+                <span>Confirmation</span>
+                <span className="text-[#FDD935] font-bold">I AGREE required</span>
+              </div>
+            </button>
+          </div>
         </div>
 
         {/* ORDER DETAILS Card */}
         <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-7 mb-6 shadow-xl backdrop-blur-md">
           <h3 className="text-xs font-bold text-gray-400 mb-6 uppercase tracking-widest">
-            Order Details
+            Order Summary
           </h3>
           <div className="space-y-5">
             <div className="flex justify-between items-center">
@@ -437,8 +638,10 @@ export default function SubscriptionsPage({ onNavigate }) {
             <div className="h-px bg-white/10" />
 
             <div className="flex justify-between items-center text-sm">
-              <div className="text-gray-300 font-medium">Subtotal</div>
-              <div className="text-white font-bold">${amountDue}</div>
+              <div className="text-gray-300 font-medium">Selected Provider</div>
+              <div className="text-[#FDD935] font-bold">
+                {paymentMethod === 'gumroad' ? 'Gumroad Checkout' : 'Contact Sales (Admin Approval)'}
+              </div>
             </div>
 
             <div className="flex justify-between items-center pt-2">
@@ -452,112 +655,154 @@ export default function SubscriptionsPage({ onNavigate }) {
         <div className="flex gap-4 p-5 bg-white/[0.02] border border-white/10 rounded-2xl mb-8 items-start backdrop-blur-sm">
           <Info size={18} className="text-gray-400 shrink-0 mt-0.5" />
           <p className="text-xs text-gray-300 leading-relaxed">
-            Your subscription will renew on {renewalDateString}. You will be charged ${amountDue}.00 {isYearly ? '/year' : '/month'} + tax upon admin confirmation.
+            Your subscription will renew on {renewalDateString}. You will be charged ${amountDue}.00 {isYearly ? '/year' : '/month'} + tax.
           </p>
         </div>
 
-        {/* USER INFORMATION & AGREEMENT METHOD Section */}
-        <div className="mb-8">
-          <h3 className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-widest flex items-center justify-between">
-            <span>Payment Authorization</span>
-            <span className="text-[11px] text-gray-500 font-normal normal-case flex items-center gap-1">
-              <Lock size={12} className="text-[#FDD935]" /> 256-bit encrypted
-            </span>
-          </h3>
-
-          <div className="p-6 sm:p-8 bg-white/[0.02] border border-white/10 rounded-2xl space-y-5 backdrop-blur-md relative overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FDD935]/30 to-transparent"></div>
-
-            {/* Full Name */}
-            <div>
-              <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-                <User size={14} className="text-[#FDD935]" />
-                <span>Full Name</span>
-              </label>
-              <input 
-                type="text"
-                placeholder="example Chris Juan"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
-                required
-              />
-            </div>
-
-            {/* Email */}
-            <div>
-              <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-                <Mail size={14} className="text-[#FDD935]" />
-                <span>Email</span>
-              </label>
-              <input 
-                type="email"
-                placeholder="example chris.juan@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
-                required
-              />
-            </div>
-
-            {/* Agree to pay */}
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-                  <ShieldCheck size={14} className="text-[#FDD935]" />
-                  <span>Agree to pay</span>
-                </label>
-                <span className="text-[10px] font-mono text-[#FDD935]">type exactly "I AGREE"</span>
+        {/* GUMROAD FLOW */}
+        {paymentMethod === 'gumroad' && (
+          <div className="mb-8 space-y-6 animate-fade-in">
+            <div className="p-6 sm:p-7 bg-white/[0.02] border border-[#FDD935]/30 rounded-2xl backdrop-blur-md relative overflow-hidden">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-[#FDD935]/15 border border-[#FDD935]/30 flex items-center justify-center text-[#FDD935] shrink-0">
+                  <CreditCard size={22} />
+                </div>
+                <div>
+                  <h4 className="text-base font-bold text-white mb-1">Gumroad Payment Gateway</h4>
+                  <p className="text-gray-400 text-xs leading-relaxed mb-4">
+                    You are checking out for the <strong className="text-white">{selectedPlan} Plan ({isYearly ? 'Annual' : 'Monthly'})</strong> at <strong className="text-[#FDD935]">${amountDue}.00 USD</strong>.
+                  </p>
+                  <div className="p-3.5 rounded-xl bg-black/40 border border-white/10 font-mono text-xs flex items-center justify-between text-gray-300">
+                    <span className="truncate pr-2">{gumroadUrl}</span>
+                    <a 
+                      href={gumroadUrl} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-[#FDD935] hover:underline flex items-center gap-1 font-bold whitespace-nowrap"
+                    >
+                      Open <ExternalLink size={12} />
+                    </a>
+                  </div>
+                </div>
               </div>
-              <input 
-                type="text"
-                placeholder='type exactly "I AGREE"'
-                value={agreeText}
-                onChange={(e) => setAgreeText(e.target.value)}
-                className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white text-sm font-mono placeholder-gray-600 focus:outline-none transition-colors ${
-                  agreeText.trim() === 'I AGREE' 
-                    ? 'border-[#FDD935] bg-[#FDD935]/5 shadow-[0_0_15px_rgba(253,217,53,0.1)]' 
-                    : 'border-white/10 focus:border-[#FDD935]'
-                }`}
-                required
-              />
-              <p className="text-[11px] text-gray-500 mt-1.5 leading-relaxed">
-                By entering "I AGREE", you authorize the subscription order transmission to the Administrator Dashboard for payment validation.
-              </p>
             </div>
-          </div>
-        </div>
 
-        {/* Error message */}
-        {paymentError && (
-          <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-center gap-2.5 animate-fade-in">
-            <AlertCircle size={16} className="text-red-400 shrink-0" />
-            <span>{paymentError}</span>
+            <a
+              href={gumroadUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-4 rounded-xl font-black uppercase tracking-[0.2em] text-sm transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border-none shadow-[0_0_30px_rgba(253,217,53,0.3)] bg-[#FDD935] hover:bg-[#FFE066] text-black active:scale-[0.99] hover:shadow-[0_0_40px_rgba(253,217,53,0.5)] no-underline"
+            >
+              <span>Pay on Gumroad (${amountDue})</span>
+              <ExternalLink size={16} />
+            </a>
           </div>
         )}
 
-        {/* Subscribe Action */}
-        <div className="space-y-4">
-          <button 
-            type="button"
-            disabled={isProcessing}
-            onClick={handleSubscribe}
-            className={`w-full py-4 rounded-xl font-black uppercase tracking-[0.2em] text-sm transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border-none shadow-[0_0_30px_rgba(253,217,53,0.3)] ${
-              isProcessing
-                ? 'bg-[#FDD935]/70 text-black cursor-wait'
-                : 'bg-[#FDD935] hover:bg-[#FFE066] text-black active:scale-[0.99] hover:shadow-[0_0_40px_rgba(253,217,53,0.5)]'
-            }`}
-          >
-            {isProcessing ? (
-              <>
-                <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                <span>Transmitting Order…</span>
-              </>
-            ) : (
-              <span>Subscribe</span>
+        {/* CONTACT SALES FLOW (with I AGREE submission to admin) */}
+        {paymentMethod === 'contact_sales' && (
+          <div className="mb-8 animate-fade-in">
+            <h3 className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-widest flex items-center justify-between">
+              <span>Contact Sales & Admin Authorization</span>
+              <span className="text-[11px] text-gray-500 font-normal normal-case flex items-center gap-1">
+                <Lock size={12} className="text-[#FDD935]" /> 256-bit encrypted
+              </span>
+            </h3>
+
+            <div className="p-6 sm:p-8 bg-white/[0.02] border border-white/10 rounded-2xl space-y-5 backdrop-blur-md relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FDD935]/30 to-transparent"></div>
+
+              {/* Full Name */}
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                  <User size={14} className="text-[#FDD935]" />
+                  <span>Full Name</span>
+                </label>
+                <input 
+                  type="text"
+                  placeholder="example Chris Juan"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
+                  required
+                />
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                  <Mail size={14} className="text-[#FDD935]" />
+                  <span>Email</span>
+                </label>
+                <input 
+                  type="email"
+                  placeholder="example chris.juan@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
+                  required
+                />
+              </div>
+
+              {/* Agree to pay */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                    <ShieldCheck size={14} className="text-[#FDD935]" />
+                    <span>Agree to pay</span>
+                  </label>
+                  <span className="text-[10px] font-mono text-[#FDD935]">type exactly "I AGREE"</span>
+                </div>
+                <input 
+                  type="text"
+                  placeholder='type exactly "I AGREE"'
+                  value={agreeText}
+                  onChange={(e) => setAgreeText(e.target.value)}
+                  className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white text-sm font-mono placeholder-gray-600 focus:outline-none transition-colors ${
+                    agreeText.trim() === 'I AGREE' 
+                      ? 'border-[#FDD935] bg-[#FDD935]/5 shadow-[0_0_15px_rgba(253,217,53,0.1)]' 
+                      : 'border-white/10 focus:border-[#FDD935]'
+                  }`}
+                  required
+                />
+                <p className="text-[11px] text-gray-500 mt-1.5 leading-relaxed">
+                  By entering "I AGREE", you authorize this subscription request to be submitted directly to the Administrator Dashboard for sales contact and activation.
+                </p>
+              </div>
+            </div>
+
+            {/* Error message */}
+            {paymentError && (
+              <div className="mt-4 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-center gap-2.5 animate-fade-in">
+                <AlertCircle size={16} className="text-red-400 shrink-0" />
+                <span>{paymentError}</span>
+              </div>
             )}
-          </button>
-        </div>
+
+            {/* Contact Sales Submit Action */}
+            <div className="mt-6 space-y-4">
+              <button 
+                type="button"
+                disabled={isProcessing}
+                onClick={handleSubscribe}
+                className={`w-full py-4 rounded-xl font-black uppercase tracking-[0.2em] text-sm transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border-none shadow-[0_0_30px_rgba(253,217,53,0.3)] ${
+                  isProcessing
+                    ? 'bg-[#FDD935]/70 text-black cursor-wait'
+                    : 'bg-[#FDD935] hover:bg-[#FFE066] text-black active:scale-[0.99] hover:shadow-[0_0_40px_rgba(253,217,53,0.5)]'
+                }`}
+              >
+                {isProcessing ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                    <span>Submitting to Admin…</span>
+                  </>
+                ) : (
+                  <span>Submit Order to Sales & Admin</span>
+                )}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Success Confirmation Modal */}
         {successReceipt && (

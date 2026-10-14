@@ -54,6 +54,7 @@ export default function App() {
       return 'auth';
     }
     if (path === '/callback' || path.startsWith('/callback')) return 'auth-callback';
+    if (hostname.includes('pay.xoeris.com') || hostname.startsWith('pay.')) return 'pricing';
     if (hostname.includes('aurevia.xoeris.com') || hostname.includes('aurevia')) return 'aurevia';
     if (hostname.includes('api.xoeris.com')) return 'error-api';
     if (hostname.includes('dl.private.drive.xoeris.com')) return 'error-dl';
@@ -77,7 +78,7 @@ export default function App() {
     if (path === '/login' || path === '/auth') return 'auth';
     if (path === '/admin' || path.startsWith('/admin')) return 'admin';
 
-    if (path === '/pricing' || path === '/subscription' || path === '/subscriptions' || path === '/payment') return 'pricing';
+    if (path === '/pricing' || path === '/subscription' || path === '/subscriptions' || path === '/payment' || path === '/pay' || path.startsWith('/l/')) return 'pricing';
 
     if (path.startsWith('/ariasphere/vocalis')) return 'ariasphere-vocalis';
 
@@ -139,6 +140,10 @@ export default function App() {
         setCurrentPage('auth-callback');
         return;
       }
+      if (hostname.includes('pay.xoeris.com') || hostname.startsWith('pay.')) {
+        setCurrentPage('pricing');
+        return;
+      }
       if (hostname.includes('aurevia.xoeris.com') || hostname.includes('aurevia')) {
         setCurrentPage('aurevia');
         return;
@@ -187,7 +192,7 @@ export default function App() {
       else if (path === '/chat') setCurrentPage('chat');
       else if (path === '/login' || path === '/auth') setCurrentPage('auth');
       else if (path === '/admin' || path.startsWith('/admin')) setCurrentPage('admin');
-      else if (path === '/pricing' || path === '/subscription' || path === '/subscriptions' || path === '/payment') setCurrentPage('pricing');
+      else if (path === '/pricing' || path === '/subscription' || path === '/subscriptions' || path === '/payment' || path === '/pay' || path.startsWith('/l/')) setCurrentPage('pricing');
       else if (path.startsWith('/aurevia') || path.startsWith('/search')) setCurrentPage('aurevia');
       else setCurrentPage('xoeris');
     };
