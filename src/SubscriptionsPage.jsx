@@ -660,7 +660,7 @@ export default function SubscriptionsPage({ onNavigate }) {
                   <CreditCard size={22} />
                 </div>
                 <div>
-                  <h4 className="text-base font-bold text-white mb-1">Gumroad Payment Gateway</h4>
+                  <h4 className="text-base font-bold text-white mb-1">Gumroad</h4>
                   <p className="text-gray-400 text-xs leading-relaxed">
                     You will be redirected securely to complete checkout for the <strong className="text-white">{selectedPlan} Plan ({isYearly ? 'Annual' : 'Monthly'})</strong> at <strong className="text-[#FDD935]">${amountDue}.00 USD</strong>.
                   </p>
