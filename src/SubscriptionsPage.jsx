@@ -405,7 +405,7 @@ export default function SubscriptionsPage({ onNavigate }) {
                   "Exclusive access to Xalme Chat Web version",
                   "Access Xalme Code on web",
                   "Up to 10x more usage than Pro*",
-                  "High priorities for customer support from Xoeris Agent",
+                  "High priority for customer support from Xoeris Agent",
                   "Early access to Alpha, Beta, and Dev Xoeris products and advanced features"
                 ]}
               />
