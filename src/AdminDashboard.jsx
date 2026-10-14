@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   ShieldCheck, Lock, Bell, CheckCircle2, XCircle, AlertCircle, 
   RefreshCw, User, Mail, DollarSign, Calendar, Zap, Sparkles, 
-  LogOut, Search, Filter, ArrowUpRight, Volume2, VolumeX, Eye
+  LogOut, Search, Filter, ArrowUpRight, Volume2, VolumeX, Eye,
+  Key, Copy, Download, Smartphone, Monitor
 } from 'lucide-react';
 
 export default function AdminDashboard({ onNavigate }) {
@@ -54,6 +55,65 @@ export default function AdminDashboard({ onNavigate }) {
   const [manualCustomVal, setManualCustomVal] = useState(1);
   const [manualCustomUnit, setManualCustomUnit] = useState('months');
   const [isAssigning, setIsAssigning] = useState(false);
+
+  // Universal Keygen state
+  const [keygenEmail, setKeygenEmail] = useState('');
+  const [keygenEdition, setKeygenEdition] = useState('pro');
+  const [keygenPin, setKeygenPin] = useState(() => Math.floor(100000 + Math.random() * 900000).toString());
+  const [generatedKey, setGeneratedKey] = useState('');
+  const [generatedFilename, setGeneratedFilename] = useState('Xoeris.key');
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleGenerateKey = async (e) => {
+    if (e) e.preventDefault();
+    const email = (keygenEmail || '').trim().toLowerCase();
+    if (!email || !email.includes('@')) {
+      setActionMessage({ text: 'Please enter a valid user account email', type: 'error' });
+      return;
+    }
+
+    let pin = (keygenPin || '').trim();
+    if (!pin) {
+      pin = Math.floor(100000 + Math.random() * 900000).toString();
+      setKeygenPin(pin);
+    }
+    const finalPin = keygenEdition === 'ultra' && !pin.toUpperCase().includes('ULTRA')
+      ? `ULTRA${pin}`
+      : pin;
+
+    const salt = 'APEX_SALT_2026_SECURE';
+    const payload = `${email}${finalPin}${salt}`;
+    const encoder = new TextEncoder();
+    const data = encoder.encode(payload);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('').toLowerCase();
+
+    const fullKey = `${finalPin}-${hashHex}`;
+    setGeneratedKey(fullKey);
+    setGeneratedFilename('Xoeris.key');
+    setIsCopied(false);
+  };
+
+  const handleCopyKey = () => {
+    if (!generatedKey) return;
+    navigator.clipboard.writeText(generatedKey);
+    setIsCopied(true);
+    setTimeout(() => setIsCopied(false), 2000);
+  };
+
+  const handleDownloadKeyFile = () => {
+    if (!generatedKey) return;
+    const blob = new Blob([generatedKey], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = generatedFilename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   // Per-order approval duration options map
   const [orderDurations, setOrderDurations] = useState({});
@@ -603,6 +663,142 @@ export default function AdminDashboard({ onNavigate }) {
               {isAssigning ? 'Saving…' : 'Apply Tier'}
             </button>
           </form>
+        </div>
+
+        {/* XOERIS UNIVERSAL KEYGEN SUITE */}
+        <div className="p-6 sm:p-8 rounded-3xl bg-white/[0.02] border border-white/10 backdrop-blur-2xl relative overflow-hidden">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+            <div>
+              <h3 className="text-sm font-mono font-bold uppercase tracking-wider text-[#FDD935] flex items-center gap-2">
+                <Key size={18} />
+                <span>Xoeris Universal Keygen</span>
+              </h3>
+              <p className="text-xs text-gray-400 mt-1">
+                Generate offline activation keys for all Xoeris apps and platforms (Android &amp; Windows PC)
+              </p>
+            </div>
+            <span className="px-3 py-1 rounded-full bg-[#FDD935]/10 border border-[#FDD935]/30 text-[#FDD935] text-[10px] font-mono self-start sm:self-auto">
+              Offline Cryptographic Keygen
+            </span>
+          </div>
+
+          <form onSubmit={handleGenerateKey} className="space-y-5">
+            {/* User Account Email Input */}
+            <div>
+              <label className="block text-xs font-mono font-bold text-gray-300 uppercase tracking-wider mb-2">
+                1. User Account Email
+              </label>
+              <input
+                type="email"
+                placeholder="Enter user account email (e.g. user@xoeris.com)"
+                value={keygenEmail}
+                onChange={(e) => setKeygenEmail(e.target.value)}
+                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-xs font-mono placeholder-gray-600 focus:outline-none focus:border-[#FDD935]"
+                required
+              />
+            </div>
+
+            {/* Edition & PIN */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-mono font-bold text-gray-300 uppercase tracking-wider mb-2">
+                  2. License Edition
+                </label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setKeygenEdition('pro')}
+                    className={`py-2.5 px-3 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+                      keygenEdition === 'pro'
+                        ? 'bg-[#FDD935] text-black border-[#FDD935]'
+                        : 'bg-white/5 text-gray-300 border-white/10 hover:border-white/20'
+                    }`}
+                  >
+                    PRO EDITION
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setKeygenEdition('ultra')}
+                    className={`py-2.5 px-3 text-xs font-bold rounded-xl border transition-all cursor-pointer ${
+                      keygenEdition === 'ultra'
+                        ? 'bg-purple-500 text-white border-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.4)]'
+                        : 'bg-white/5 text-gray-300 border-white/10 hover:border-white/20'
+                    }`}
+                  >
+                    ULTRA EDITION
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-mono font-bold text-gray-300 uppercase tracking-wider">
+                    4. Activation PIN
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setKeygenPin(Math.floor(100000 + Math.random() * 900000).toString())}
+                    className="text-[11px] text-[#FDD935] hover:underline bg-transparent border-none cursor-pointer"
+                  >
+                    Generate Random PIN
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  placeholder="e.g. 123456"
+                  value={keygenPin}
+                  onChange={(e) => setKeygenPin(e.target.value)}
+                  className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-xs font-mono placeholder-gray-600 focus:outline-none focus:border-[#FDD935]"
+                />
+              </div>
+            </div>
+
+            {/* Generate Key Button */}
+            <button
+              type="submit"
+              className="w-full py-3.5 bg-[#FDD935] hover:bg-[#FFE066] text-black font-black uppercase tracking-wider text-xs rounded-xl transition-all shadow-[0_0_20px_rgba(253,217,53,0.25)] border-none cursor-pointer flex items-center justify-center gap-2"
+            >
+              <Key size={16} />
+              <span>Generate Offline Activation Key</span>
+            </button>
+          </form>
+
+          {/* Key Output Card */}
+          {generatedKey && (
+            <div className="mt-6 p-5 rounded-2xl bg-white/[0.04] border border-[#FDD935]/40 shadow-[0_0_25px_rgba(253,217,53,0.15)] space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono font-bold text-[#FDD935]">
+                  Target File: {generatedFilename} ({keygenApp} {keygenEdition.toUpperCase()})
+                </span>
+                <span className="text-[10px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                  Ready to Activate
+                </span>
+              </div>
+
+              <div className="p-3 bg-black/60 rounded-xl border border-white/10 font-mono text-xs text-white break-all select-all">
+                {generatedKey}
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={handleCopyKey}
+                  className="flex-1 py-2.5 px-4 bg-white/10 hover:bg-white/20 text-white rounded-xl text-xs font-bold font-mono flex items-center justify-center gap-2 transition-colors border border-white/10 cursor-pointer"
+                >
+                  <Copy size={14} />
+                  <span>{isCopied ? 'Copied to Clipboard!' : 'Copy Key'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDownloadKeyFile}
+                  className="flex-1 py-2.5 px-4 bg-[#FDD935] hover:bg-[#FFE066] text-black rounded-xl text-xs font-bold font-mono flex items-center justify-center gap-2 transition-colors border-none cursor-pointer"
+                >
+                  <Download size={14} />
+                  <span>Download .{generatedFilename.split('.').pop()} File</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Subscription Orders Section */}
