@@ -1,26 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import AboutPage from './AboutPage';
-import ChatPage from './ChatPage';
-import ErrorPage from './ErrorPage';
-import UnderConstructionPage from './UnderConstructionPage';
-import XalmeMainPage from './XalmeMainPage';
-import XoerisPage from './XoerisPage';
-import SubscriptionsPage from './SubscriptionsPage';
-import AureviaPage from './AureviaPage';
-import AuthPage from './AuthPage';
-import AuthCallbackPage from './AuthCallbackPage';
-import AdminDashboard from './AdminDashboard';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { setSession, syncUserFromDatabase } from './services/authService';
 
+// Pages are code-split so users only download the route they visit.
+const AboutPage = lazy(() => import('./AboutPage'));
+const ChatPage = lazy(() => import('./ChatPage'));
+const ErrorPage = lazy(() => import('./ErrorPage'));
+const UnderConstructionPage = lazy(() => import('./UnderConstructionPage'));
+const XalmeMainPage = lazy(() => import('./XalmeMainPage'));
+const XoerisPage = lazy(() => import('./XoerisPage'));
+const SubscriptionsPage = lazy(() => import('./SubscriptionsPage'));
+const AureviaPage = lazy(() => import('./AureviaPage'));
+const AuthPage = lazy(() => import('./AuthPage'));
+const AuthCallbackPage = lazy(() => import('./AuthCallbackPage'));
+const AdminDashboard = lazy(() => import('./AdminDashboard'));
+
 // Product Deep-Dive Pages
-import VocalisProductPage from './VocalisProductPage';
-import APEX from './APEX';
-import HorizoneEngine from './HorizoneEngine';
-import HorizoneIDE from './HorizoneIDE';
-import MOVA from './MOVA';
-import Musify from './Musify';
-import Xalme from './Xalme';
-import XalmeCode from './XalmeCode';
+const VocalisProductPage = lazy(() => import('./VocalisProductPage'));
+const APEX = lazy(() => import('./APEX'));
+const HorizoneIDE = lazy(() => import('./HorizoneIDE'));
+const MOVA = lazy(() => import('./MOVA'));
+const Musify = lazy(() => import('./Musify'));
+const Xalme = lazy(() => import('./Xalme'));
+const XalmeCode = lazy(() => import('./XalmeCode'));
+
+const PageFallback = () => (
+  <div className="min-h-screen flex items-center justify-center bg-[#050505]">
+    <div className="w-8 h-8 rounded-full border-2 border-[#FDD935]/20 border-t-[#FDD935] animate-spin"></div>
+  </div>
+);
 
 const PlaceholderProduct = ({ title, onNavigate }) => (
   <div className="min-h-screen bg-hide-canvas text-hide-text-primary flex flex-col items-center justify-center p-10 text-center">
@@ -328,15 +335,16 @@ export default function App() {
   return (
     <div className="min-h-screen font-ui relative z-0 overflow-x-hidden bg-[#050505] text-white selection:bg-[#FDD935] selection:text-black">
       {!['xoeris', 'subscriptions', 'samudra-showcase', 'aurevia', 'auth', 'auth-callback', 'apex', 'under-construction', 'admin', 'horizoneide', 'mova', 'musify', 'xalme', 'xalmecode'].includes(currentPage) && (
-        <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden opacity-30 mix-blend-screen">
+        <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden opacity-30">
           {/* Xoeris Cyber ambient blobs */}
           <div className="blob blob-1 will-change-transform" style={{ backgroundColor: colors.amber }}></div>
           <div className="blob blob-2 will-change-transform" style={{ backgroundColor: colors.amberDeep }}></div>
           <div className="blob blob-3 will-change-transform" style={{ backgroundColor: colors.teal }}></div>
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-[100px]"></div>
+          <div className="absolute inset-0 bg-black/60"></div>
         </div>
       )}
 
+      <Suspense fallback={<PageFallback />}>
       <div key={currentPage}>
         {currentPage === 'auth-callback' && <AuthCallbackPage onNavigate={handleNavigate} />}
         {currentPage === 'auth' && <AuthPage onNavigate={handleNavigate} />}
@@ -360,9 +368,10 @@ export default function App() {
         {currentPage === 'xalme' && <Xalme onNavigate={handleNavigate} />}
         {currentPage === 'xalmecode' && <XalmeCode onNavigate={handleNavigate} />}
       </div>
+      </Suspense>
 
       <style dangerouslySetInnerHTML={{__html: `
-        .blob { position: absolute; filter: blur(80px); opacity: 0.6; border-radius: 50%; animation: blob-anim 20s infinite alternate; }
+        .blob { position: absolute; -webkit-mask-image: radial-gradient(circle, #000 0%, transparent 70%); mask-image: radial-gradient(circle, #000 0%, transparent 70%); opacity: 0.6; border-radius: 50%; animation: blob-anim 20s infinite alternate; }
         @keyframes blob-anim { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(20vw, 10vh) scale(1.2); } }
         .blob-1 { width: 60vw; height: 60vw; top: -10%; left: -10%; }
         .blob-2 { width: 50vw; height: 50vw; bottom: -10%; right: -10%; animation-delay: -5s; }

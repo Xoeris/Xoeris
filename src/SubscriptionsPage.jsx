@@ -847,11 +847,11 @@ export default function SubscriptionsPage({ onNavigate }) {
       <div className="fixed inset-0 z-0 bg-[linear-gradient(rgba(253,217,53,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-50"></div>
 
       {/* Background blobs for depth - Xoeris cyber yellow palette */}
-      <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden mix-blend-screen gpu-accel">
+      <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden gpu-accel">
         <div className="blob blob-1 will-change-transform" style={{ backgroundColor: '#FDD935' }}></div>
         <div className="blob blob-2 will-change-transform" style={{ backgroundColor: '#FFC94A' }}></div>
         <div className="blob blob-3 will-change-transform" style={{ backgroundColor: '#FEF08A' }}></div>
-        <div className="absolute inset-0 bg-black/65 backdrop-blur-[60px]"></div>
+        <div className="absolute inset-0 bg-black/65"></div>
       </div>
 
       <div className="relative z-10 w-full">

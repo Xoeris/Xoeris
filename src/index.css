@@ -115,13 +115,62 @@ body {
 .gpu-accel {
   transform: translateZ(0);
   backface-visibility: hidden;
-  perspective: 1000px;
 }
 
 .liquid-glass-panel {
-  -webkit-backdrop-filter: blur(40px) saturate(200%) !important;
-  backdrop-filter: blur(40px) saturate(200%) !important;
-  background: linear-gradient(135deg, rgba(30, 30, 30, 0.78) 0%, rgba(12, 12, 12, 0.88) 100%) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(160%) !important;
+  backdrop-filter: blur(16px) saturate(160%) !important;
+  background: linear-gradient(135deg, rgba(30, 30, 30, 0.82) 0%, rgba(12, 12, 12, 0.92) 100%) !important;
+}
+
+/* Images: avoid layout shift & decode off the main thread */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Skip rendering of offscreen sections until near viewport */
+section {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+}
+
+/* ── Touch / small screens: drop costly GPU effects ── */
+@media (max-width: 1023px), (pointer: coarse) {
+  [class*="backdrop-blur"],
+  .liquid-glass-panel {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  .liquid-glass-panel {
+    background: rgba(14, 14, 14, 0.96) !important;
+  }
+  .blob {
+    animation: none !important;
+  }
+  [class*="blur-["] {
+    filter: none !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ── Respect user motion preference ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Pause infinite animations when tab is hidden (set from main.jsx) ── */
+html.page-hidden *,
+html.page-hidden *::before,
+html.page-hidden *::after {
+  animation-play-state: paused !important;
 }
 
 .will-change-filter {

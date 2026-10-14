@@ -147,12 +147,12 @@ export default function XoerisPage({ onNavigate }) {
       <div className="fixed inset-0 z-[-2] bg-[linear-gradient(rgba(253,217,53,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-50 mask-image-radial-gradient"></div>
 
       {/* Shared Animated Background Blobs (Yellow Tech Theme) */}
-      <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden mix-blend-screen gpu-accel">
+      <div className="fixed inset-0 w-full h-full z-[-1] pointer-events-none overflow-hidden gpu-accel">
         <div className="blob blob-1 will-change-transform" style={{ backgroundColor: colors.primary }}></div>
         <div className="blob blob-2 will-change-transform" style={{ backgroundColor: colors.secondary }}></div>
         <div className="blob blob-3 will-change-transform" style={{ backgroundColor: colors.accent }}></div>
-        {/* Heavy Glass overlay for CyberGlassMorphism */}
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[60px]"></div>
+        {/* Dark overlay (no backdrop-filter: re-blurring a full screen every frame is very costly) */}
+        <div className="absolute inset-0 bg-black/60"></div>
       </div>
 
       {/* Navigation - Liquid Glass Sticky Top */}
@@ -746,13 +746,14 @@ export default function XoerisPage({ onNavigate }) {
         }
         .blob {
           position: absolute;
-          filter: blur(120px);
+          /* Soft edge via mask instead of filter: blur(120px) - far cheaper to render */
+          -webkit-mask-image: radial-gradient(circle, #000 0%, transparent 70%);
+          mask-image: radial-gradient(circle, #000 0%, transparent 70%);
           opacity: 0.35;
           border-radius: 50%;
           animation-iteration-count: infinite;
           animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
           animation-direction: alternate;
-          mix-blend-mode: screen;
         }
         .blob-1 {
           width: 50vw;
