@@ -26,6 +26,7 @@ export default function XoerisPage({ onNavigate }) {
   const [currentUser, setCurrentUser] = useState(() => getStoredUser());
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const navRef = useRef(null);
+  const userDropdownRef = useRef(null);
   const hoverTimeoutRef = useRef(null);
 
   useEffect(() => {
@@ -69,6 +70,9 @@ export default function XoerisPage({ onNavigate }) {
     const handleClickOutside = (event) => {
       if (navRef.current && !navRef.current.contains(event.target)) {
         setActiveDropdown(null);
+      }
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+        setUserDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -295,7 +299,7 @@ export default function XoerisPage({ onNavigate }) {
             {/* Right Action Buttons */}
             <div className="hidden lg:flex items-center gap-4" onMouseEnter={() => handleMouseEnter(null)}>
               {currentUser ? (
-                <div className="relative">
+                <div className="relative" ref={userDropdownRef}>
                   <button
                     onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                     className="flex items-center gap-2.5 p-1 rounded-full border border-white/20 hover:border-[#FDD935]/80 transition-all bg-white/5 hover:bg-white/10 cursor-pointer group shadow-[0_0_15px_rgba(253,217,53,0.15)]"

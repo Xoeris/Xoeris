@@ -16,11 +16,25 @@ export default function SoftwareLayout({
   const [currentUser, setCurrentUser] = useState(() => getStoredUser());
   const navRef = useRef(null);
   const timeoutRef = useRef(null);
+  const userMenuTriggerRef = useRef(null);
+  const userDropdownMenuRef = useRef(null);
 
   useEffect(() => {
     const handleAuthChange = () => setCurrentUser(getStoredUser());
     window.addEventListener('xoeris_auth_change', handleAuthChange);
     return () => window.removeEventListener('xoeris_auth_change', handleAuthChange);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const clickedTrigger = userMenuTriggerRef.current && userMenuTriggerRef.current.contains(event.target);
+      const clickedMenu = userDropdownMenuRef.current && userDropdownMenuRef.current.contains(event.target);
+      if (!clickedTrigger && !clickedMenu) {
+        setUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -131,7 +145,7 @@ export default function SoftwareLayout({
           {/* Right Action Buttons */}
           <div className="hidden lg:flex items-center gap-4" onMouseEnter={() => handleMouseEnter(null)}>
             {currentUser ? (
-              <div className="relative">
+              <div className="relative" ref={userMenuTriggerRef}>
                 <button
                   onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                   className="flex items-center gap-2.5 p-1 rounded-full border border-white/20 hover:border-[#FDD935]/80 transition-all bg-white/5 hover:bg-white/10 cursor-pointer group shadow-[0_0_15px_rgba(253,217,53,0.15)]"
@@ -315,6 +329,7 @@ export default function SoftwareLayout({
       {/* Floating User Dropdown */}
       {userDropdownOpen && currentUser && (
         <div
+          ref={userDropdownMenuRef}
           className={`fixed right-6 md:right-12 z-[60] w-56 rounded-2xl p-3 liquid-glass-panel border border-white/20 ring-1 ring-white/10 shadow-2xl text-left pointer-events-auto transition-all duration-300 ${isScrolled ? 'top-16' : 'top-20'}`}
         >
           <div className="px-3 py-2 border-b border-white/10 mb-2">

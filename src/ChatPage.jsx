@@ -69,6 +69,17 @@ export default function ChatPage({ onNavigate }) {
   const [copiedIndex, setCopiedIndex] = useState(null);
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
+  const userDropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (userDropdownRef.current && !userDropdownRef.current.contains(event.target)) {
+        setUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Load active thread messages on mount or thread switch
   useEffect(() => {
@@ -497,7 +508,7 @@ export default function ChatPage({ onNavigate }) {
           </div>
 
           {/* User Account Tile inside Sidebar */}
-          <div className="p-3 border-t border-white/10 relative bg-black/40">
+          <div ref={userDropdownRef} className="p-3 border-t border-white/10 relative bg-black/40">
             <button
               onClick={() => setUserDropdownOpen(!userDropdownOpen)}
               className="w-full p-2 rounded-xl hover:bg-white/5 flex items-center justify-between text-left transition-colors cursor-pointer bg-transparent border-none"
