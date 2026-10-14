@@ -41,8 +41,9 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'A valid email address is required.' });
     }
 
-    if (String(agreeText || '').trim() !== 'I AGREE') {
-      return res.status(400).json({ error: 'You must type exactly "I AGREE" to confirm payment authorization.' });
+    const isAgreed = String(agreeText || '').trim().toUpperCase() === 'I AGREE' || Boolean(body?.agree || body?.termsAgreed || body?.confirm);
+    if (!isAgreed) {
+      return res.status(400).json({ error: 'Please accept the subscription terms to proceed.' });
     }
 
     const sql = neon(postgresUrl);

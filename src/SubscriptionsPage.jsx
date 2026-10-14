@@ -103,7 +103,7 @@ export default function SubscriptionsPage({ onNavigate }) {
     }
 
     if (agreeText.trim() !== 'I AGREE') {
-      setPaymentError('You must type exactly "I AGREE" to confirm your subscription request.');
+      setPaymentError('Please check the authorization box to confirm your subscription request.');
       return;
     }
 
@@ -576,10 +576,6 @@ export default function SubscriptionsPage({ onNavigate }) {
                   Fast automatic checkout via Gumroad with instant activation on your account.
                 </p>
               </div>
-              <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[11px] font-mono text-gray-400">
-                <span>Direct link</span>
-                <span className="text-[#FDD935] flex items-center gap-1 font-bold">pay.xoeris.com/l/... <ExternalLink size={11} /></span>
-              </div>
             </button>
 
             {/* Contact Sales Option */}
@@ -612,10 +608,6 @@ export default function SubscriptionsPage({ onNavigate }) {
                 <p className="text-gray-300 text-xs leading-relaxed">
                   Submit an authorized subscription request directly to the Admin Dashboard.
                 </p>
-              </div>
-              <div className="mt-4 pt-3 border-t border-white/5 flex items-center justify-between text-[11px] font-mono text-gray-400">
-                <span>Confirmation</span>
-                <span className="text-[#FDD935] font-bold">I AGREE required</span>
               </div>
             </button>
           </div>
@@ -669,20 +661,9 @@ export default function SubscriptionsPage({ onNavigate }) {
                 </div>
                 <div>
                   <h4 className="text-base font-bold text-white mb-1">Gumroad Payment Gateway</h4>
-                  <p className="text-gray-400 text-xs leading-relaxed mb-4">
-                    You are checking out for the <strong className="text-white">{selectedPlan} Plan ({isYearly ? 'Annual' : 'Monthly'})</strong> at <strong className="text-[#FDD935]">${amountDue}.00 USD</strong>.
+                  <p className="text-gray-400 text-xs leading-relaxed">
+                    You will be redirected securely to complete checkout for the <strong className="text-white">{selectedPlan} Plan ({isYearly ? 'Annual' : 'Monthly'})</strong> at <strong className="text-[#FDD935]">${amountDue}.00 USD</strong>.
                   </p>
-                  <div className="p-3.5 rounded-xl bg-black/40 border border-white/10 font-mono text-xs flex items-center justify-between text-gray-300">
-                    <span className="truncate pr-2">{gumroadUrl}</span>
-                    <a 
-                      href={gumroadUrl} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-[#FDD935] hover:underline flex items-center gap-1 font-bold whitespace-nowrap"
-                    >
-                      Open <ExternalLink size={12} />
-                    </a>
-                  </div>
                 </div>
               </div>
             </div>
@@ -699,7 +680,7 @@ export default function SubscriptionsPage({ onNavigate }) {
           </div>
         )}
 
-        {/* CONTACT SALES FLOW (with I AGREE submission to admin) */}
+        {/* CONTACT SALES FLOW (with submission to admin) */}
         {paymentMethod === 'contact_sales' && (
           <div className="mb-8 animate-fade-in">
             <h3 className="text-xs font-bold text-gray-400 mb-4 uppercase tracking-widest flex items-center justify-between">
@@ -720,7 +701,7 @@ export default function SubscriptionsPage({ onNavigate }) {
                 </label>
                 <input 
                   type="text"
-                  placeholder="example Chris Juan"
+                  placeholder="Your full name"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
@@ -736,7 +717,7 @@ export default function SubscriptionsPage({ onNavigate }) {
                 </label>
                 <input 
                   type="email"
-                  placeholder="example chris.juan@example.com"
+                  placeholder="your.email@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white text-sm placeholder-gray-600 focus:outline-none focus:border-[#FDD935] transition-colors"
@@ -744,30 +725,23 @@ export default function SubscriptionsPage({ onNavigate }) {
                 />
               </div>
 
-              {/* Agree to pay */}
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-                    <ShieldCheck size={14} className="text-[#FDD935]" />
-                    <span>Agree to pay</span>
-                  </label>
-                  <span className="text-[10px] font-mono text-[#FDD935]">type exactly "I AGREE"</span>
-                </div>
-                <input 
-                  type="text"
-                  placeholder='type exactly "I AGREE"'
-                  value={agreeText}
-                  onChange={(e) => setAgreeText(e.target.value)}
-                  className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white text-sm font-mono placeholder-gray-600 focus:outline-none transition-colors ${
-                    agreeText.trim() === 'I AGREE' 
-                      ? 'border-[#FDD935] bg-[#FDD935]/5 shadow-[0_0_15px_rgba(253,217,53,0.1)]' 
-                      : 'border-white/10 focus:border-[#FDD935]'
-                  }`}
-                  required
-                />
-                <p className="text-[11px] text-gray-500 mt-1.5 leading-relaxed">
-                  By entering "I AGREE", you authorize this subscription request to be submitted directly to the Administrator Dashboard for sales contact and activation.
-                </p>
+              {/* Terms and Confirmation */}
+              <div className="pt-2">
+                <label 
+                  onClick={() => setAgreeText(agreeText === 'I AGREE' ? '' : 'I AGREE')}
+                  className="flex items-start gap-3 p-4 rounded-xl bg-white/[0.03] border border-white/10 hover:border-white/20 transition-all cursor-pointer select-none group"
+                >
+                  <div className={`w-5 h-5 rounded-lg border-2 flex items-center justify-center transition-all mt-0.5 shrink-0 ${
+                    agreeText === 'I AGREE'
+                      ? 'border-[#FDD935] bg-[#FDD935]'
+                      : 'border-gray-500 group-hover:border-gray-400'
+                  }`}>
+                    {agreeText === 'I AGREE' && <Check size={14} className="text-black stroke-[3]" />}
+                  </div>
+                  <div className="text-xs text-gray-300 leading-relaxed">
+                    <span>I authorize this subscription request and agree to be contacted by Xoeris for order activation.</span>
+                  </div>
+                </label>
               </div>
             </div>
 
