@@ -1,4 +1,4 @@
-# XESC Engine — RunPod Serverless worker running Ollama + Qwen2.5:1.5b
+# Xalme — RunPod Serverless worker running Ollama + Qwen3.5:9b
 #
 # Model is baked into the image at build time (`ollama pull` during build)
 # so cold starts don't need to download weights over the network.
@@ -17,13 +17,13 @@ RUN pip3 install --no-cache-dir -r requirements.txt --break-system-packages
 # Start the ollama server in the background just long enough to pull the
 # model, then let the entrypoint script own it at runtime.
 # Force cache invalidation trigger: 2026-08-15-12-38
-RUN (ollama serve &) && sleep 5 && ollama pull qwen2.5:1.5b
+RUN (ollama serve &) && sleep 5 && ollama pull qwen3.5:9b
 
 COPY api/ollama-worker/handler.py .
 COPY api/ollama-worker/start.sh .
 RUN chmod +x start.sh
 
-ENV OLLAMA_MODEL=qwen2.5:1.5b
+ENV OLLAMA_MODEL=qwen3.5:9b
 ENV OLLAMA_HOST=0.0.0.0:11434
 
 # The base ollama/ollama image sets ENTRYPOINT ["/bin/ollama"], which would

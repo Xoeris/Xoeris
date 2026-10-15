@@ -1,9 +1,10 @@
+import { allowedOriginFor } from '../_lib/auth.js';
 import { neon } from '@neondatabase/serverless';
 import { OAuth2Client } from 'google-auth-library';
 import { issueSessionToken, normalizeEmail } from '../_lib/auth.js';
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', allowedOriginFor(req));
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Levelist-App-Secret, X-Mova-App-Secret, X-Musify-App-Secret, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');

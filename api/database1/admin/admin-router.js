@@ -1,3 +1,5 @@
+import { attemptAllowed, clientIp } from '../../_lib/auth.js';
+import { requireJwtSecret } from '../../_lib/auth.js';
 import jwt from 'jsonwebtoken';
 import { neon } from '@neondatabase/serverless';
 import { normalizeEmail, setCorsHeaders } from '../../_lib/auth.js';
@@ -8,7 +10,7 @@ function verifyAdmin(req) {
   if (!token) return false;
 
   try {
-    const jwtSecret = process.env.JWT_SECRET || 'xoeris-admin-secure-vault-key-2026';
+    const jwtSecret = requireJwtSecret();
     const payload = jwt.verify(token, jwtSecret);
     const configuredAdminEmail = (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
     if (!payload || payload.role !== 'admin') return false;
@@ -51,11 +53,15 @@ export default async function handler(req, res) {
         return res.status(500).json({ error: 'ADMIN_EMAIL or ADMIN_PIN environment variable is not configured.' });
       }
 
-      if (!email || email.trim().toLowerCase() !== configuredAdminEmail || !pin || String(pin).trim() !== configuredAdminPin) {
+      if (!(await attemptAllowed('admin-login:' + clientIp(req)))) {
+      return res.status(429).json({ error: 'Too many attempts. Try again in 15 minutes.' });
+    }
+
+    if (!email || email.trim().toLowerCase() !== configuredAdminEmail || !pin || String(pin).trim() !== configuredAdminPin) {
         return res.status(401).json({ error: 'Invalid admin email or PIN.' });
       }
 
-      const jwtSecret = process.env.JWT_SECRET || 'xoeris-admin-secure-vault-key-2026';
+      const jwtSecret = requireJwtSecret();
       const adminToken = jwt.sign(
         { sub: 'xoeris-admin', email: configuredAdminEmail, role: 'admin' },
         jwtSecret,

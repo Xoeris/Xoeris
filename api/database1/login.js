@@ -1,19 +1,16 @@
+import { allowedOriginFor } from '../_lib/auth.js';
 import { neon } from '@neondatabase/serverless';
 import { Resend } from 'resend';
-import { issueSessionToken, isValidAppSecret, getAppDisplayName, normalizeEmail } from '../_lib/auth.js';
+import { issueSessionToken, getAppDisplayName, normalizeEmail } from '../_lib/auth.js';
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', allowedOriginFor(req));
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Levelist-App-Secret, X-Mova-App-Secret, X-Musify-App-Secret, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
-  }
-
-  if (!isValidAppSecret(req)) {
-    return res.status(403).json({ error: 'Unauthorized: Invalid App Secret' });
   }
 
   if (req.method !== 'POST') {

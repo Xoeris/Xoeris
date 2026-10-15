@@ -2,7 +2,7 @@
 XESC Engine (Qwen2.5 backend) — RunPod Serverless Handler
 -----------------------------------------------------------
 Runs behind api.xoeris.com. Talks to a local Ollama instance serving
-Qwen2.5:1.5b, but sanitizes everything so no third-party model lineage
+Qwen3.5:9b, but sanitizes everything so no third-party model lineage
 is visible to callers — per Xoeris branding rules, this is an internal
 implementation detail only.
 """
@@ -13,7 +13,7 @@ import requests
 import runpod
 
 OLLAMA_URL = "http://127.0.0.1:11434/api/chat"
-OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen2.5:1.5b")
+OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen3.5:9b")
 
 # Public-facing identity — this is what gets returned to callers,
 # regardless of what's actually running underneath.

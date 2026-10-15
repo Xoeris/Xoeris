@@ -28,3 +28,9 @@ dist-ssr
 
 # Other
 Xoeris.zip
+
+# Large binaries and build caches
+*.apk
+sarah/files/
+__pycache__/
+*.pyc

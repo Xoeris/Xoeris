@@ -1,6 +1,6 @@
 # api.xoeris.com — Qwen2.5-backed XESC Engine
 
-Public API for Xoeris, currently backed by Qwen2.5:1.5b via Ollama
+Public API for Xoeris, currently backed by Qwen3.5:9b via Ollama
 (internal implementation detail — never exposed to callers). Your
 from-scratch Xalme1.1 Forge training is parked; this is the interim
 public-facing model until that's ready.
@@ -8,7 +8,7 @@ public-facing model until that's ready.
 ```
 Public request
    → api.xoeris.com          (Vercel proxy: auth key check, forwards)
-       → RunPod Serverless    (Ollama + Qwen2.5:1.5b, scale-to-zero)
+       → RunPod Serverless    (Ollama + Qwen3.5:9b, scale-to-zero)
            → response scrubbed of any Qwen/Alibaba mentions, returned as
              model: "xalme-1"
 ```
@@ -38,7 +38,7 @@ docker build -t <your-dockerhub-user>/xoeris-api:latest .
 docker push <your-dockerhub-user>/xoeris-api:latest
 ```
 
-Note: the model is pulled during the Docker build (`ollama pull qwen2.5:1.5b`),
+Note: the model is pulled during the Docker build (`ollama pull qwen3.5:9b`),
 so the image will be a few GB — that's expected, it bakes the weights in for
 fast cold starts.
 

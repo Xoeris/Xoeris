@@ -1,3 +1,4 @@
+import { requireJwtSecret } from '../../_lib/auth.js';
 import jwt from 'jsonwebtoken';
 import { neon } from '@neondatabase/serverless';
 import { normalizeEmail, setCorsHeaders } from '../../_lib/auth.js';
@@ -8,7 +9,7 @@ function verifyAdmin(req) {
   if (!token) return false;
 
   try {
-    const jwtSecret = process.env.JWT_SECRET || 'xoeris-admin-secure-vault-key-2026';
+    const jwtSecret = requireJwtSecret();
     const payload = jwt.verify(token, jwtSecret);
     const configuredAdminEmail = (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
     if (!payload || payload.role !== 'admin') return false;

@@ -441,7 +441,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
       })();
       const res = await fetch('https://api.xoeris.com/api/database1/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Levelist-App-Secret': 'levelist-dev-secret-123' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           mode: 'signup',
           email,
@@ -479,7 +479,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
       })();
       const res = await fetch('https://api.xoeris.com/api/database1/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Levelist-App-Secret': 'levelist-dev-secret-123' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier: email, password, device_id: deviceId, remember_device: true }),
       });
       const data = await res.json();
@@ -511,7 +511,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
       const deviceId = localStorage.getItem('xoeris_device_id') || 'web';
       const res = await fetch('https://api.xoeris.com/api/database1/verify-otp', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-Levelist-App-Secret': 'levelist-dev-secret-123' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: pendingEmail || email, otp, device_id: deviceId, remember_device: true }),
       });
       const data = await res.json();
