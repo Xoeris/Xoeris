@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 
 import AuthPage from './AuthPage';
+import ElectricSlider from './components/ElectricSlider';
 import {
   getStoredUser,
   getStoredToken,
@@ -794,16 +795,15 @@ I have analyzed your request:
                           <span>Smarter</span>
                         </div>
 
-                        {/* Slider control */}
-                        <input
-                          type="range"
-                          min={0}
-                          max={3}
-                          step={1}
-                          value={effortLevel}
-                          onChange={(e) => setEffortLevel(Number(e.target.value))}
-                          className="w-full accent-[#3478F6] cursor-pointer mb-2"
-                        />
+                        {/* Electric Slider control */}
+                        <div className="my-1">
+                          <ElectricSlider
+                            value={effortLevel}
+                            min={0}
+                            max={3}
+                            onChange={(val) => setEffortLevel(val)}
+                          />
+                        </div>
 
                         <div className="text-[10px] text-[#777788] leading-tight px-1 mb-3">
                           {activeProfile.hint}
