@@ -1,11 +1,18 @@
 @echo off
 setlocal
+cd /d "%~dp0"
 echo =========================================
 echo  Pushing Updates to Xoeris GitHub Repo
 echo =========================================
 
 echo Building Xoeris Website...
 call npm run build
+if errorlevel 1 (
+    echo.
+    echo [ERROR] Build failed. No changes were staged, committed, or pushed.
+    pause
+    exit /b 1
+)
 
 REM Add git safe directory exception in case of ownership mismatched environment
 git config --global --add safe.directory E:/Home/Projects/Users/Acelbyte/Categories/Programmings/projects/Xoeris/websites/Xoeris >nul 2>&1

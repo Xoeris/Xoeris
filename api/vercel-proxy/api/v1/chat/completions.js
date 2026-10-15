@@ -15,7 +15,15 @@ const rateBuckets = new Map(); // per-instance fallback; use Upstash/KV for real
 
 function allowedOrigin(req) {
   const o = req.headers.get("origin") || "";
-  return ALLOWED_ORIGINS.includes(o) ? o : ALLOWED_ORIGINS[0];
+  if (!o) return ALLOWED_ORIGINS[0];
+  if (ALLOWED_ORIGINS.includes(o)) return o;
+  try {
+    const url = new URL(o);
+    if (url.hostname.endsWith(".xoeris.com") || url.hostname === "xoeris.com" || url.hostname === "localhost" || url.hostname === "127.0.0.1") {
+      return o;
+    }
+  } catch {}
+  return ALLOWED_ORIGINS[0];
 }
 
 // Distributed fixed-window limit via Upstash Redis REST (set UPSTASH_REDIS_REST_URL
@@ -52,12 +60,14 @@ const RUNPOD_API_KEY = process.env.RUNPOD_API_KEY;
 const VALID_KEYS = new Set((process.env.XOERIS_API_KEYS || "").split(",").filter(Boolean));
 
 export default async function handler(req) {
+  const origin = allowedOrigin(req);
+
   // --- CORS preflight ---
   if (req.method === "OPTIONS") {
     return new Response(null, {
       status: 200,
       headers: {
-        "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+        "Access-Control-Allow-Origin": origin,
         "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization",
         "Access-Control-Max-Age": "86400"
@@ -66,7 +76,7 @@ export default async function handler(req) {
   }
 
   if (req.method !== "POST") {
-    return json({ error: "Method not allowed" }, 405);
+    return json({ error: "Method not allowed" }, 405, origin);
   }
 
   // --- Auth ---
@@ -74,10 +84,10 @@ export default async function handler(req) {
   const apiKey = authHeader.replace(/^Bearer\s+/i, "");
 
   if (!apiKey || !VALID_KEYS.has(apiKey)) {
-    return json({ error: "Invalid or missing API key" }, 401);
+    return json({ error: "Invalid or missing API key" }, 401, origin);
   }
   if (await rateLimited(apiKey)) {
-    return json({ error: "Rate limit exceeded" }, 429);
+    return json({ error: "Rate limit exceeded" }, 429, origin);
   }
 
   // --- Rate limiting placeholder ---
@@ -89,13 +99,13 @@ export default async function handler(req) {
   try {
     body = await req.json();
   } catch {
-    return json({ error: "Invalid JSON body" }, 400);
+    return json({ error: "Invalid JSON body" }, 400, origin);
   }
 
   const { messages, temperature, top_k } = body;
   const max_new_tokens = Math.min(Number(body.max_new_tokens) || 512, MAX_TOKENS);
   if (!messages || !Array.isArray(messages)) {
-    return json({ error: "`messages` array is required" }, 400);
+    return json({ error: "`messages` array is required" }, 400, origin);
   }
 
   // --- Forward to RunPod Serverless (sync endpoint) ---
@@ -115,7 +125,7 @@ export default async function handler(req) {
   );
 
   if (!runpodRes.ok) {
-    return json({ error: "Upstream inference error" }, 502);
+    return json({ error: "Upstream inference error" }, 502, origin);
   }
 
   const runpodJson = await runpodRes.json();
@@ -123,7 +133,7 @@ export default async function handler(req) {
   // RunPod wraps your handler's return value in { output: {...} }
   const output = runpodJson.output || {};
 
-  return json(output, 200);
+  return json(output, 200, origin);
 }
 
 function json(obj, status, origin = ALLOWED_ORIGINS[0]) {

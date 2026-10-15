@@ -1,0 +1,6 @@
+/* Keep the initial page dark before the application loads. */
+html,
+body {
+  background: #050505;
+  margin: 0;
+}
