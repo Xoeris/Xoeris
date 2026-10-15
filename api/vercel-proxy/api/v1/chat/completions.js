@@ -9,7 +9,7 @@ export const config = {
 };
 
 const ALLOWED_ORIGINS = ["https://xoeris.com", "https://www.xoeris.com", "https://xalme.xoeris.com", "https://api.xoeris.com"];
-const MAX_TOKENS = 2048;
+const MAX_TOKENS = 8192;
 const RATE_LIMIT_PER_MIN = 20;
 const rateBuckets = new Map(); // per-instance fallback; use Upstash/KV for real enforcement
 
@@ -102,9 +102,11 @@ export default async function handler(req) {
     return json({ error: "Invalid JSON body" }, 400, origin);
   }
 
-  const { messages, temperature, top_k } = body;
+  const { messages, temperature, top_k, top_p, thinking, tools, action } = body;
+  const model = String(body.model || "atlas").toLowerCase();
+  if (!["atlas", "forge", "nebula"].includes(model)) return json({ error: "Unknown Xalme model" }, 400, origin);
   const max_new_tokens = Math.min(Number(body.max_new_tokens) || 512, MAX_TOKENS);
-  if (!messages || !Array.isArray(messages)) {
+  if (action !== "models" && (!messages || !Array.isArray(messages))) {
     return json({ error: "`messages` array is required" }, 400, origin);
   }
 
@@ -119,7 +121,7 @@ export default async function handler(req) {
         Authorization: 'Bearer ' + RUNPOD_API_KEY,
       },
       body: JSON.stringify({
-        input: { messages, max_new_tokens, temperature, top_k },
+        input: { model, action, messages, max_new_tokens, temperature, top_k, top_p, thinking, tools },
       }),
     }
   );
@@ -131,9 +133,11 @@ export default async function handler(req) {
   const runpodJson = await runpodRes.json();
 
   // RunPod wraps your handler's return value in { output: {...} }
-  const output = runpodJson.output || {};
-
-  return json(output, 200, origin);
+  if (runpodJson.status !== "COMPLETED" || !runpodJson.output) {
+    return json({ error: "Inference job did not complete. Please retry." }, 503, origin);
+  }
+  const output = runpodJson.output;
+  return json(output, output.error ? (Number(output.status) || 502) : 200, origin);
 }
 
 function json(obj, status, origin = ALLOWED_ORIGINS[0]) {

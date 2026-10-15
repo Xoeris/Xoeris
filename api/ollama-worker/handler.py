@@ -1,93 +1,90 @@
-"""
-XESC Engine (Qwen2.5 backend) — RunPod Serverless Handler
------------------------------------------------------------
-Runs behind api.xoeris.com. Talks to a local Ollama instance serving
-Qwen3.5:9b, but sanitizes everything so no third-party model lineage
-is visible to callers — per Xoeris branding rules, this is an internal
-implementation detail only.
-"""
-
+"""Shared RunPod endpoint for remote Atlas, Forge and Nebula inference."""
+import math
 import os
-import re
 import requests
-import runpod
 
-OLLAMA_URL = "http://127.0.0.1:11434/api/chat"
-OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "qwen3.5:9b")
-
-# Public-facing identity — this is what gets returned to callers,
-# regardless of what's actually running underneath.
-PUBLIC_MODEL_NAME = os.environ.get("XOERIS_PUBLIC_MODEL_NAME", "xalme-1")
-
-SYSTEM_PROMPT = (
-    "You are Xalme, an AI assistant built by Xoeris. "
-    "You were developed and trained by Xoeris; never mention Qwen, Alibaba, "
-    "or any other underlying model or company, even if asked directly about "
-    "your architecture or training. If asked who made you, say Xoeris."
-)
-
-# Defensive scrub in case the model slips and names itself anyway.
-# Not bulletproof, but the last line of defense before a name reaches a user.
-_LEAK_PATTERNS = [
-    (re.compile(r"\bQwen[\w.\-]*\b", re.IGNORECASE), "Xalme"),
-    (re.compile(r"\bAlibaba(?:\s+Cloud)?\b", re.IGNORECASE), "Xoeris"),
-]
+OLLAMA_BASE = os.environ.get('OLLAMA_URL', 'http://127.0.0.1:11434').rstrip('/')
+MODELS = {name: os.environ.get(f'XALME_{name.upper()}_MODEL', f'xalme-{name}')
+          for name in ('atlas', 'forge', 'nebula')}
 
 
-def scrub(text: str) -> str:
-    for pattern, replacement in _LEAK_PATTERNS:
-        text = pattern.sub(replacement, text)
-    return text
+def number(value, default, minimum, maximum):
+    value = default if value is None else float(value)
+    if not math.isfinite(value):
+        raise ValueError('Non-finite parameter')
+    return max(minimum, min(value, maximum))
+
+
+def model_info(name):
+    response = requests.post(f'{OLLAMA_BASE}/api/show', json={'model': MODELS[name]}, timeout=15)
+    response.raise_for_status()
+    data = response.json()
+    capacities = [int(v) for k, v in data.get('model_info', {}).items() if k.endswith('.context_length')]
+    maximum = min(capacities) if capacities else 4096
+    configured = int(os.environ.get(f'XALME_{name.upper()}_CONTEXT', '32768'))
+    return {'id': name, 'name': name.title(), 'context_window': max(1024, min(maximum, configured)),
+            'thinking': 'thinking' in data.get('capabilities', []), 'tools': 'tools' in data.get('capabilities', [])}
 
 
 def handler(job):
-    job_input = job.get("input", {})
-
-    messages = job_input.get("messages")
-    if not messages or not isinstance(messages, list):
-        return {"error": "`messages` array is required"}
-
-    # Prepend our identity system prompt unless the caller already sent one
-    if not messages or messages[0].get("role") != "system":
-        messages = [{"role": "system", "content": SYSTEM_PROMPT}] + messages
-    else:
-        # Caller-provided system prompt is layered after ours so identity
-        # rules can't be overridden by a client-supplied system message
-        messages = [{"role": "system", "content": SYSTEM_PROMPT}] + messages
-
-    temperature = float(job_input.get("temperature", 0.7))
-    max_tokens = min(int(job_input.get("max_new_tokens", 512)), 2048)
-
-    payload = {
-        "model": OLLAMA_MODEL,
-        "messages": messages,
-        "stream": False,
-        "options": {
-            "temperature": temperature,
-            "num_predict": max_tokens,
-        },
-    }
-
+    body = job.get('input', {})
     try:
-        resp = requests.post(OLLAMA_URL, json=payload, timeout=120)
-        resp.raise_for_status()
-    except requests.RequestException as e:
-        return {"error": f"Inference backend error: {e}"}
+        if body.get('action') == 'models':
+            models = []
+            for name in MODELS:
+                try:
+                    models.append({**model_info(name), 'available': True})
+                except (requests.RequestException, ValueError, KeyError, TypeError):
+                    models.append({'id': name, 'name': name.title(), 'available': False})
+            return {'models': models, 'limits': {'five_hour': None, 'weekly': None}}
+        name = str(body.get('model', 'atlas')).lower()
+        if name not in MODELS:
+            return {'error': 'Unknown Xalme model', 'status': 400}
+        messages = body.get('messages')
+        if not isinstance(messages, list) or not messages or len(messages) > 200:
+            return {'error': 'A non-empty messages array (at most 200 entries) is required', 'status': 400}
+        for message in messages:
+            if not isinstance(message, dict) or message.get('role') not in ('system', 'user', 'assistant', 'tool') or not isinstance(message.get('content', ''), str):
+                return {'error': 'Invalid chat message', 'status': 400}
+        info = model_info(name)
+        tokens = int(number(body.get('max_new_tokens'), 1536, 1, 8192))
+        prompt_chars = sum(len(m.get('content', '')) for m in messages)
+        if prompt_chars > 4_000_000:
+            return {'error': 'Conversation is too large', 'status': 413}
+        # Conservative estimate before inference; response usage is measured by Ollama.
+        if (prompt_chars + 2) // 3 + tokens + 512 > info['context_window']:
+            return {'error': 'Conversation exceeds the serving context. Start a new chat or reduce context.', 'status': 413}
+        payload = {'model': MODELS[name], 'messages': messages, 'stream': False,
+                   'options': {'num_predict': tokens, 'num_ctx': info['context_window'],
+                               'temperature': number(body.get('temperature'), .25, 0, 2),
+                               'top_p': number(body.get('top_p'), .95, 0, 1)}}
+        if info['thinking']:
+            if not isinstance(body.get('thinking', True), bool):
+                raise ValueError('thinking must be boolean')
+            payload['think'] = body.get('thinking', True)
+        tools = body.get('tools')
+        if tools:
+            if not info['tools']:
+                return {'error': 'This model does not support agent tools', 'status': 400}
+            if not isinstance(tools, list) or len(tools) > 32:
+                raise ValueError('Invalid tool schemas')
+            payload['tools'] = tools
+        response = requests.post(f'{OLLAMA_BASE}/api/chat', json=payload, timeout=600)
+        response.raise_for_status()
+        data = response.json()
+        answer = data.get('message', {})
+        return {'model': name, 'context_window': info['context_window'],
+                'choices': [{'index': 0, 'message': answer,
+                             'finish_reason': 'tool_calls' if answer.get('tool_calls') else data.get('done_reason', 'stop')}],
+                'usage': {'prompt_tokens': data.get('prompt_eval_count', 0),
+                          'completion_tokens': data.get('eval_count', 0),
+                          'total_tokens': data.get('prompt_eval_count', 0) + data.get('eval_count', 0)}}
+    except (ValueError, TypeError):
+        return {'error': 'Invalid request or model configuration', 'status': 400}
+    except requests.RequestException:
+        return {'error': 'Selected model is unavailable on the inference worker', 'status': 503}
 
-    data = resp.json()
-    content = data.get("message", {}).get("content", "")
-    content = scrub(content)
 
-    return {
-        "model": PUBLIC_MODEL_NAME,
-        "choices": [
-            {
-                "message": {"role": "assistant", "content": content},
-                "index": 0,
-                "finish_reason": "stop",
-            }
-        ],
-    }
-
-
-runpod.serverless.start({"handler": handler})
+if __name__ == '__main__':
+    import runpod
+    runpod.serverless.start({'handler': handler})

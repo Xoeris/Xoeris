@@ -8,6 +8,7 @@ set -e
 echo "[xoeris-api] Starting Ollama server..."
 ollama serve &
 OLLAMA_PID=$!
+trap 'kill "$OLLAMA_PID" 2>/dev/null || true' EXIT TERM INT
 
 # Wait for Ollama's HTTP API to come up before accepting jobs, but don't
 # wait forever — if Ollama died or is stuck, fail loudly instead of hanging
@@ -29,6 +30,7 @@ until curl -sf http://127.0.0.1:11434/api/tags > /dev/null 2>&1; do
 done
 
 echo "[xoeris-api] Ollama ready. Starting RunPod handler..."
+python3 -u prepare_models.py
 python3 -u handler.py
 
 # If the handler ever exits, bring Ollama down with it
