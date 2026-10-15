@@ -4,7 +4,7 @@ import {
   Search, Folder, Layout, SlidersHorizontal, Mic,
   AudioWaveform, ArrowUp, PanelLeft, Sparkles, MessageSquare,
   LogOut, ExternalLink, X, Trash2, Copy, Check, Terminal, Cpu, Code,
-  ArrowRight, ShieldCheck, Lock, Loader2
+  ArrowRight, ShieldCheck, Lock, Loader2, Menu, Settings, Info
 } from 'lucide-react';
 
 import AuthPage from './AuthPage';
@@ -46,6 +46,8 @@ export default function ChatPage({ onNavigate }) {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [selectedModel, setSelectedModel] = useState('Atlas 5');
   const [modelDropdownOpen, setModelDropdownOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
 
   // Chat conversation state
   const [currentThreadId, setCurrentThreadId] = useState(() => {
@@ -404,161 +406,108 @@ export default function ChatPage({ onNavigate }) {
   }
 
   return (
-    <div className="h-screen supports-[height:100dvh]:h-dvh bg-[#050505] text-white flex font-sans selection:bg-[#FDD935] selection:text-black overflow-hidden relative">
-      {/* Cyber Grid Background */}
-      <div className="fixed inset-0 z-0 bg-[linear-gradient(rgba(253,217,53,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.02)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-40"></div>
-
-      {/* Cyber ambient glow blobs */}
-      <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden mix-blend-screen opacity-20">
-        <div className="absolute top-[-15%] left-[-10%] w-[55vw] h-[55vw] bg-[#FDD935]/15 rounded-full blur-[140px]" />
-        <div className="absolute bottom-[-15%] right-[-10%] w-[45vw] h-[45vw] bg-[#FFC94A]/10 rounded-full blur-[140px]" />
+    <div className="h-screen supports-[height:100dvh]:h-dvh bg-[#0A0A0F] text-white flex font-sans selection:bg-[#FFC94A] selection:text-black overflow-hidden relative">
+      {/* Ambient background glow blobs */}
+      <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden mix-blend-screen opacity-25">
+        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] bg-[#FFC94A]/10 rounded-full blur-[140px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[45vw] h-[45vw] bg-[#3B82F6]/10 rounded-full blur-[140px]" />
       </div>
 
-      {/* Xoeris Xalme Sidebar */}
+      {/* Xalme Sidebar matching desktop */}
       <aside
         className={`fixed md:relative top-0 bottom-0 left-0 ${
-          sidebarOpen ? 'w-64' : 'w-0 -translate-x-full md:w-0'
-        } border-r border-white/10 bg-[#0a0a0a]/95 backdrop-blur-2xl flex flex-col justify-between transition-all duration-300 overflow-hidden z-50 shrink-0 h-full`}
+          sidebarOpen ? 'w-60' : 'w-0 -translate-x-full md:w-0'
+        } bg-[#0A0A0F] flex flex-col justify-between transition-all duration-300 overflow-hidden z-40 shrink-0 h-full`}
       >
-        <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-          {/* Top Header: Collapse icon + Xalme title */}
-          <div className="shrink-0 px-4 py-3.5 flex items-center justify-between border-b border-white/10">
-            <div className="flex items-center gap-2.5">
-              <button
-                onClick={() => setSidebarOpen(false)}
-                className="text-gray-400 hover:text-white p-1.5 rounded-lg hover:bg-white/5 transition-colors cursor-pointer bg-transparent border-none"
-                title="Collapse sidebar"
-              >
-                <PanelLeft size={18} />
-              </button>
-              <button
-                onClick={() => { window.location.href = 'https://xoeris.com'; }}
-                className="flex items-center gap-2 group bg-transparent border-none p-0 cursor-pointer text-left"
-              >
-                <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="h-5 w-auto object-contain transition-transform group-hover:scale-105" />
-                <span className="font-black text-lg tracking-wider text-white">Xalme</span>
-                <span className="text-[10px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded bg-[#FDD935]/15 text-[#FDD935] border border-[#FDD935]/30">AI</span>
-              </button>
-            </div>
+        <div className="flex flex-col flex-1 min-h-0 p-3 overflow-hidden">
+          {/* Top Hamburger Toggle */}
+          <div className="mb-4 pt-1 px-1">
             <button
-              onClick={() => { window.location.href = 'https://xoeris.com'; }}
-              className="text-gray-400 hover:text-[#FDD935] transition-colors bg-transparent border-none p-0 cursor-pointer"
-              title="Return to xoeris.com"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer bg-transparent border-none flex items-center justify-center"
+              title="Toggle sidebar"
             >
-              <ExternalLink size={14} />
+              <Menu size={18} />
             </button>
           </div>
 
-          {/* Action Toolbar */}
-          <div className="shrink-0 p-3 space-y-2 border-b border-white/5">
-            {/* + New Chat Button in Xoeris Electric Yellow */}
+          {/* Section: WORKSPACE */}
+          <div className="px-2 mb-2 text-[10px] font-bold tracking-widest text-[#4A4A5A] uppercase">
+            WORKSPACE
+          </div>
+
+          {/* Chat active nav item */}
+          <div className="space-y-1.5">
+            <button
+              onClick={() => {
+                // If on another view or view is cleared, return to chat
+              }}
+              className="w-full px-3 py-2.5 rounded-xl bg-[#1C180E] border border-[#FFC94A] text-[#FFC94A] font-semibold text-xs flex items-center gap-3 transition-all cursor-pointer shadow-[0_0_15px_rgba(255,201,74,0.1)] text-left"
+            >
+              <MessageSquare size={15} className="text-[#FFC94A] shrink-0" />
+              <span>Chat</span>
+            </button>
+
+            {/* + New Session */}
             <button
               onClick={handleStartNewChat}
-              className="w-full py-2.5 px-3.5 bg-[#FDD935] hover:bg-[#FFE066] text-black font-black uppercase tracking-wider text-xs rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer border-none shadow-[0_0_15px_rgba(253,217,53,0.3)] hover:shadow-[0_0_20px_rgba(253,217,53,0.5)] active:scale-[0.98]"
+              className="w-full px-3 py-2.5 rounded-xl bg-transparent hover:bg-white/[0.04] text-[#888898] hover:text-white text-xs flex items-center gap-3 transition-colors cursor-pointer border-none text-left"
             >
-              <Plus size={16} className="text-black stroke-[3]" />
-              <span>New Chat</span>
+              <Plus size={15} className="text-[#888898] shrink-0" />
+              <span>New Session</span>
             </button>
           </div>
 
-          {/* Real Chat History Section (NO FAKE PLACEHOLDERS) */}
-          <div className="flex-1 min-h-0 px-3 py-3 overflow-y-auto space-y-4">
-            <div className="flex items-center justify-between px-2 text-[11px] font-bold text-gray-500 uppercase tracking-widest">
-              <span>Recent Sessions</span>
-              <span className="text-[10px] font-mono text-gray-600">{threads.length}</span>
-            </div>
-
-            {threads.length === 0 ? (
-              <div className="px-3 py-8 text-center text-gray-500 text-xs">
-                <MessageSquare size={20} className="mx-auto mb-2 opacity-30 text-[#FDD935]" />
-                <p>No recent sessions</p>
-                <p className="text-[11px] text-gray-600 mt-1">Start a conversation with Xalme</p>
+          {/* Saved Sessions list */}
+          {threads.length > 0 && (
+            <div className="mt-5 flex-1 min-h-0 overflow-y-auto space-y-1 pr-1">
+              <div className="px-2 mb-2 text-[9px] font-bold tracking-widest text-[#4A4A5A] uppercase">
+                RECENT
               </div>
-            ) : (
-              <div className="space-y-1">
-                {threads.map((thread) => {
-                  const isActive = thread.id === currentThreadId;
-                  return (
-                    <div
-                      key={thread.id}
-                      onClick={() => handleSelectThread(thread.id)}
-                      className={`group w-full px-3 py-2 rounded-xl text-xs flex items-center justify-between cursor-pointer transition-all border ${
-                        isActive
-                          ? 'bg-white/[0.06] border-[#FDD935]/40 text-white font-semibold shadow-[0_0_12px_rgba(253,217,53,0.1)]'
-                          : 'bg-transparent border-transparent text-gray-400 hover:text-white hover:bg-white/[0.03]'
-                      }`}
+              {threads.map((thread) => {
+                const isActive = thread.id === currentThreadId;
+                return (
+                  <div
+                    key={thread.id}
+                    onClick={() => handleSelectThread(thread.id)}
+                    className={`group w-full px-3 py-2 rounded-lg text-xs flex items-center justify-between cursor-pointer transition-all ${
+                      isActive
+                        ? 'bg-white/[0.06] text-white font-medium'
+                        : 'text-gray-400 hover:text-white hover:bg-white/[0.03]'
+                    }`}
+                  >
+                    <span className="truncate pr-2">{thread.title}</span>
+                    <button
+                      type="button"
+                      onClick={(e) => handleDeleteThread(e, thread.id)}
+                      className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-400 p-0.5 rounded transition-opacity bg-transparent border-none cursor-pointer"
+                      title="Delete session"
                     >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <MessageSquare size={13} className={isActive ? 'text-[#FDD935] shrink-0' : 'text-gray-500 shrink-0'} />
-                        <span className="truncate">{thread.title}</span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={(e) => handleDeleteThread(e, thread.id)}
-                        className="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-red-400 p-1 rounded transition-opacity bg-transparent border-none cursor-pointer"
-                        title="Delete session"
-                      >
-                        <Trash2 size={12} />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* User Account Tile inside Sidebar */}
-          <div ref={userDropdownRef} className="shrink-0 p-3 border-t border-white/10 relative bg-black/40">
-            <button
-              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-              className="w-full p-2 rounded-xl hover:bg-white/5 flex items-center justify-between text-left transition-colors cursor-pointer bg-transparent border-none"
-            >
-              <div className="flex items-center gap-2.5 min-w-0">
-                {currentUser?.avatar_url ? (
-                  <img src={currentUser.avatar_url} alt="User" className="w-7 h-7 rounded-full object-cover ring-1 ring-[#FDD935]/50" />
-                ) : (
-                  <div className="w-7 h-7 rounded-full bg-[#FDD935] text-black text-xs font-black flex items-center justify-center shrink-0 uppercase shadow-[0_0_10px_rgba(253,217,53,0.3)]">
-                    {(userName)[0]}
+                      <Trash2 size={11} />
+                    </button>
                   </div>
-                )}
-                <div className="flex items-center gap-1.5 min-w-0">
-                  <span className="text-xs font-bold text-white truncate">{userName}</span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider ${
-                    isAdmin
-                      ? 'bg-[#FDD935] text-black shadow-[0_0_8px_rgba(253,217,53,0.4)]'
-                      : 'bg-[#FDD935]/20 text-[#FDD935] border border-[#FDD935]/30'
-                  }`}>
-                    {isAdmin ? 'ADMIN' : 'ULTRA'}
-                  </span>
-                  <ChevronDown size={13} className="text-gray-400 shrink-0" />
-                </div>
-              </div>
-            </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
 
-            {/* User Dropdown */}
-            {userDropdownOpen && (
-              <div className="absolute bottom-full left-3 right-3 mb-2 bg-[#111111] border border-white/15 rounded-2xl p-2 shadow-2xl z-50 text-left animate-fade-in backdrop-blur-xl">
-                <div className="px-3 py-2 border-b border-white/10 mb-1">
-                  <p className="text-xs font-bold text-white truncate">{userName}</p>
-                  <p className="text-[10px] text-gray-400 truncate">{currentUser?.email || 'admin@xoeris.com'}</p>
-                </div>
-                <button
-                  onClick={() => { setUserDropdownOpen(false); if (onNavigate) onNavigate('pricing'); }}
-                  className="w-full px-3 py-2 text-xs text-gray-300 hover:text-white hover:bg-white/5 rounded-lg flex items-center justify-between cursor-pointer bg-transparent border-none text-left"
-                >
-                  <span>Pricing & Plans</span>
-                  <span className="text-[10px] text-[#FDD935] font-black uppercase">{isAdmin ? 'ADMIN' : 'ULTRA'}</span>
-                </button>
-                <button
-                  onClick={() => { setUserDropdownOpen(false); handleLogout(); }}
-                  className="w-full px-3 py-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg flex items-center gap-2 cursor-pointer bg-transparent border-none text-left"
-                >
-                  <LogOut size={13} />
-                  <span>Log out</span>
-                </button>
-              </div>
-            )}
-          </div>
+        {/* Pinned Bottom: Settings & About */}
+        <div className="p-3 border-t border-[#1C1C24] space-y-1">
+          <button
+            onClick={() => setSettingsOpen(true)}
+            className="w-full px-3 py-2.5 rounded-xl bg-transparent hover:bg-white/[0.04] text-[#888898] hover:text-white text-xs flex items-center gap-3 transition-colors cursor-pointer border-none text-left"
+          >
+            <Settings size={15} className="text-[#888898] shrink-0" />
+            <span>Settings</span>
+          </button>
+          <button
+            onClick={() => setAboutOpen(true)}
+            className="w-full px-3 py-2.5 rounded-xl bg-transparent hover:bg-white/[0.04] text-[#888898] hover:text-white text-xs flex items-center gap-3 transition-colors cursor-pointer border-none text-left"
+          >
+            <Info size={15} className="text-[#888898] shrink-0" />
+            <span>About</span>
+          </button>
         </div>
       </aside>
 
@@ -566,208 +515,143 @@ export default function ChatPage({ onNavigate }) {
       {sidebarOpen && (
         <div 
           onClick={() => setSidebarOpen(false)} 
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-30 md:hidden"
         />
       )}
 
-      {/* Main View Area */}
-      <div className="flex-1 flex flex-col min-w-0 min-h-0 h-full w-full relative z-10 bg-[#050505]">
+      {/* Main Chat Workspace framed with golden border */}
+      <div className="flex-1 flex flex-col min-w-0 min-h-0 h-full w-full relative z-10 bg-[#0A0A0F] border-l border-[#FFC94A]/40">
         
-        {/* Top Minimal Bar */}
-        <header className="h-14 shrink-0 px-6 flex justify-between items-center z-30 border-b border-white/5 bg-[#080808]/80 backdrop-blur-md">
-          <div className="flex items-center gap-3">
+        {/* Workspace Top Header Bar */}
+        <header className="h-16 shrink-0 px-6 flex justify-between items-center z-20 border-b border-[#1E1E26] bg-[#0A0A0F]">
+          <div className="flex items-center gap-3.5">
             {!sidebarOpen && (
               <button 
                 onClick={() => setSidebarOpen(true)} 
                 className="p-1.5 hover:bg-white/5 rounded-lg transition-colors text-gray-400 hover:text-white bg-transparent border-none cursor-pointer"
                 title="Open sidebar"
               >
-                <PanelLeft size={18} />
+                <Menu size={18} />
               </button>
             )}
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-black uppercase tracking-wider text-white">Xalme Console</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#FDD935] animate-pulse" />
+            
+            {/* Dark squircle with sparkle */}
+            <div className="w-8 h-8 rounded-lg bg-[#201A0C] border border-[#FFC94A]/20 flex items-center justify-center text-[#FFC94A] text-sm shrink-0">
+              ✦
+            </div>
+
+            <div>
+              <h2 className="text-sm font-bold text-white tracking-tight leading-none mb-1">New Chat</h2>
+              <p className="text-[11px] text-[#7E7E90] leading-none">Powered by Atlas 5 Intelligent Reasoning</p>
             </div>
           </div>
 
-          {/* Center Plan Link */}
-          <div className="text-xs text-gray-400 flex items-center gap-2 font-mono">
-            <span className="text-gray-500">Access:</span>
-            <button
-              onClick={() => onNavigate ? onNavigate('pricing') : window.location.href = '/pricing'}
-              className="px-2.5 py-1 rounded-full bg-white/5 border border-[#FDD935]/30 hover:border-[#FDD935] text-white hover:text-[#FDD935] font-semibold transition-all cursor-pointer text-xs flex items-center gap-1.5"
-            >
-              {isAdmin ? (
-                <>
-                  <ShieldCheck size={12} className="text-[#FDD935]" />
-                  <span>Administrator (All Privileges)</span>
-                </>
-              ) : (
-                <>
-                  <Sparkles size={12} className="text-[#FDD935]" />
-                  <span>Ultra Member</span>
-                </>
-              )}
-            </button>
-          </div>
+          {/* Right Header items: ATLAS 5 pill + Web Chat button */}
+          <div className="flex items-center gap-3">
+            <div className="px-2.5 py-1 rounded bg-[#201A0C] border border-[#FFC94A]/30 text-[#FFC94A] text-[10.5px] font-bold tracking-wider uppercase">
+              ATLAS 5
+            </div>
 
-          {/* Top Right Profile Icon / Avatar */}
-          <div className="flex items-center gap-2">
             <button
-              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 transition-colors bg-transparent border-none cursor-pointer"
-              title="Account settings"
+              onClick={() => {
+                window.open('https://xalme.xoeris.com/chat', '_blank');
+              }}
+              className="px-3.5 py-1.5 rounded-lg border border-[#323240] bg-[#14141B] hover:bg-[#1A1A24] text-xs font-semibold text-gray-200 flex items-center gap-1.5 transition-colors cursor-pointer"
             >
-              {currentUser?.avatar_url ? (
-                <img src={currentUser.avatar_url} alt="Avatar" className="w-7 h-7 rounded-full object-cover ring-1 ring-[#FDD935]/40" />
-              ) : (
-                <User size={18} />
-              )}
+              <span>Web Chat</span>
+              <ExternalLink size={12} className="text-gray-400" />
             </button>
           </div>
         </header>
 
-        {/* Main Content Body */}
+        {/* Content Body */}
         <main className="flex-1 flex flex-col justify-between overflow-hidden relative">
           
-          {/* Welcome Screen or Message Feed */}
+          {/* Welcome Screen or Message Stream */}
           {messages.length === 0 ? (
-            /* Xalme Welcome Center Stage in Xoeris Design */
-            <div className="flex-1 flex flex-col items-center justify-center px-4 max-w-3xl mx-auto w-full -mt-8">
+            <div className="flex-1 flex flex-col items-center justify-center px-4 max-w-2xl mx-auto w-full py-8 overflow-y-auto">
               
-              {/* Xalme Sunburst Emblem + Greeting */}
-              <div className="flex flex-col items-center text-center mb-8 animate-fade-in">
-                <div className="w-14 h-14 rounded-2xl bg-[#FDD935]/10 border border-[#FDD935]/30 flex items-center justify-center mb-5 shadow-[0_0_30px_rgba(253,217,53,0.15)]">
-                  <XalmeSpark className="w-8 h-8 text-[#FDD935]" />
-                </div>
-                <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight mb-3">
-                  {getGreeting()}, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FDD935] to-[#FFC94A]">{userName}</span>
-                </h1>
-                <p className="text-gray-400 text-sm md:text-base max-w-lg">
-                  What would you like to build or explore today with Xalme AI?
-                </p>
+              {/* Central Glowing Squircle */}
+              <div className="w-16 h-16 rounded-[22px] bg-[#201A0C] border border-[#FFC94A]/25 flex items-center justify-center text-[#FFC94A] text-3xl mb-6 shadow-[0_0_35px_rgba(255,201,74,0.12)]">
+                ✦
               </div>
 
-              {/* Centered Floating Input Card in Xoeris Aesthetics */}
-              <div className="w-full">
-                <form
-                  onSubmit={(e) => { e.preventDefault(); handleSend(); }}
-                  className="bg-[#0e0e0e] border border-white/15 focus-within:border-[#FDD935]/50 focus-within:shadow-[0_0_30px_rgba(253,217,53,0.12)] rounded-2xl p-4 transition-all backdrop-blur-xl"
-                >
-                  <textarea
-                    ref={textareaRef}
-                    rows={3}
-                    placeholder="Ask Xalme anything or brainstorm code..."
-                    value={input}
-                    onChange={handleInputChange}
-                    onKeyDown={handleTextareaKeyDown}
-                    disabled={loading}
-                    className="w-full bg-transparent text-white placeholder:text-gray-500 text-base resize-none outline-none border-none leading-relaxed font-sans"
-                  />
+              {/* Title & Subtitle */}
+              <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight text-center mb-2">
+                What will you create today?
+              </h1>
+              <p className="text-xs md:text-sm text-[#7E7E90] text-center mb-8">
+                Think it through. Build something great. Ask Xalme.
+              </p>
 
-                  {/* Inside Card Bottom Toolbar */}
-                  <div className="flex items-center justify-between pt-3 border-t border-white/5 mt-2">
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setModelDropdownOpen(!modelDropdownOpen)}
-                        className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-gray-300 hover:text-white flex items-center gap-1.5 transition-colors cursor-pointer"
-                      >
-                        <Cpu size={13} className="text-[#FDD935]" />
-                        <span>{selectedModel}</span>
-                        <ChevronDown size={12} className="text-gray-400" />
-                      </button>
-
-                      {modelDropdownOpen && (
-                        <div className="absolute left-4 bottom-14 bg-[#141414] border border-white/15 rounded-xl p-1.5 shadow-2xl z-50 text-left min-w-[170px] backdrop-blur-2xl">
-                          {['Atlas 5', 'Forge 6', 'Nebula 7'].map((m) => (
-                            <button
-                              key={m}
-                              type="button"
-                              onClick={() => { setSelectedModel(m); setModelDropdownOpen(false); }}
-                              className={`w-full px-3 py-2 rounded-lg text-xs text-left cursor-pointer border-none flex items-center justify-between ${
-                                selectedModel === m ? 'bg-[#FDD935]/15 text-[#FDD935] font-bold' : 'text-gray-400 hover:text-white hover:bg-white/5 bg-transparent'
-                              }`}
-                            >
-                              <span>{m}</span>
-                              {selectedModel === m && <Check size={12} />}
-                            </button>
-                          ))}
-                        </div>
-                      )}
+              {/* 2x2 Grid of Prompt Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 w-full">
+                {[
+                  {
+                    icon: '⌘',
+                    title: 'System Architecture',
+                    desc: 'Plan robust schemas, service layouts and APIs.',
+                    prompt: 'Help me design the architecture for a scalable, high-concurrency microservice system.'
+                  },
+                  {
+                    icon: '⌥',
+                    title: 'Refactor Code',
+                    desc: 'Simplify implementations and optimize bottlenecks.',
+                    prompt: 'Help me refactor this code for maximum clarity, idiomatic style, and performance.'
+                  },
+                  {
+                    icon: '✦',
+                    title: 'Explain Concepts',
+                    desc: 'Deep dive into algorithms, protocols and math.',
+                    prompt: 'Explain zero-knowledge rollups and practical zk-SNARK mathematical concepts.'
+                  },
+                  {
+                    icon: '◇',
+                    title: 'Security Review',
+                    desc: 'Identify exploit vectors and reinforce defenses.',
+                    prompt: 'Review common security vulnerabilities and exploit vectors in modern token authentication.'
+                  }
+                ].map((card, i) => (
+                  <button
+                    key={i}
+                    onClick={() => handleSend(card.prompt)}
+                    className="p-4 rounded-2xl bg-[#16161E] hover:bg-[#1C1C26] border border-[#252532] hover:border-[#383848] text-left transition-all cursor-pointer group shadow-sm"
+                  >
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-[#FFC94A] text-sm font-bold">{card.icon}</span>
+                      <span className="text-xs font-semibold text-[#FFC94A]">{card.title}</span>
                     </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="submit"
-                        disabled={loading || !input.trim()}
-                        className={`p-2.5 rounded-xl transition-all cursor-pointer border-none flex items-center justify-center ${
-                          input.trim()
-                            ? 'bg-[#FDD935] text-black hover:bg-[#FFE066] shadow-[0_0_15px_rgba(253,217,53,0.4)] active:scale-95'
-                            : 'bg-white/5 text-gray-600 cursor-not-allowed'
-                        }`}
-                        title="Send prompt"
-                      >
-                        <ArrowUp size={16} className={input.trim() ? 'stroke-[2.5]' : ''} />
-                      </button>
-                    </div>
-                  </div>
-                </form>
-
-                {/* Prompt Starters */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mt-4">
-                  {[
-                    { label: 'System Design', icon: Terminal, prompt: 'Outline the system architecture for a high-concurrency event router in Go.' },
-                    { label: 'Refactor Code', icon: Code, prompt: 'Refactor this async function to handle exponential backoff and timeout safely.' },
-                    { label: 'Explain Concept', icon: Sparkles, prompt: 'Explain zero-knowledge rollups with intuitive diagrams and tradeoffs.' },
-                    { label: 'Security Review', icon: Cpu, prompt: 'Review OAuth 2.0 PKCE implementation best practices for multi-tenant SPAs.' }
-                  ].map((starter, idx) => {
-                    const Icon = starter.icon;
-                    return (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={() => handleSend(starter.prompt)}
-                        className="p-3 rounded-xl bg-white/[0.02] border border-white/10 hover:border-[#FDD935]/40 hover:bg-white/[0.05] transition-all text-left cursor-pointer group"
-                      >
-                        <div className="flex items-center gap-2 mb-1">
-                          <Icon size={13} className="text-[#FDD935]" />
-                          <span className="text-xs font-bold text-gray-300 group-hover:text-white">{starter.label}</span>
-                        </div>
-                        <p className="text-[11px] text-gray-500 line-clamp-2 leading-relaxed">{starter.prompt}</p>
-                      </button>
-                    );
-                  })}
-                </div>
+                    <p className="text-[11px] text-[#7E7E90] leading-relaxed">{card.desc}</p>
+                  </button>
+                ))}
               </div>
             </div>
           ) : (
-            /* Active Conversation Feed */
-            <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-6 max-w-3xl mx-auto w-full">
+            /* Active Message History */
+            <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-5 max-w-3xl mx-auto w-full">
               {messages.map((msg, index) => (
                 <div
                   key={index}
                   className={`flex gap-3.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}
                 >
                   {msg.role === 'assistant' && (
-                    <div className="w-7 h-7 rounded-xl bg-[#FDD935]/15 border border-[#FDD935]/30 flex items-center justify-center shrink-0 mt-0.5 text-[#FDD935] shadow-[0_0_10px_rgba(253,217,53,0.15)]">
-                      <XalmeSpark className="w-4 h-4 text-[#FDD935]" />
+                    <div className="w-7 h-7 rounded-lg bg-[#201A0C] border border-[#FFC94A]/25 flex items-center justify-center shrink-0 mt-0.5 text-[#FFC94A] text-xs">
+                      ✦
                     </div>
                   )}
 
                   <div
-                    className={`max-w-[85%] rounded-2xl px-5 py-3.5 leading-relaxed text-sm ${
+                    className={`max-w-[85%] rounded-2xl px-5 py-3.5 leading-relaxed text-xs md:text-sm ${
                       msg.role === 'user'
-                        ? 'bg-[#FDD935]/10 border border-[#FDD935]/30 text-white font-sans shadow-[0_0_20px_rgba(253,217,53,0.06)]'
+                        ? 'bg-[#1C180E] border border-[#FFC94A]/40 text-white shadow-[0_0_15px_rgba(255,201,74,0.06)]'
                         : msg.content.startsWith('[XALME SYSTEM ALERT]')
                           ? 'bg-red-500/10 border border-red-500/30 text-red-300 font-mono text-xs'
-                          : 'bg-white/[0.03] border border-white/10 text-gray-100 leading-relaxed whitespace-pre-wrap'
+                          : 'bg-[#16161E] border border-[#262634] text-[#F0F0F5] whitespace-pre-wrap'
                     }`}
                   >
                     {msg.role === 'assistant' && !msg.content.startsWith('[XALME SYSTEM ALERT]') && (
-                      <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-white/5 text-[11px] font-mono text-gray-400">
-                        <span className="text-[#FDD935] font-bold">Xalme AI</span>
+                      <div className="flex items-center justify-between mb-2 pb-1.5 border-b border-white/5 text-[11px]">
+                        <span className="text-[#FFC94A] font-bold">Xalme (Atlas 5)</span>
                         <button
                           type="button"
                           onClick={() => handleCopy(msg.content, index)}
@@ -785,7 +669,7 @@ export default function ChatPage({ onNavigate }) {
 
               {loading && (
                 <div className="flex items-center gap-3 text-xs text-gray-400 bg-white/[0.02] border border-white/5 rounded-xl px-4 py-3 w-fit">
-                  <div className="w-2 h-2 rounded-full bg-[#FDD935] animate-ping" />
+                  <div className="w-2 h-2 rounded-full bg-[#FFC94A] animate-ping" />
                   <span className="font-mono">{statusText || 'Xalme is synthesizing response...'}</span>
                 </div>
               )}
@@ -793,54 +677,139 @@ export default function ChatPage({ onNavigate }) {
             </div>
           )}
 
-          {/* Bottom Dock Input (only visible when conversation is active) */}
-          {messages.length > 0 && (
-            <div className="p-4 md:p-6 bg-gradient-to-t from-[#050505] via-[#050505]/95 to-transparent z-20">
-              <div className="max-w-3xl mx-auto w-full">
-                <form
-                  onSubmit={(e) => { e.preventDefault(); handleSend(); }}
-                  className="bg-[#0e0e0e] border border-white/15 focus-within:border-[#FDD935]/50 focus-within:shadow-[0_0_30px_rgba(253,217,53,0.12)] rounded-2xl p-3.5 shadow-2xl transition-all backdrop-blur-xl"
-                >
-                  <textarea
-                    ref={textareaRef}
-                    rows={1}
-                    placeholder="Message Xalme..."
-                    value={input}
-                    onChange={handleInputChange}
-                    onKeyDown={handleTextareaKeyDown}
-                    disabled={loading}
-                    className="w-full bg-transparent text-white placeholder:text-gray-500 text-sm resize-none outline-none border-none leading-relaxed font-sans max-h-36"
-                  />
+          {/* Bottom Composer Box */}
+          <div className="p-4 md:p-6 bg-[#0A0A0F] border-t border-[#1C1C24] z-20">
+            <div className="max-w-3xl mx-auto w-full">
+              <form
+                onSubmit={(e) => { e.preventDefault(); handleSend(); }}
+                className="bg-[#161622] border border-[#2B2B38] focus-within:border-[#FFC94A]/60 rounded-2xl p-4 shadow-2xl transition-all"
+              >
+                <textarea
+                  ref={textareaRef}
+                  rows={2}
+                  placeholder="Ask Xalme anything, explore ideas or write code..."
+                  value={input}
+                  onChange={handleInputChange}
+                  onKeyDown={handleTextareaKeyDown}
+                  disabled={loading}
+                  className="w-full bg-transparent text-[#F0F0F5] placeholder:text-[#585868] text-sm resize-none outline-none border-none leading-relaxed font-sans max-h-36"
+                />
 
-                  <div className="flex items-center justify-between pt-2 border-t border-white/5 mt-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-mono text-gray-500 flex items-center gap-1">
-                        <Cpu size={12} className="text-[#FDD935]" />
-                        {selectedModel}
-                      </span>
+                <div className="flex items-center justify-between pt-3 border-t border-white/5 mt-2">
+                  <div className="flex items-center gap-2">
+                    <div className="px-2.5 py-1 rounded-md bg-[#201A0C] border border-[#FFC94A]/20 text-[#FFC94A] text-xs font-semibold flex items-center gap-1.5">
+                      <span>✦</span>
+                      <span>Atlas 5 Reasoning</span>
                     </div>
-
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="submit"
-                        disabled={loading || !input.trim()}
-                        className={`p-2 rounded-xl transition-all cursor-pointer border-none flex items-center justify-center ${
-                          input.trim()
-                            ? 'bg-[#FDD935] text-black hover:bg-[#FFE066] shadow-[0_0_15px_rgba(253,217,53,0.4)]'
-                            : 'bg-white/5 text-gray-600 cursor-not-allowed'
-                        }`}
-                        title="Send message"
-                      >
-                        <ArrowUp size={16} className={input.trim() ? 'stroke-[2.5]' : ''} />
-                      </button>
-                    </div>
+                    <span className="text-[11px] text-[#545464] hidden sm:inline ml-2">
+                      Press Enter to send · Shift+Enter for new line
+                    </span>
                   </div>
-                </form>
-              </div>
+
+                  <button
+                    type="submit"
+                    disabled={loading || !input.trim()}
+                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer border-none flex items-center gap-1.5 ${
+                      input.trim()
+                        ? 'bg-[#FFC94A] hover:bg-[#FFD46A] text-[#0A0A0F] shadow-[0_0_15px_rgba(255,201,74,0.3)] active:scale-95'
+                        : 'bg-white/5 text-gray-600 cursor-not-allowed'
+                    }`}
+                  >
+                    <span>Send</span>
+                    <span>↑</span>
+                  </button>
+                </div>
+              </form>
+
+              {/* Centered Disclaimer */}
+              <p className="text-[10px] text-[#464654] text-center mt-2.5">
+                Xalme Desktop AI can make mistakes. Verify critical facts and code output.
+              </p>
             </div>
-          )}
+          </div>
         </main>
       </div>
+
+      {/* Settings Modal */}
+      {settingsOpen && (
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#14141A] border border-[#2E2E38] rounded-2xl max-w-md w-full p-6 shadow-2xl relative animate-fade-in">
+            <button
+              onClick={() => setSettingsOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white bg-transparent border-none cursor-pointer"
+            >
+              <X size={18} />
+            </button>
+            <div className="flex items-center gap-2.5 mb-5">
+              <Settings size={18} className="text-[#FFC94A]" />
+              <h3 className="text-base font-bold text-white">Settings</h3>
+            </div>
+            <div className="space-y-4 text-xs">
+              <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex justify-between items-center">
+                <div>
+                  <p className="font-semibold text-white">Theme</p>
+                  <p className="text-[#7E7E90] text-[11px]">Dark Obsidian (APEX Yellow)</p>
+                </div>
+                <span className="px-2 py-1 rounded bg-[#201A0C] text-[#FFC94A] font-bold text-[10px]">Active</span>
+              </div>
+              <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex justify-between items-center">
+                <div>
+                  <p className="font-semibold text-white">Active Reasoning Model</p>
+                  <p className="text-[#7E7E90] text-[11px]">Atlas 5 (Deep Reasoning)</p>
+                </div>
+                <span className="px-2 py-1 rounded bg-[#201A0C] text-[#FFC94A] font-bold text-[10px]">Atlas 5</span>
+              </div>
+              <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex justify-between items-center">
+                <div>
+                  <p className="font-semibold text-white">User Account</p>
+                  <p className="text-[#7E7E90] text-[11px]">{currentUser?.email || 'admin@xoeris.com'}</p>
+                </div>
+                <span className="px-2 py-1 rounded bg-[#201A0C] text-[#FFC94A] font-bold text-[10px]">Pro Edition</span>
+              </div>
+            </div>
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={() => setSettingsOpen(false)}
+                className="px-4 py-2 rounded-xl bg-[#FFC94A] text-black font-bold text-xs cursor-pointer border-none"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* About Modal */}
+      {aboutOpen && (
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#14141A] border border-[#2E2E38] rounded-2xl max-w-md w-full p-6 shadow-2xl relative animate-fade-in text-center">
+            <button
+              onClick={() => setAboutOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white bg-transparent border-none cursor-pointer"
+            >
+              <X size={18} />
+            </button>
+            <div className="w-12 h-12 rounded-2xl bg-[#201A0C] border border-[#FFC94A]/30 flex items-center justify-center text-[#FFC94A] text-2xl mx-auto mb-3">
+              ✦
+            </div>
+            <h3 className="text-lg font-bold text-white mb-1">Xalme</h3>
+            <p className="text-xs text-[#7E7E90] mb-4">Version 1.0.0 · Desktop Web Edition</p>
+            <p className="text-xs text-gray-300 leading-relaxed mb-6">
+              Xalme is the intelligent reasoning assistant built by Xoeris for architecture, engineering, and deep conceptual planning.
+            </p>
+            <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-left text-xs mb-6 space-y-1">
+              <p className="text-[#7E7E90]">Account: <span className="text-white font-medium">{currentUser?.email || 'admin@xoeris.com'}</span></p>
+              <p className="text-[#7E7E90]">Status: <span className="text-[#6DBE47] font-bold">Licensed (Pro)</span></p>
+            </div>
+            <button
+              onClick={() => setAboutOpen(false)}
+              className="w-full py-2.5 rounded-xl bg-[#FFC94A] text-black font-bold text-xs cursor-pointer border-none"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
