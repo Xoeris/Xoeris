@@ -404,7 +404,7 @@ export default function ChatPage({ onNavigate }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white flex font-sans selection:bg-[#FDD935] selection:text-black overflow-hidden relative">
+    <div className="h-screen supports-[height:100dvh]:h-dvh bg-[#050505] text-white flex font-sans selection:bg-[#FDD935] selection:text-black overflow-hidden relative">
       {/* Cyber Grid Background */}
       <div className="fixed inset-0 z-0 bg-[linear-gradient(rgba(253,217,53,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.02)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-40"></div>
 
@@ -420,9 +420,9 @@ export default function ChatPage({ onNavigate }) {
           sidebarOpen ? 'w-64' : 'w-0 -translate-x-full md:w-0'
         } border-r border-white/10 bg-[#0a0a0a]/95 backdrop-blur-2xl flex flex-col justify-between transition-all duration-300 overflow-hidden z-50 shrink-0 h-full`}
       >
-        <div className="flex flex-col h-full overflow-hidden">
+        <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
           {/* Top Header: Collapse icon + Xalme title */}
-          <div className="px-4 py-3.5 flex items-center justify-between border-b border-white/10">
+          <div className="shrink-0 px-4 py-3.5 flex items-center justify-between border-b border-white/10">
             <div className="flex items-center gap-2.5">
               <button
                 onClick={() => setSidebarOpen(false)}
@@ -450,7 +450,7 @@ export default function ChatPage({ onNavigate }) {
           </div>
 
           {/* Action Toolbar */}
-          <div className="p-3 space-y-2 border-b border-white/5">
+          <div className="shrink-0 p-3 space-y-2 border-b border-white/5">
             {/* + New Chat Button in Xoeris Electric Yellow */}
             <button
               onClick={handleStartNewChat}
@@ -462,7 +462,7 @@ export default function ChatPage({ onNavigate }) {
           </div>
 
           {/* Real Chat History Section (NO FAKE PLACEHOLDERS) */}
-          <div className="flex-1 px-3 py-3 overflow-y-auto space-y-4">
+          <div className="flex-1 min-h-0 px-3 py-3 overflow-y-auto space-y-4">
             <div className="flex items-center justify-between px-2 text-[11px] font-bold text-gray-500 uppercase tracking-widest">
               <span>Recent Sessions</span>
               <span className="text-[10px] font-mono text-gray-600">{threads.length}</span>
@@ -508,7 +508,7 @@ export default function ChatPage({ onNavigate }) {
           </div>
 
           {/* User Account Tile inside Sidebar */}
-          <div ref={userDropdownRef} className="p-3 border-t border-white/10 relative bg-black/40">
+          <div ref={userDropdownRef} className="shrink-0 p-3 border-t border-white/10 relative bg-black/40">
             <button
               onClick={() => setUserDropdownOpen(!userDropdownOpen)}
               className="w-full p-2 rounded-xl hover:bg-white/5 flex items-center justify-between text-left transition-colors cursor-pointer bg-transparent border-none"
@@ -571,10 +571,10 @@ export default function ChatPage({ onNavigate }) {
       )}
 
       {/* Main View Area */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen w-full relative z-10 bg-[#050505]">
+      <div className="flex-1 flex flex-col min-w-0 min-h-0 h-full w-full relative z-10 bg-[#050505]">
         
         {/* Top Minimal Bar */}
-        <header className="h-14 px-6 flex justify-between items-center z-30 border-b border-white/5 bg-[#080808]/80 backdrop-blur-md">
+        <header className="h-14 shrink-0 px-6 flex justify-between items-center z-30 border-b border-white/5 bg-[#080808]/80 backdrop-blur-md">
           <div className="flex items-center gap-3">
             {!sidebarOpen && (
               <button 
