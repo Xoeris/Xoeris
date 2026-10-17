@@ -483,11 +483,7 @@ export default function XoerisPage({ onNavigate }) {
         <section className="relative pt-40 pb-20 md:pt-56 md:pb-32 px-6 md:px-12 max-w-7xl mx-auto overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 items-center">
             <div className="z-10 relative text-white">
-              <h1 className="text-6xl md:text-8xl font-black leading-[1.05] mb-6 tracking-tighter drop-shadow-2xl">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FDD935] to-[#FFC94A] drop-shadow-[0_0_20px_rgba(253,217,53,0.5)]">
-                  XOERIS
-                </span>
-              </h1>
+
               <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-lg leading-relaxed font-medium">
                 Pioneering high-velocity software ecosystems, modular operating system architectures, and interactive digital environments.
               </p>
