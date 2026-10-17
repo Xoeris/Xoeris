@@ -250,10 +250,11 @@ export default function App() {
 
     document.title = titles[currentPage] || 'Xoeris';
 
-    // Update Favicon
+    // Update Favicon with cache buster
     const link = document.querySelector("link[rel~='icon']");
     if (link) {
-      link.href = icons[currentPage] || '/xoeris_logo_color.png';
+      const targetIcon = icons[currentPage] || '/xoeris_logo_color.png';
+      link.href = targetIcon.includes('?') ? targetIcon : `${targetIcon}?v=2`;
     }
   }, [currentPage]);
 

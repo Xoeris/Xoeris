@@ -68,7 +68,7 @@ export default function Xalme({ onNavigate }) {
       <section className="pt-20 pb-24 px-6 md:px-12 max-w-7xl mx-auto flex flex-col items-center text-center">
         <FadeIn className="max-w-4xl flex flex-col items-center">
           <img 
-            src="/xoeris_logo_color.png" 
+            src="/xoeris_logo_color.png?v=2" 
             alt="Xalme" 
             className="w-20 h-20 mb-6 object-contain drop-shadow-[0_0_25px_rgba(253,217,53,0.35)]" 
           />

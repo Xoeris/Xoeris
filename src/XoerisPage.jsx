@@ -174,7 +174,7 @@ export default function XoerisPage({ onNavigate }) {
               className="flex items-center group bg-transparent border-none p-0 cursor-pointer"
             >
               <div className="h-10 w-40 transition-transform duration-300 group-hover:scale-105">
-                <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="w-full h-full object-contain object-left" />
+                <img src="/xoeris_logo_emblem.png?v=2" alt="Xoeris" className="w-full h-full object-contain object-left" />
               </div>
             </button>
 
@@ -642,7 +642,7 @@ export default function XoerisPage({ onNavigate }) {
           <div className="max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-12 gap-12 mb-16 relative z-10">
             <div className="md:col-span-5">
               <button onClick={() => { window.location.href = 'https://xoeris.com'; }} className="flex items-center gap-3 mb-6 group inline-flex bg-transparent border-none p-0 cursor-pointer">
-                <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="h-10 w-40 object-contain object-left transition-transform duration-300 group-hover:scale-105" />
+                <img src="/xoeris_logo_emblem.png?v=2" alt="Xoeris" className="h-10 w-40 object-contain object-left transition-transform duration-300 group-hover:scale-105" />
               </button>
               <p className="text-gray-400 max-w-sm font-medium leading-relaxed mb-6">
                 Pioneering professional software ecosystems, modular operating system frameworks, and interactive digital computing environments.

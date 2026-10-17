@@ -10,7 +10,7 @@ export default function ErrorPage({ title, errorType }) {
       {/* Header */}
       <header className="flex justify-between items-center max-w-5xl w-full mx-auto py-4">
         <button onClick={() => { window.location.href = 'https://xoeris.com'; }} className="flex items-center gap-2 bg-transparent border-none p-0 cursor-pointer">
-          <img src="/xoeris_logo_emblem.png" alt="Xoeris Logo" className="h-6 w-6 object-contain" />
+          <img src="/xoeris_logo_emblem.png?v=2" alt="Xoeris Logo" className="h-6 w-6 object-contain" />
           <span className="text-xs font-black uppercase tracking-widest text-gray-500 hover:text-white transition-colors">Xoeris Network</span>
         </button>
       </header>

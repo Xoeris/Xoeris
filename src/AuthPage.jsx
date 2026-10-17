@@ -606,7 +606,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
         <div className="fixed inset-0 z-[-2] bg-[linear-gradient(rgba(253,217,53,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(253,217,53,0.03)_1px,transparent_1px)] bg-[size:40px_40px] pointer-events-none opacity-50"></div>
         <div className="relative liquid-glass-panel border border-white/20 rounded-3xl p-8 max-w-[520px] w-full text-center ring-1 ring-white/10" style={{ backdropFilter: 'blur(32px) saturate(190%)', WebkitBackdropFilter: 'blur(32px) saturate(190%)' }}>
           <div className="h-10 w-36 mx-auto mb-6">
-            <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="w-full h-full object-contain" />
+            <img src="/xoeris_logo_emblem.png?v=2" alt="Xoeris" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-2xl font-bold text-white mb-3">Authentication required</h1>
           <p className="text-gray-300 text-sm mb-2">{guard.error}</p>
@@ -642,7 +642,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
             className="flex items-center group bg-transparent border-none p-0 cursor-pointer text-left"
           >
             <div className="h-9 w-36 transition-transform duration-300 group-hover:scale-105">
-              <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="w-full h-full object-contain object-left" />
+              <img src="/xoeris_logo_emblem.png?v=2" alt="Xoeris" className="w-full h-full object-contain object-left" />
             </div>
           </button>
           <button
@@ -830,7 +830,7 @@ export default function AuthPage({ onNavigate, onSuccess, subheading }) {
 
             {/* Application Branding Emblem */}
             <div className="h-7 w-28 mb-4">
-              <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="w-full h-full object-contain object-left" />
+              <img src="/xoeris_logo_emblem.png?v=2" alt="Xoeris" className="w-full h-full object-contain object-left" />
             </div>
 
             {/* Main Headline */}

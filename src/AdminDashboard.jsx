@@ -349,7 +349,7 @@ export default function AdminDashboard({ onNavigate }) {
             onClick={() => onNavigate ? onNavigate('xoeris') : (window.location.href = '/')} 
             className="flex items-center group bg-transparent border-none p-0 cursor-pointer"
           >
-            <img src="/xoeris_logo_emblem.png" alt="Xoeris Logo Emblem" className="h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
+            <img src="/xoeris_logo_emblem.png?v=2" alt="Xoeris Logo Emblem" className="h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
           </button>
           <div className="px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-red-400 text-[10px] font-mono uppercase tracking-widest flex items-center gap-1.5">
             <Lock size={12} />
@@ -443,7 +443,7 @@ export default function AdminDashboard({ onNavigate }) {
               onClick={() => onNavigate ? onNavigate('xoeris') : (window.location.href = '/')} 
               className="flex items-center group bg-transparent border-none p-0 cursor-pointer"
             >
-              <img src="/xoeris_logo_emblem.png" alt="Xoeris Logo Emblem" className="h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
+              <img src="/xoeris_logo_emblem.png?v=2" alt="Xoeris Logo Emblem" className="h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
             </button>
             <div className="h-5 w-px bg-white/20"></div>
             <div className="flex items-center gap-2">

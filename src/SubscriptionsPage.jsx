@@ -288,7 +288,7 @@ export default function SubscriptionsPage({ onNavigate }) {
             onClick={() => { window.location.href = 'https://xoeris.com'; }}
             className="flex items-center group bg-transparent border-none p-0 cursor-pointer"
           >
-            <img src="/xoeris_logo_emblem.png" alt="Xoeris Logo Emblem" className="h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
+            <img src="/xoeris_logo_emblem.png?v=2" alt="Xoeris Logo Emblem" className="h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
           </button>
         </div>
 
@@ -459,7 +459,7 @@ export default function SubscriptionsPage({ onNavigate }) {
             onClick={() => { window.location.href = 'https://xoeris.com'; }}
             className="flex items-center group bg-transparent border-none p-0 cursor-pointer"
           >
-            <img src="/xoeris_logo_emblem.png" alt="Xoeris Logo Emblem" className="h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
+            <img src="/xoeris_logo_emblem.png?v=2" alt="Xoeris Logo Emblem" className="h-7 w-auto object-contain transition-transform duration-300 group-hover:scale-105" />
           </button>
         </div>
 

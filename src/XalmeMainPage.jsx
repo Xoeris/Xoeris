@@ -11,7 +11,7 @@ export default function XalmeMainPage({ onNavigate }) {
       {/* Top Navbar */}
       <header className="px-6 py-6 max-w-7xl w-full mx-auto flex justify-between items-center z-10">
         <button onClick={() => { window.location.href = 'https://xoeris.com'; }} className="flex items-center gap-2 group bg-transparent border-none text-gray-400 hover:text-white transition-colors cursor-pointer">
-          <img src="/xoeris_logo_emblem.png" alt="Xoeris Logo" className="h-8 w-8 object-contain" />
+          <img src="/xoeris_logo_emblem.png?v=2" alt="Xoeris Logo" className="h-8 w-8 object-contain" />
         </button>
         <button
           onClick={() => onNavigate('chat')}

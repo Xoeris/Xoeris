@@ -128,7 +128,7 @@ export const ProductLayout = ({ name, family, familyRoute, tagline, description,
     <footer className="py-20 border-t border-hide-border-subtle bg-hide-primary/30">
        <div className="max-w-[1400px] mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-10">
           <button onClick={() => { window.location.href = 'https://xoeris.com'; }} className="flex items-center gap-4 bg-transparent border-none p-0 cursor-pointer">
-             <img src="/xoeris_logo_emblem.png" alt="Xoeris" className="h-6 w-24 object-contain" />
+             <img src="/xoeris_logo_emblem.png?v=2" alt="Xoeris" className="h-6 w-24 object-contain" />
              <span className="text-sm font-bold uppercase tracking-widest text-hide-text-muted">Powered by Zenith Engine</span>
           </button>
           <div className="flex gap-10">
