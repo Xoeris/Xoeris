@@ -484,9 +484,9 @@ export default function XoerisPage({ onNavigate }) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-8 items-center">
             <div className="z-10 relative text-white">
 
-              <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-lg leading-relaxed font-medium">
-                Pioneering high-velocity software ecosystems, modular operating system architectures, and interactive digital environments.
-              </p>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white font-black tracking-tight leading-[1.15] mb-10 max-w-2xl drop-shadow-xl">
+                Pioneering <span className="text-[#FDD935]">high-velocity</span> software ecosystems, modular operating system architectures, and interactive digital environments.
+              </h1>
               <div className="flex flex-col sm:flex-row gap-5">
                 <button
                   onClick={() => onNavigate('pricing')}
