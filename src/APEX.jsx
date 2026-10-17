@@ -128,7 +128,7 @@ export default function APEX({ onNavigate }) {
         <FadeIn delay={150} className="w-full max-w-6xl mt-4">
           <div className="rounded-3xl border border-white/15 overflow-hidden shadow-[0_20px_80px_rgba(0,0,0,0.8)] bg-black/60 relative group">
             <img 
-              src="/xoeris_apexpro_mockup.png" 
+              src="/xoeris_apexpro_mockup.png?v=2" 
               alt="Xoeris APEX Mockup" 
               className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-[1.01]"
             />

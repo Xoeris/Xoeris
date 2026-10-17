@@ -205,7 +205,7 @@ export default function MOVA({ onNavigate }) {
         <FadeIn delay={150} className="w-full max-w-5xl mt-2">
           <div className="rounded-3xl border border-white/15 overflow-hidden shadow-2xl bg-black/60 relative group">
             <img 
-              src="https://github.com/user-attachments/assets/7e020fe6-9352-4e52-a202-03461f20cd59" 
+              src="/xoeris_mova_mockup.png?v=2" 
               alt="Xoeris MOVA Banner" 
               className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-[1.01]"
             />
